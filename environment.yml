@@ -1,0 +1,12 @@
+name: neo4jsbml
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - libsbml
+  - python
+  - pandas
+  - openpyxl
+  - cobra
+  - networkx
+  - pyyaml
