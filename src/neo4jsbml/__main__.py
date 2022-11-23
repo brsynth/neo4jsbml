@@ -3,7 +3,8 @@ import logging
 import os
 import sys
 
-from neo4jsbml import _version
+from neo4jsbml import _version, connect
+from neo4jsbml.sbml import Sbml
 
 
 def main():
@@ -17,45 +18,39 @@ def main():
         prog='python -m neo4jsbml'
     )
 
-    - protocol: bolt, neo4j, ?
-- url (default: localhost:3000)
-- user (default: neo4j)
-- password
-- database (default: neo4j)
-
-- fichier sbml
-- id model
-- entités
-
-    # Input
-    parser_input = parser.add_argument_group(
-        'Input'
+    # Database connection
+    parser_dbb = parser.add_argument_group(
+        'Database connection'
     )
-    parser_input.add_argument(
+    parser_dbb.add_argument(
         '--input-protocol-str',
         default="neo4j",
         choices=["neo4j", "bolt"],
-        help="Protocol",
+        help="Protocol used to connect the database",
     )
-    parser_input.add_argument(
+    parser_dbb.add_argument(
         "--input-url-str",
         default="localhost:3000",
-        help="",
+        help="URL to connect to the database Neo4j with the port associated",
     )
-    parser_input.add_argument(
+    parser_dbb.add_argument(
         "--input-user-str",
         default="neo4j",
-        help="",
+        help="The login to the database",
     )
-    parser_input.add_argument(
+    parser_dbb.add_argument(
         "--input-password-file",
         required=True,
-        help="",
+        help="A password in a file",
     )
-    parser_input.add_argument(
+    parser_dbb.add_argument(
         "--input-database-str",
         default="neo4j",
-        help="",
+        help="The name of the database",
+    )
+    # Input
+    parser_input = parser.add_argument_group(
+        'Input'
     )
     parser_input.add_argument(
         "--input-file-sbml",
@@ -63,13 +58,13 @@ def main():
         help="",
     )
     parser_input.add_argument(
-        "--input-id-sbml",
-        help="",
+        "--input-id-str",
+        help="Id of document",
     )
     parser_input.add_argument(
         "--input-modelisation-str",
-        default="sbml",
-        choices=["sbml", "pathway"],
+        default="sbml-3.1-1",
+        choices=["sbml-3.1-1", "pathway"],
         help="",
     )
 
@@ -87,17 +82,53 @@ def main():
     logger.addHandler(st_handler)
     logger.setLevel(args.log_level)
 
-    # TODO: Check arguments.
+    # Check arguments.
+    if not os.path.isfile(args.input_file_sbml):
+        logging.error("SBML file does not exist: %s" % (args.input_file_sbml,))
 
     # Connection to database
     logger.info('Connection to database')
-    con = Connect(
-        user=
-        password=
-        protocol=
-        datasbase=
-        url=
+    con = connect.Connect(
+        user=args.input_user_str,
+        password=args.input_password_file,
+        protocol=args.input_protocol_str,
+        database=args.input_database_str,
+        url=args.input_url_str,
     )
+
+    sbml = Sbml(
+        id=args.input_id_str,
+        path=args.input_sbml_file,
+        modelisation=args.input_modelisation_str,
+    )
+
+    # Create entity
+    logging.info("Create node: Document")
+    con.create_nodes(entity="Document", nodes=sbml.get_document())
+    logging.info("Create node: Model")
+    con.create_nodes(entity="Model", nodes=sbml.get_model())
+
+    logging.info("Create node: Species")
+    con.create_nodes(entity="Species", nodes=sbml.get_species())
+    logging.info("Create node: Compartment")
+    con.create_nodes(entity="Compartment", nodes=sbml.get_compartments())
+    logging.info("Create node: Reaction")
+    con.create_nodes(entity="Reaction", nodes=sbml.get_reactions())
+    logging.info("Create node: Parameter")
+    con.create_nodes(entity="Parameter", nodes=sbml.get_parameters())
+
+    # Create relationships
+    logging.info("Create relationship: Document-Model")
+    con.create_relationships(sbml.get_relationships_document_model())
+    logging.info("Create relationship: Model-Reactions")
+    con.create_relationships(sbml.get_relationships_model_reactions())
+    logging.info("Create relationship: Model-Compartments")
+    con.create_relationships(sbml.get_relationships_model_compartments())
+    logging.info("Create relationship: Model-Parameters")
+    con.create_relationships(sbml.get_relationships_model_parameters())
+    logging.info("Create relationship: Species-Compartment")
+    con.create_relationships(sbml.get_relationships_species_compartments())
+
     return 0
 
 
