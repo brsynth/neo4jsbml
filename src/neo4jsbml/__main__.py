@@ -30,7 +30,7 @@ def main():
     )
     parser_dbb.add_argument(
         "--input-url-str",
-        default="localhost:3000",
+        default="localhost:7687",
         help="URL to connect to the database Neo4j with the port associated",
     )
     parser_dbb.add_argument(
@@ -98,7 +98,7 @@ def main():
 
     sbml = Sbml(
         id=args.input_id_str,
-        path=args.input_sbml_file,
+        path=args.input_file_sbml,
         modelisation=args.input_modelisation_str,
     )
 
