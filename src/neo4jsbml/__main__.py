@@ -80,7 +80,7 @@ def main():
     st_handler = logging.StreamHandler()
     st_handler.setFormatter(formatter)
     logger.addHandler(st_handler)
-    logger.setLevel(args.log_level)
+    # logger.setLevel(args.log_level)
 
     # Check arguments.
     if not os.path.isfile(args.input_file_sbml):
