@@ -8,7 +8,7 @@ version = ""
 fversion = glob.glob("**/_version.py", recursive=True)[0]
 with open(fversion) as fid:
     lines = fid.read().splitlines()
-    version = lines[1].split("=")[-1].strip().replace('"', "")
+    version = lines[0].split("=")[-1].strip().replace('"', "")
 
 # App name - dependencies
 env = {}
