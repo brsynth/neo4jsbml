@@ -28,7 +28,7 @@ class Sbml(object):
         for ix, result in enumerate(results):
             keys = []
             for k, v in result.items():
-                if v is None:
+                if v is None or v == "":
                     keys.append(k)
             for k in keys:
                 del result[k]
@@ -40,16 +40,18 @@ class Sbml(object):
         data = Sbml.sbase_to_dict(sbase=self.document)
         # TODO: get xmlns
         data.update(dict(
-            annotation=self.model.getAnnotation(),
-            notes=self.model.getNotes(),
-            version=self.model.getVersion(),
-            level=self.model.getLevel(),
+            annotation=self.document.getAnnotationString(),
+            notes=self.document.getNotesString(),
+            version=self.document.getVersion(),
+            level=self.document.getLevel(),
             ))
         data["id"] = self.id
         return Sbml.format_results([data])
 
     def get_model(self) -> List[Dict[str, Any]]:
         data = Sbml.sbase_to_dict(sbase=self.model)
+        if data.get("id") is None:
+            data["id"] = self.id
         return Sbml.format_results([data])
 
     def get_compartments(self) -> List[Dict[str, Any]]:
@@ -88,7 +90,7 @@ class Sbml(object):
     def get_reactions(self) -> List[Dict[str, Any]]:
         res = []
         for r in self.model.getListOfReactions():
-            data = dict(reaction_id=r.getId())
+            data = dict(id=r.getId())
             res.append(data)
         return Sbml.format_results(res)
 
