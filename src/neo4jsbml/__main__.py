@@ -105,18 +105,18 @@ def main():
 
     # Create entity
     logging.info("Create node: Document")
-    con.create_nodes(entity="Document", nodes=sbml.get_document())
+    con.create_nodes(label="Document", attributes=sbml.get_document())
     logging.info("Create node: Model")
-    con.create_nodes(entity="Model", nodes=sbml.get_model())
+    con.create_nodes(label="Model", attributes=sbml.get_model())
 
     logging.info("Create node: Species")
-    con.create_nodes(entity="Species", nodes=sbml.get_species())
+    con.create_nodes(label="Species", attributes=sbml.get_species())
     logging.info("Create node: Compartment")
-    con.create_nodes(entity="Compartment", nodes=sbml.get_compartments())
+    con.create_nodes(label="Compartment", attributes=sbml.get_compartments())
     logging.info("Create node: Reaction")
-    con.create_nodes(entity="Reaction", nodes=sbml.get_reactions())
+    con.create_nodes(label="Reaction", attributes=sbml.get_reactions())
     logging.info("Create node: Parameter")
-    con.create_nodes(entity="Parameter", nodes=sbml.get_parameters())
+    con.create_nodes(label="Parameter", attributes=sbml.get_parameters())
 
     # Create relationships
     logging.info("Create relationship: Document-Model")
