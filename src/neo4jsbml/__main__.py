@@ -59,6 +59,7 @@ def main():
     )
     parser_input.add_argument(
         "--input-id-str",
+        default="chassis",
         help="Id of document",
     )
     parser_input.add_argument(
