@@ -1,0 +1,200 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - stable
+
+jobs:
+
+  TagRaw:
+    runs-on: ubuntu-latest
+    outputs:
+     tag: ${{ steps.tag_label.outputs.tag }}
+     changelog: ${{ steps.tag_raw.outputs.changelog }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: 'Bump version and push tag - dry run'
+        id: tag_raw
+        uses: mathieudutour/github-tag-action@v6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          release_branches: stable
+          tag_prefix:
+          dry_run: true
+      - name: 'Format tag'
+        id: tag_label
+        env:
+          TAG: ${{ steps.tag_raw.outputs.new_tag }}
+        run: |
+          TAG=$(echo "$TAG" | cut -f1 -d "-")
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+  Changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: 'Check file present'
+        run: |
+          [[ -f CHANGELOG.md ]] || touch CHANGELOG.md
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3 # Not needed with a .ruby-version file
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+      - name: 'Generate CHANGELOG'
+        env:
+          CHANGELOG_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gem install github_changelog_generator
+          USER=$(echo "$GITHUB_REPOSITORY" | sed -e 's/\// /g' | awk '{print $1}')
+          PROJECT=$(echo "$GITHUB_REPOSITORY" | sed -e 's/\// /g' | awk '{print $2}')
+          echo "$USER $PROJECT"
+          github_changelog_generator --user "$USER" --project "$PROJECT" --no-unreleased
+      - name: 'Upload Artifact Changelog'
+        uses: actions/upload-artifact@v2
+        with:
+          name: changelog-artifact
+          path: CHANGELOG.md
+          retention-days: 1
+
+  Version:
+    needs: TagRaw
+    runs-on: ubuntu-latest
+    outputs:
+      version_path: ${{ steps.update_version.outputs.version_path }}
+      version_dir: ${{ steps.update_version.outputs.version_dir }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: 'Update _version.py'
+        id: update_version
+        env:
+          TAG: ${{ needs.TagRaw.outputs.tag }}
+        run: |
+          VERSION_PATH=$(find . -name _version.py | head -n 1)
+          VERSION_DIR=$(dirname "$VERSION_PATH")
+          sed -i "2s/.*/__version__ = \"$TAG\"/" "$VERSION_PATH"
+          echo "version_path=$VERSION_PATH" >> "$GITHUB_OUTPUT"
+          echo "version_dir=$VERSION_DIR" >> "$GITHUB_OUTPUT"
+      - name: 'Upload Artifact Version'
+        uses: actions/upload-artifact@v2
+        with:
+          name: version-artifact
+          path: ${{ steps.update_version.outputs.version_path }}
+
+  Commit:
+    needs: [Changelog, Version]
+    runs-on: ubuntu-latest
+    steps:
+      # Get Data
+      - name: 'Checkout'
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: 'Download Artifact Version'
+        uses: actions/download-artifact@v3
+        with:
+          name: version-artifact
+          path: ${{ needs.Version.outputs.version_dir }}
+      - name: 'Download Artifact Changelog'
+        uses: actions/download-artifact@v3
+        with:
+          name: changelog-artifact
+      # Commit
+      - name: 'Commit files'
+        run: |
+          echo "show version file"
+          cat ${{ needs.Version.outputs.version_path }}
+          git config --local user.email "$GITHUB_EMAIL"
+          git config --local user.name "$GITHUB_USERNAME"
+          git add .
+          git commit -m "doc(changelog): update"
+        env:
+          GITHUB_USERNAME: guillaume-gricourt
+          GITHUB_EMAIL: guipagui@gmail.com
+      - name: 'Push changes'
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
+      - name: 'Update main branch'
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
+
+  Tag:
+    needs: [Commit, TagRaw]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: 'Bump version and push tag'
+        id: tag
+        uses: mathieudutour/github-tag-action@v6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          release_branches: stable
+          custom_tag: ${{ needs.TagRaw.outputs.tag }}
+          tag_prefix:
+
+  BuildConda:
+    needs: [Tag]
+    runs-on: ubuntu-latest
+    env:
+      dirbuild: /tmp/build
+    outputs:
+      asset: ${{ steps.identify_asset.outputs.asset }}
+    defaults:
+      run:
+        shell: bash -l {0} # activate env conda
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v3
+      - name: 'Deploying miniconda'
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          environment-file: recipes/workflow.yaml
+          python-version: '3.9'
+          mamba-version: "*"
+          channel-priority: true
+          use-mamba: true
+      - name: 'Build conda package'
+        run: |
+          mkdir -p ${{ env.dirbuild }}
+          conda-build recipes --output-folder ${{ env.dirbuild }}
+      - name: 'Find name package'
+        id: identify_asset
+        run: |
+          filename=$(find ${{ env.dirbuild }} | head -n 1)
+          echo "asset=$filename" >> "$GITHUB_OUTPUT"
+      - name: 'Upload Artifact Package'
+        uses: actions/upload-artifact@v2
+        with:
+          name: package-conda-artifact
+          path: ${{ steps.identify_asset.outputs.asset }}
+          retention-days: 1
+          if-no-files-found: error
+
+  Release:
+    needs: [TagRaw, BuildConda]
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Download Artifact Package - Pip'
+        uses: actions/download-artifact@v3
+        with:
+          name: package-conda-artifact
+      - name: 'Create Release'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ needs.TagRaw.outputs.tag }}
+          body: ${{ needs.TagRaw.outputs.changelog }}
+          files: ${{ needs.BuildConda.outputs.asset }}

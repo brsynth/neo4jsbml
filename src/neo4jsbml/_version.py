@@ -1,1 +1,2 @@
-__version__ = "0.0.1"
+__app_name__ = "neo4jsbml"
+__version__ = "0.8.0"

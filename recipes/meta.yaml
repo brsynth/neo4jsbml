@@ -1,0 +1,40 @@
+{% set name = "neo4jsbml" %}
+{% set version = "0.8.0" %}
+
+package:
+  name: {{ name }}
+  version: {{ version }}
+
+source:
+  path: ../
+
+build:
+  number: 0
+  noarch: python
+  script: {{ PYTHON }} -m pip install -vv .
+
+requirements:
+  build:
+    - pip
+    - python
+    - pyyaml
+    - setuptools
+  run:
+    - python-libsbml
+    - neo4j-python-driver
+
+test:
+  imports:
+    - {{ name }}
+  commands:
+    - python -m {{ name }} --help
+
+about:
+  home: https://github.com/brsynth/{{ name }}
+  summary: Import SBML file into Neo4j
+  license: MIT
+  license_file: LICENSE
+
+extra:
+  recipe-maintainers:
+    - guillaume-gricourt
