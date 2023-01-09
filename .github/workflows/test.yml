@@ -1,0 +1,72 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+
+  Build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8, 3.9]
+    defaults:
+      run:
+        shell: bash -l {0}
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.ref }}
+      - name: 'Deploying miniconda'
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          miniconda-version: "latest"
+          environment-file: recipes/workflow.yaml
+          python-version: ${{ matrix.python-version }}
+          mamba-version: "*"
+          channel-priority: true
+          use-mamba: true
+      - name: 'Build conda package'
+        run: |
+          conda-build recipes/
+      - name: 'Run tests'
+        run: |
+          pip install --no-deps .
+          python -m pytest tests
+
+  Coverage:
+    needs: [Build]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -l {0}
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.ref }}
+      - name: 'Deploying miniconda'
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          miniconda-version: "latest"
+          environment-file: recipes/workflow.yaml
+          python-version: '3.9'
+          mamba-version: "*"
+          channel-priority: true
+          use-mamba: true
+      - name: 'Run tests'
+        run: |
+          pip install --no-deps .
+          coverage run -m pytest
+          coverage lcov
+      - name: 'Coveralls'
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: ./coverage.lcov

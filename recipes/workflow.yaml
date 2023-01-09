@@ -1,0 +1,9 @@
+name: test
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - conda-build
+  - python-libsbml
+  - neo4j-python-driver
+  - pytest

@@ -10,20 +10,14 @@ from neo4jsbml.sbml import Sbml
 def main():
     """CLI for neo4jsbml"""
 
-    desc = ""  \
-        ""
+    desc = "" ""
 
-    parser = argparse.ArgumentParser(
-        description=desc,
-        prog='python -m neo4jsbml'
-    )
+    parser = argparse.ArgumentParser(description=desc, prog="python -m neo4jsbml")
 
     # Database connection
-    parser_dbb = parser.add_argument_group(
-        'Database connection'
-    )
+    parser_dbb = parser.add_argument_group("Database connection")
     parser_dbb.add_argument(
-        '--input-protocol-str',
+        "--input-protocol-str",
         default="neo4j",
         choices=["neo4j", "bolt"],
         help="Protocol used to connect the database",
@@ -49,9 +43,7 @@ def main():
         help="The name of the database",
     )
     # Input
-    parser_input = parser.add_argument_group(
-        'Input'
-    )
+    parser_input = parser.add_argument_group("Input")
     parser_input.add_argument(
         "--input-file-sbml",
         required=True,
@@ -73,10 +65,9 @@ def main():
     args = parser.parse_args()
 
     # Logging.
-    logger = logging.getLogger(name='main')
+    logger = logging.getLogger(name="main")
     formatter = logging.Formatter(
-        '%(asctime)s - %(levelname)s - %(message)s',
-        datefmt='%d-%m-%Y %H:%M'
+        "%(asctime)s - %(levelname)s - %(message)s", datefmt="%d-%m-%Y %H:%M"
     )
     st_handler = logging.StreamHandler()
     st_handler.setFormatter(formatter)
@@ -88,7 +79,7 @@ def main():
         logging.error("SBML file does not exist: %s" % (args.input_file_sbml,))
 
     # Connection to database
-    logger.info('Connection to database')
+    logger.info("Connection to database")
     con = connect.Connect(
         user=args.input_user_str,
         password=args.input_password_file,
@@ -133,5 +124,5 @@ def main():
     return 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

@@ -4,9 +4,17 @@ import neo4j
 
 
 class Relationship(object):
-    """Relation. """
+    """Relation."""
 
-    def __init__(self, left: str, left_id: str, right: str, right_id: str, relationship: str, attributes: Dict[Any, Any] = {}) -> None:
+    def __init__(
+        self,
+        left: str,
+        left_id: str,
+        right: str,
+        right_id: str,
+        relationship: str,
+        attributes: Dict[Any, Any] = {},
+    ) -> None:
         self.left = left
         self.left_id = left_id
         self.right = right
@@ -15,4 +23,11 @@ class Relationship(object):
         self.attributes = attributes
 
     def to_list(self) -> List[Any]:
-        return [self.left, self.left_id, self.relationship, self.right, self.right_id, self.attributes]
+        return [
+            self.left,
+            self.left_id,
+            self.relationship,
+            self.right,
+            self.right_id,
+            self.attributes,
+        ]

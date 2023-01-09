@@ -4,17 +4,18 @@ import setuptools
 import yaml
 
 # Version
+name = ""
 version = ""
 fversion = glob.glob("**/_version.py", recursive=True)[0]
 with open(fversion) as fid:
     lines = fid.read().splitlines()
-    version = lines[0].split("=")[-1].strip().replace('"', "")
+    name = lines[0].split("=")[-1].strip().replace('"', "")
+    version = lines[1].split("=")[-1].strip().replace('"', "")
 
 # App name - dependencies
 env = {}
-with open("environment.yml") as fid:
+with open("recipes/workflow.yaml") as fid:
     env = yaml.safe_load(fid)
-name = env["name"]
 install_requires = []
 for package in env["dependencies"]:
     if isinstance(package, dict):
@@ -22,16 +23,16 @@ for package in env["dependencies"]:
         install_requires += package
     else:
         install_requires.append(package)
-description = "Load SBML file into a Neo4j database"
+description = "Import SBML file into Neo4j"
 
 setuptools.setup(
     name=name,
     version=version,
-    author=[""],
-    author_email=[""],
+    author=["guillaume-gricourt", "tduigou"],
+    author_email=["guipagui@gmail.com", "thomas.duigou@inrae.fr"],
     description=description,
     long_description_content_type="text/markdown",
-    url="https://forgemia.inra.fr/cati-sysmics/wp3/neo4jsbml",
+    url="https://github.com/brsynth/neo4jsbml",
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src"),
     include_package_data=True,
