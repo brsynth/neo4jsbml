@@ -2,6 +2,7 @@ import logging
 from typing import Any, Dict, List
 
 import libsbml
+
 from neo4jsbml import relationship
 
 
@@ -39,12 +40,14 @@ class Sbml(object):
     def get_document(self) -> List[Dict[str, Any]]:
         data = Sbml.sbase_to_dict(sbase=self.document)
         # TODO: get xmlns
-        data.update(dict(
-            annotation=self.document.getAnnotationString(),
-            notes=self.document.getNotesString(),
-            version=self.document.getVersion(),
-            level=self.document.getLevel(),
-            ))
+        data.update(
+            dict(
+                annotation=self.document.getAnnotationString(),
+                notes=self.document.getNotesString(),
+                version=self.document.getVersion(),
+                level=self.document.getLevel(),
+            )
+        )
         data["id"] = self.id
         return Sbml.format_results([data])
 
@@ -129,31 +132,71 @@ class Sbml(object):
     # Relationships
     def get_relationships_document_model(self) -> List[Any]:
         res = []
-        res.append(relationship.Relationship(left="Document", left_id=self.id, right="Model", right_id=self.model.getId(), relationship="HAS_MODEL"))
+        res.append(
+            relationship.Relationship(
+                left="Document",
+                left_id=self.id,
+                right="Model",
+                right_id=self.model.getId(),
+                relationship="HAS_MODEL",
+            )
+        )
         return res
 
     def get_relationships_species_compartments(self) -> List[Any]:
         res = []
         for s in self.model.getListOfSpecies():
-            res.append(relationship.Relationship(left="Species", left_id=s.getId(), right="Compartment", right_id=s.getCompartment(), relationship="HAS_COMPARTMENT"))
+            res.append(
+                relationship.Relationship(
+                    left="Species",
+                    left_id=s.getId(),
+                    right="Compartment",
+                    right_id=s.getCompartment(),
+                    relationship="HAS_COMPARTMENT",
+                )
+            )
         return res
 
     def get_relationships_model_reactions(self) -> List[Any]:
         res = []
         for r in self.model.getListOfReaction():
-            res.append(relationship.Relationship(left="Model", left_id=self.model.getId(), right="Reaction", right_id=r.getId(), relationship="HAS_REACTION"))
+            res.append(
+                relationship.Relationship(
+                    left="Model",
+                    left_id=self.model.getId(),
+                    right="Reaction",
+                    right_id=r.getId(),
+                    relationship="HAS_REACTION",
+                )
+            )
         return res
 
     def get_relationships_model_compartments(self) -> List[Any]:
         res = []
         for c in self.model.getListOfCompartment():
-            res.append(relationship.Relationship(left="Model", left_id=self.model.getId(), right="Compartment", right_id=c.getId(), relationship="HAS_COMPARTMENT"))
+            res.append(
+                relationship.Relationship(
+                    left="Model",
+                    left_id=self.model.getId(),
+                    right="Compartment",
+                    right_id=c.getId(),
+                    relationship="HAS_COMPARTMENT",
+                )
+            )
         return res
 
     def get_relationships_model_parameters(self) -> List[Any]:
         res = []
         for p in self.model.getListOfParameter():
-            res.append(relationship.Relationship(left="Model", left_id=self.model.getId(), right="Parameter", right_id=p.getId(), relationship="HAS_CONVERSION_FACTOR"))
+            res.append(
+                relationship.Relationship(
+                    left="Model",
+                    left_id=self.model.getId(),
+                    right="Parameter",
+                    right_id=p.getId(),
+                    relationship="HAS_CONVERSION_FACTOR",
+                )
+            )
         return res
 
     def get_relationships_species_reactions(self) -> List[Any]:
@@ -165,14 +208,32 @@ class Sbml(object):
                     stoichiometry=p.getStoichiometry(),  #  double, optional
                     constant=p.getConstant(),  #  boolean
                 )
-                res.append(relationship.Relationship(left="Reaction", left_id=r.getId(), right="Species", right_id=p.getSpecies(), relationship="HAS_PRODUCT", attributes=data))
+                res.append(
+                    relationship.Relationship(
+                        left="Reaction",
+                        left_id=r.getId(),
+                        right="Species",
+                        right_id=p.getSpecies(),
+                        relationship="HAS_PRODUCT",
+                        attributes=data,
+                    )
+                )
             # Reactants
             for re in r.getListOfReactants():
                 data = dict(
                     stoichiometry=re.getStoichiometry(),  #  double, optional
                     constant=re.getConstant(),  #  boolean
                 )
-                res.append(relationship.Relationship(left="Species", left_id=re.getSpecies(), right="Reaction", right_id=r.getId(), relationship="IS_REACTANT", attributes=data))
+                res.append(
+                    relationship.Relationship(
+                        left="Species",
+                        left_id=re.getSpecies(),
+                        right="Reaction",
+                        right_id=r.getId(),
+                        relationship="IS_REACTANT",
+                        attributes=data,
+                    )
+                )
         return res
 
     def has_plugin(self) -> bool:
@@ -199,6 +260,7 @@ class Sbml(object):
             data_genes["gene_product"] = fmt
             df = pd.concat([df, pd.DataFrame(data_genes, index=index)])
     """
+
     @classmethod
     def load_document(cls, path: str) -> Any:
         doc = libsbml.readSBML(path)
@@ -207,4 +269,3 @@ class Sbml(object):
             logging.error(doc.printErrors())
             raise ValueError("Error when parsing SBML -> abort")
         return doc
-
