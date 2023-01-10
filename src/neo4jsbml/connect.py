@@ -1,34 +1,54 @@
+import configparser
 import logging
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 import neo4j
+
 from neo4jsbml import singleton
 
 
 class Connect(metaclass=singleton.Singleton):
     """Connect"""
 
+    BATCH = 5000
+    PROTOCOLS = ["neo4j", "bolt"]
+
     def __init__(
-        self, user: str, password: str, protocol: str, database: str, url: str
+        self,
+        protocol: str,
+        url: str,
+        port: int,
+        user: str,
+        database: str,
+        password: Optional[str],
+        password_path: Optional[str] = None,
+        batch: Optional[int] = None,
     ) -> None:
-        self._password = password
         self.protocol = protocol
-        self.database = database
         self.url = url
+        self.port = port
+
         self.user = user
+        self.database = database
+
+        self.password = password
+        if password_path is not None:
+            self.password = Connect.read_password(path=password_path)
 
         self.driver = neo4j.GraphDatabase.driver(
             self.uri, auth=(self.user, self.password)
         )
-        self.batch = 5000
+        self.batch = Connect.BATCH
+        if batch:
+            self.batch = batch
 
     @property
     def uri(self) -> str:
-        return self.protocol + "://" + self.url
+        return self.protocol + "://" + self.url + ":" + str(self.port)
 
-    @property
-    def password(self) -> str:
-        with open(self._password) as fid:
+    @classmethod
+    def read_password(cls, path: str) -> str:
+        with open(path) as fid:
             return fid.read().splitlines()[0]
 
     def create_nodes(self, label: str, attributes: List[Dict[str, Any]]) -> None:
@@ -60,3 +80,18 @@ class Connect(metaclass=singleton.Singleton):
 
     def __del__(self):
         self.driver.close()
+
+    @classmethod
+    def from_config(cls, path: str) -> "Connect":
+        config = configparser.ConfigParser()
+        config.read(path)
+
+        return Connect(
+            protocol=config["connection"]["protocol"],
+            url=config["connection"]["url"],
+            port=int(config["connection"]["port"]),
+            user=config["database"]["user"],
+            database=config["database"]["name"],
+            password=config["database"]["password"],
+            batch=int(config["parameters"]["batch"]),
+        )
