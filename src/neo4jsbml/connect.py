@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional
 
 import neo4j
 
-from neo4jsbml import singleton
+from neo4jsbml import _version, singleton
 
 
 class Connect(metaclass=singleton.Singleton):
@@ -75,8 +75,8 @@ class Connect(metaclass=singleton.Singleton):
     def enable_log(level, output_stream):
         handler = logging.StreamHandler(output_stream)
         handler.setLevel(level)
-        logging.getLogger("neo4j").addHandler(handler)
-        logging.getLogger("neo4j").setLevel(level)
+        logging.getLogger(_version.__app_name__).addHandler(handler)
+        logging.getLogger(_version.__app_name__).setLevel(level)
 
     def __del__(self):
         self.driver.close()
