@@ -51,15 +51,24 @@ class Connect(metaclass=singleton.Singleton):
         with open(path) as fid:
             return fid.read().splitlines()[0]
 
-    def create_nodes(self, label: str, attributes: List[Dict[str, Any]]) -> None:
-        for i in range(0, len(attributes), self.batch):
-            with self.driver.session(default_access_mode=neo4j.WRITE_ACCESS) as session:
-                res = session.run(
-                    "WITH $attributes as attributes UNWIND attributes as attribute CALL apoc.merge.node([$label], {id: attribute.id}, attribute, attribute) YIELD node RETURN count(*)",
-                    label=label,
-                    attributes=attributes[i : i + self.batch],
-                )
-                res.single()
+    def create_nodes(self, nodes: List[Dict[str, Any]]) -> None:
+        # Order by label
+        labels = set()
+        for node in nodes:
+            labels.add(node.pop("labels"))
+
+        for label in labels:
+            sub_nodes = [x for x in nodes if x["labels"] == label]
+            for i in range(0, len(sub_nodes), self.batch):
+                with self.driver.session(
+                    default_access_mode=neo4j.WRITE_ACCESS
+                ) as session:
+                    res = session.run(
+                        "WITH $attributes as attributes UNWIND attributes as attribute CALL apoc.merge.node([$label], attribute) YIELD node RETURN count(*)",
+                        label=label,
+                        attributes=sub_nodes[i : i + self.batch],
+                    )
+                    res.single()
 
     def create_relationships(self, relations: List[Any]) -> None:
         # List: Dict: EntiteGauche, IdEntiteGauche, Relation, EntiteDroite, IdEntiteDroite, Attributs
@@ -67,7 +76,7 @@ class Connect(metaclass=singleton.Singleton):
             with self.driver.session(default_access_mode=neo4j.WRITE_ACCESS) as session:
                 res = session.run(
                     "WITH $relations as relations UNWIND relations as rel MATCH (a:rel[0] {id: rel[1]}) MATCH (b:rel[2] {id: rel[3]}) CALL apoc.create.relationship(a, rel[4], rel[5], b) YIELD rel RETURN rel",
-                    relations=[x.to_list() for x in relations[i : i + self.batch],
+                    relations=[x.to_list() for x in relations[i : i + self.batch]],
                 )
                 res.single()
 
