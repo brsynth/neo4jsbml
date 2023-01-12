@@ -1,10 +1,11 @@
 from neo4jsbml.arrows import Arrows
-from tests.main_test import Main_test
+
+from tests.main_test import MainTest
 
 
-class TestArrows(Main_test):
+class TestArrows(MainTest):
     def test_load(self):
-        arrow = Arrows.from_json(path=Main_test.pathway_one_json)
+        arrow = Arrows.from_json(path=MainTest.pathway_one_json)
 
         self.assertEqual(len(arrow.nodes), 4)
         self.assertEqual(arrow.nodes[-1].id, "n21")
