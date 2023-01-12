@@ -7,3 +7,4 @@ dependencies:
   - python-libsbml
   - neo4j-python-driver
   - pytest
+  - python-asyncio
