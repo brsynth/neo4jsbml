@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional
 
 import libsbml
 
-from neo4jsbml import _version, arrows, relationship
+from neo4jsbml import _version, arrows
 
 
 class Sbml(object):
