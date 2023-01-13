@@ -37,7 +37,7 @@ def pathway_one_path(data_directory):
     return os.path.join(data_directory, "PathwayModelisation-0.4.1.json")
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def node_one_dict():
     return dict(
         id="n11",
@@ -46,7 +46,7 @@ def node_one_dict():
     )
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def node_two_dict():
     return dict(
         id="n12",
@@ -60,7 +60,7 @@ def node_two_dict():
     )
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def node_three_dict():
     return dict(
         id="n13",
@@ -69,7 +69,7 @@ def node_three_dict():
     )
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def rel_one_dict():
     return dict(
         id="n21",
@@ -81,7 +81,7 @@ def rel_one_dict():
     )
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def rel_two_dict():
     return dict(
         id="n21",
