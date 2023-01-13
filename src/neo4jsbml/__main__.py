@@ -3,8 +3,7 @@ import logging
 import os
 import sys
 
-from neo4jsbml import _version, connect
-from neo4jsbml.sbml import Sbml
+from neo4jsbml import _version, arrows, connect, sbml
 
 
 def main():
@@ -71,28 +70,49 @@ def main():
         help="Id of document",
     )
     parser_input.add_argument(
-        "--input-modelisation-str",
-        default="sbml-3.1-1",
-        choices=["sbml-3.1-1", "pathway"],
-        help="",
+        "--input-modelisation-json",
+        required=True,
+        help="Modelisation created and downloaded from arrow",
     )
 
+    # Parameters
+    parser_parameters = parser.add_argument_group("Parameters")
+    parser_parameters.add_argument(
+        "--log-level",
+        choices=[
+            "debug",
+            "info",
+            "warning",
+            "error",
+            "critical",
+            "silent",
+            "quiet",
+        ],
+        default="info",
+        help="Adds a console logger for the specified level (default: info)",
+    )
     # Compute
     args = parser.parse_args()
 
     # Logging.
-    logger = logging.getLogger(name="main")
+    logger = logging.getLogger(name=_version.__app_name__)
     formatter = logging.Formatter(
         "%(asctime)s - %(levelname)s - %(message)s", datefmt="%d-%m-%Y %H:%M"
     )
     st_handler = logging.StreamHandler()
     st_handler.setFormatter(formatter)
     logger.addHandler(st_handler)
-    # logger.setLevel(args.log_level)
+    logger.setLevel(args.log_level)
 
     # Check arguments.
+    logger.info("Start - %s" % (_version.__app_name__,))
     if not os.path.isfile(args.input_file_sbml):
-        logging.error("SBML file does not exist: %s" % (args.input_file_sbml,))
+        logger.error("Model SBML file does not exist: %s" % (args.input_file_sbml,))
+    if not os.path.isfile(args.input_modelisation_json):
+        logger.error(
+            "Modelisation JSON file does not exist: %s"
+            % (args.input_modelisation_json,)
+        )
 
     # Connection to database
     logger.info("Connection to database")
@@ -111,38 +131,25 @@ def main():
             batch=args.input_batch_int,
         )
 
-    sbml = Sbml(
-        id=args.input_id_str,
-        path=args.input_file_sbml,
-        modelisation=args.input_modelisation_str,
-    )
+    # Load model
+    logger.info("Load SBML file")
+    sbm = sbml.Sbml.from_sbml(path=args.input_file_sbml, id=args.input_id_str)
 
-    # Create entity
-    logging.info("Create node: Document")
-    con.create_nodes(label="Document", attributes=sbml.get_document())
-    logging.info("Create node: Model")
-    con.create_nodes(label="Model", attributes=sbml.get_model())
+    # Load modelisation
+    logger.info("Load modelisation file")
+    arr = arrows.Arrows.from_json(path=args.input_modelisation_json)
 
-    logging.info("Create node: Species")
-    con.create_nodes(label="Species", attributes=sbml.get_species())
-    logging.info("Create node: Compartment")
-    con.create_nodes(label="Compartment", attributes=sbml.get_compartments())
-    logging.info("Create node: Reaction")
-    con.create_nodes(label="Reaction", attributes=sbml.get_reactions())
-    logging.info("Create node: Parameter")
-    con.create_nodes(label="Parameter", attributes=sbml.get_parameters())
+    # Create entities
+    logger.info("Create nodes")
+    con.create_nodes(nodes=sbm.Sbml.format_nodes(nodes=arr.nodes))
 
     # Create relationships
-    logging.info("Create relationship: Document-Model")
-    con.create_relationships(sbml.get_relationships_document_model())
-    logging.info("Create relationship: Model-Reactions")
-    con.create_relationships(sbml.get_relationships_model_reactions())
-    logging.info("Create relationship: Model-Compartments")
-    con.create_relationships(sbml.get_relationships_model_compartments())
-    logging.info("Create relationship: Model-Parameters")
-    con.create_relationships(sbml.get_relationships_model_parameters())
-    logging.info("Create relationship: Species-Compartment")
-    con.create_relationships(sbml.get_relationships_species_compartments())
+    logger.info("Create relationships")
+    con.create_relationships(
+        relationships=sbm.Sbml.format_relationships(relationships=arr.relationships)
+    )
+
+    logger.info("End - %s" % (_version.__app_name__,))
 
     return 0
 
