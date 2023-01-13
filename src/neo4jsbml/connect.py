@@ -75,7 +75,7 @@ class Connect(metaclass=singleton.Singleton):
         for i in range(0, len(relations), self.batch):
             with self.driver.session(default_access_mode=neo4j.WRITE_ACCESS) as session:
                 res = session.run(
-                    "WITH $relations as relations UNWIND relations as rel MATCH (a:rel[0] {id: rel[1]}) MATCH (b:rel[2] {id: rel[3]}) CALL apoc.create.relationship(a, rel[4], rel[5], b) YIELD rel RETURN rel",
+                    "WITH $relations as relations UNWIND relations as rel MATCH (a:rel.left {id: rel.left_id}) MATCH (b:rel.label {id: rel.right}) CALL apoc.create.relationship(a, rel.right_id, rel.properties, b) YIELD rel RETURN rel",
                     relations=[x.to_list() for x in relations[i : i + self.batch]],
                 )
                 res.single()
