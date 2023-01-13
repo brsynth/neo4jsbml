@@ -48,7 +48,7 @@ class Sbml(object):
                 if self.tag is not None:
                     data["tag"] = self.tag
                 if data.get("id", None) is None or data.get("id", "") == "":
-                    data["id"] == "%.%s" % (label, ix)
+                    data["id"] == "%s.%s" % (label, ix)
                 # Update map
                 if node.id not in self.node_map_item.keys():
                     self.node_map_item[node.id] = []
@@ -62,14 +62,14 @@ class Sbml(object):
     ) -> List[Dict[str, Any]]:
         res = []
         self.logger.debug("node_map_item: " + str(self.node_map_item))
-        for relationship in relationships:
-            left_label = self.node_map_label[relationship.from_id]
-            right_label = self.node_map_label[relationship.to_id]
+        for rel in relationships:
+            left_label = self.node_map_label[rel.from_id]
+            right_label = self.node_map_label[rel.to_id]
 
             self.logger.debug("left_label: " + str(left_label))
             self.logger.debug("right_label: " + str(right_label))
-            left_ids = self.node_map_item[relationship.from_id]
-            right_ids = self.node_map_item[relationship.to_id]
+            left_ids = self.node_map_item[rel.from_id]
+            right_ids = self.node_map_item[rel.to_id]
 
             self.logger.debug("left_ids: " + str(left_ids))
             self.logger.debug("right_ids: " + str(right_ids))
@@ -95,7 +95,7 @@ class Sbml(object):
             if len(methods) < 1:
                 self.logger.warning(
                     "No method was found for entities: %s and %s, belongs to the relationships: %s"
-                    % (left_label, right_label, relationship.type)
+                    % (left_label, right_label, rel.label)
                 )
                 continue
 
@@ -114,7 +114,7 @@ class Sbml(object):
 
                     cur_id = eval("left_obj.%s()" % (methods[0],))
                     if cur_id == right_id:
-                        data["relationship"] = relationship.label
+                        data["relationship"] = rel.label
                         data["left_id"] = left_id
                         data["right_id"] = right_id
 

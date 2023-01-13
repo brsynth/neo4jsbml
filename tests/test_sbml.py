@@ -1,5 +1,4 @@
-import libsbml
-from neo4jsbml.arrows import Arrows, Node, Relationship
+from neo4jsbml.arrows import Node, Relationship
 from neo4jsbml.sbml import Sbml
 
 from tests.main_test import MainTest
@@ -68,7 +67,7 @@ class TestSbml(MainTest):
         )
 
     def test_format_relationships_forward(self):
-        nodes = self.sbml_toy.format_nodes(nodes=[self.node_two, self.node_three])
+        self.sbml_toy.format_nodes(nodes=[self.node_two, self.node_three])
         # Relationship - forward
         rel_one = Relationship.from_dict(data=MainTest.rel_one_dict)
         rels = self.sbml_toy.format_relationships(relationships=[rel_one])
@@ -100,7 +99,7 @@ class TestSbml(MainTest):
         )
 
     def test_format_relationships_reverse(self):
-        nodes = self.sbml_toy.format_nodes(nodes=[self.node_two, self.node_three])
+        self.sbml_toy.format_nodes(nodes=[self.node_two, self.node_three])
         # Relationship - reverse
         rel_two = Relationship.from_dict(data=MainTest.rel_two_dict)
         rels = self.sbml_toy.format_relationships(relationships=[rel_two])

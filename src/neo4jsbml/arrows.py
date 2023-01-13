@@ -85,7 +85,7 @@ class Arrows(object):
                 node["properties"][Node.LABEL_ID] = node["properties"].pop(id_label)
                 logger.warning(
                     'Entity: %s has an "%s" in properties, but it will be renamed into: %s'
-                    % (id_label, Node.LABEL_ID)
+                    % (" ".join(node["labels"]), id_label, Node.LABEL_ID)
                 )
             if not is_id_found:
                 logger.warning(
