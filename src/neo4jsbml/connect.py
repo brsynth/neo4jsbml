@@ -8,7 +8,44 @@ from neo4jsbml import _version, singleton
 
 
 class Connect(metaclass=singleton.Singleton):
-    """Connect"""
+    """Connect
+
+    Attributes
+    ----------
+    protocol: str
+        the name of the protocol to connect to the database
+    url: str
+        the domain name
+    port: int
+        the port number to connect to the database
+    user: str
+        the username to connect to the database
+    password: Optional[str]
+        the password to connect to the database
+    password_path: Optional[str]
+        the password provided by a file
+    batch: Optional[int] (default: 5000)
+        number of transactions before a commit for Neo4j
+
+    Methods
+    -------
+    is_connected -> bool
+        test if the connection is established
+
+    @classmethod
+    def read_password(path: str) -> str
+        read a password from a file
+
+    def create_nodes(nodes: List[Dict[str, Any]]) -> None
+        insert nodes into Neo4j
+
+    def create_relationships(relations: List[Any]) -> None
+        insert relationships into Neo4j
+
+    @classmethod
+    def from_config(cls, path: str) -> "Connect"
+        create a Connect from an .ini file
+    """
 
     BATCH = 5000
     PROTOCOLS = ["neo4j", "bolt"]
@@ -42,16 +79,47 @@ class Connect(metaclass=singleton.Singleton):
         if batch:
             self.batch = batch
 
+    def is_connected(self) -> bool:
+        """Test if the connection is established.
+
+        Return
+        ------
+        bool
+        """
+        try:
+            self.driver.verify_connectivity()
+        except Exception:
+            return False
+        return True
+
     @property
     def uri(self) -> str:
         return self.protocol + "://" + self.url + ":" + str(self.port)
 
     @classmethod
     def read_password(cls, path: str) -> str:
+        """Read a password from a file.
+
+        Parameters
+        ----------
+        path: str
+            a path of the file
+
+        Return
+        ------
+        str
+        """
         with open(path) as fid:
             return fid.read().splitlines()[0]
 
     def create_nodes(self, nodes: List[Dict[str, Any]]) -> None:
+        """Insert nodes into Neo4j.
+
+        Parameters
+        ----------
+        nodes: List[Dict[str, Any]]
+            the nodes to create
+        """
         # Order by label
         labels = set()
         for node in nodes:
@@ -71,6 +139,13 @@ class Connect(metaclass=singleton.Singleton):
                     res.single()
 
     def create_relationships(self, relations: List[Any]) -> None:
+        """Insert relationships into Neo4j.
+
+        Parameters
+        ----------
+        relationships: List[Any]
+            the relationships to create
+        """
         # List: Dict: EntiteGauche, IdEntiteGauche, Relation, EntiteDroite, IdEntiteDroite, Attributs
         for i in range(0, len(relations), self.batch):
             with self.driver.session(default_access_mode=neo4j.WRITE_ACCESS) as session:
@@ -80,18 +155,23 @@ class Connect(metaclass=singleton.Singleton):
                 )
                 res.single()
 
-    @staticmethod
-    def enable_log(level, output_stream):
-        handler = logging.StreamHandler(output_stream)
-        handler.setLevel(level)
-        logging.getLogger(_version.__app_name__).addHandler(handler)
-        logging.getLogger(_version.__app_name__).setLevel(level)
-
     def __del__(self):
+        """Close the driver"""
         self.driver.close()
 
     @classmethod
     def from_config(cls, path: str) -> "Connect":
+        """Create a Connect from an .ini file
+
+        Parameters
+        ----------
+        path: str
+            a path of an .ini file
+
+        Return
+        ------
+        Connect
+        """
         config = configparser.ConfigParser()
         config.read(path)
 
