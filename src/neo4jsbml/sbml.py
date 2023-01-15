@@ -8,6 +8,46 @@ from neo4jsbml import _version, arrows
 
 
 class Sbml(object):
+    """Help to map entities coming from Arrows and SBML.
+
+    Attributes
+    ----------
+    tag: str
+        identify nodes from an extra arguments for Neo4j
+    document: libsml.Document
+        a document
+    model: libsml.Model
+        a model extract from the document
+
+    Raises
+    -----
+    ValueError
+        if no model found in the document
+
+    Methods
+    -------
+    __init__(document: libsbml.SBML_DOCUMENT, tag: Optional[str])
+        Instanciate a new object. tag parameter is optional
+
+    format_nodes(nodes: List[arrows.Node]) -> List[Dict[str, Any]]
+        Create nodes, from the schema and the values in the SBML file.
+
+    format_relationships(relationships: List[arrows.Relationship]) -> List[Dict[str, Any]]:
+        Create relationships, from the schema and the values in the SBML file
+
+    @classmethod
+    find_method(obj: Any, method: str) -> List[str]
+        Given an object, search a method name by intropection
+
+    @classmethod
+    format_results(results: List[Dict[str, Any]]) -> List[Dict[str, Any]]
+        Remove empty values
+
+    @classmethod
+    from_sbml(path: str, tag: Optional[str] = None) -> "Sbml"
+        Create an Sbml object given a SBML file
+    """
+
     def __init__(self, document: libsbml.SBML_DOCUMENT, tag: Optional[str]) -> None:
         self.tag = tag
         self.document = document
@@ -19,6 +59,17 @@ class Sbml(object):
             raise ValueError("No model found")
 
     def format_nodes(self, nodes: List[arrows.Node]) -> List[Dict[str, Any]]:
+        """Create nodes, from the schema and the values in the SBML file.
+
+        Parameters
+        ----------
+        nodes: List[arrows.Node]
+            the nodes stored into the Arrows object
+
+        Return
+        ------
+        List[Dict[str, Any]]
+        """
         res = []
         for node in nodes:
             label = node.labels[0]
@@ -60,6 +111,17 @@ class Sbml(object):
     def format_relationships(
         self, relationships: List[arrows.Relationship]
     ) -> List[Dict[str, Any]]:
+        """Create relationships, from the schema and the values in the SBML file.
+
+        Parameters
+        ----------
+        relationships: List[arrows.Relationship]
+            the relationships stored into the Arrows object
+
+        Return
+        ------
+        List[Dict[str, Any]]
+        """
         res = []
         self.logger.debug("node_map_item: " + str(self.node_map_item))
         for rel in relationships:
@@ -126,6 +188,19 @@ class Sbml(object):
 
     @classmethod
     def find_method(cls, obj: Any, method: str) -> List[str]:
+        """Given an object, search a method name by intropection.
+
+        Parameters
+        ----------
+        obj: Any
+            any object
+        method: str
+            a method to search
+
+        Return
+        ------
+        List[str]
+        """
         # Exact match
         regex = re.compile(r"^get" + method + "$", re.IGNORECASE)
         methods = list(filter(regex.match, obj.__dir__()))
@@ -138,6 +213,17 @@ class Sbml(object):
 
     @classmethod
     def format_results(cls, results: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Remove empty values.
+
+        Parameters
+        ----------
+        results: List[Dict[str, Any]]
+            a list to format
+
+        Return
+        ------
+        List[Dict[str, Any]]
+        """
         for ix, result in enumerate(results):
             keys = []
             for k, v in result.items():
@@ -150,6 +236,23 @@ class Sbml(object):
 
     @classmethod
     def from_sbml(cls, path: str, tag: Optional[str] = None) -> "Sbml":
+        """Create an Sbml object given a SBML file.
+
+        Parameters
+        ----------
+        path: str
+            a SBML file
+        tag: Optional[str] (default: None)
+            an extra identifier for the node
+
+        Raises
+        ------
+        ValueError
+            if an error is encountered during the loading of the file
+        Return
+        ------
+        Sbml
+        """
         doc = libsbml.readSBML(path)
         errors = doc.getNumErrors()
         if errors > 0:
