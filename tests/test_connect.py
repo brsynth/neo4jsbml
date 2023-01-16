@@ -2,6 +2,7 @@ import os
 
 import pytest
 from neo4j import GraphDatabase
+
 from neo4jsbml import connect, snode
 
 CON = connect.Connect(
@@ -42,13 +43,13 @@ class TestConnect:
 
     @pytest.mark.skipif(CON.is_connected(), reason="none Neo4j instance")
     def test_is_connected(self, init_driver):
-        assert init_driver.is_connected() == False
+        assert init_driver.is_connected() is False
 
     def test_read_password(self, neo4j_password):
         pwd = connect.Connect.read_password(path=neo4j_password)
         assert pwd == "this_is_not_a_real_password"
 
-    @pytest.mark.skipif(not CON.is_connected(), reason="none Neo4j instance")
+    @pytest.mark.skipif(CON.is_connected() is False, reason="none Neo4j instance")
     def test_create_nodes(self, init_driver, node_one_dict):
         nod = snode.SNode.from_dict(data=node_one_dict)
         init_driver.create_nodes(nodes=[nod])
