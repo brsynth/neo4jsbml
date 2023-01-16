@@ -1,16 +1,17 @@
 import pytest
-from neo4jsbml.arrows import Node, Relationship
 from neo4jsbml.sbml import Sbml
+from neo4jsbml.snode import SNode
+from neo4jsbml.srelationship import SRelationship
 
 
 @pytest.fixture(scope="function")
 def node_two(node_two_dict):
-    return Node.from_dict(data=node_two_dict)
+    return SNode.from_dict(data=node_two_dict)
 
 
 @pytest.fixture(scope="function")
 def node_three(node_three_dict):
-    return Node.from_dict(data=node_three_dict)
+    return SNode.from_dict(data=node_three_dict)
 
 
 class TestSbml:
@@ -29,102 +30,116 @@ class TestSbml:
         methods = Sbml.find_method(sbml_iml.model, "Idl")
         assert methods == ["getAllElementIdList", "getAllElementMetaIdList"]
 
-    def test_format_results_empty(self, node_one_dict):
-        data = Sbml.format_results(results=[node_one_dict])
-        assert len(data) == 1
-        assert len(data[0].keys()) == len(node_one_dict.keys())
-
-    def test_format_results_effective(self, node_two_dict):
-        data = Sbml.format_results(results=[node_two_dict])
-        assert "null_one" not in data[0].keys()
-        assert "null_two" not in data[0].keys()
-        assert len(data[0].keys()) == 4
-
     def test_format_nodes(self, sbml_iml, node_two_dict):
-        node_two = Node.from_dict(data=node_two_dict)
+        node_two = SNode.from_dict(data=node_two_dict)
         nodes = sbml_iml.format_nodes(nodes=[node_two])
-        assert nodes == [
+        lnodes = [x.to_dict() for x in nodes]
+        res = [
             {
-                "labels": ["Compartment"],
                 "id": "c",
-                "name": "cytosol",
-                "sboTerm": -1,
-                "spatialDimensions": 0,
+                "labels": ["Compartment"],
+                "properties": {
+                    "name": "cytosol",
+                    "sboTerm": -1,
+                    "spatialDimensions": 0,
+                },
             },
             {
-                "labels": ["Compartment"],
                 "id": "e",
-                "name": "extracellular space",
-                "sboTerm": -1,
-                "spatialDimensions": 0,
+                "labels": ["Compartment"],
+                "properties": {
+                    "name": "extracellular space",
+                    "sboTerm": -1,
+                    "spatialDimensions": 0,
+                },
             },
             {
-                "labels": ["Compartment"],
                 "id": "p",
-                "name": "periplasm",
-                "sboTerm": -1,
-                "spatialDimensions": 0,
+                "labels": ["Compartment"],
+                "properties": {
+                    "name": "periplasm",
+                    "sboTerm": -1,
+                    "spatialDimensions": 0,
+                },
             },
         ]
+
+        assert lnodes == res
 
     def test_format_relationships_forward(
         self, sbml_toy, rel_one_dict, node_two, node_three
     ):
         sbml_toy.format_nodes(nodes=[node_two, node_three])
         # Relationship - forward
-        rel_one = Relationship.from_dict(data=rel_one_dict)
+        rel_one = SRelationship.from_dict(data=rel_one_dict)
         rels = sbml_toy.format_relationships(relationships=[rel_one])
-        assert rels == [
+        lrels = [x.to_dict() for x in rels]
+        res = [
             {
-                "left": "Species",
-                "left_id": "M_octapb_c",
-                "relationship": "HAS_COMPARTMENT",
-                "right": "Compartment",
-                "right_id": "c",
+                "id": "",
+                "from_label": "Species",
+                "to_label": "Compartment",
+                "from_id": "M_octapb_c",
+                "to_id": "c",
+                "label": "HAS_COMPARTMENT",
+                "properties": {},
             },
             {
-                "left": "Species",
-                "left_id": "M_cysi__L_e",
-                "relationship": "HAS_COMPARTMENT",
-                "right": "Compartment",
-                "right_id": "e",
+                "id": "",
+                "from_label": "Species",
+                "to_label": "Compartment",
+                "from_id": "M_cysi__L_e",
+                "to_id": "e",
+                "label": "HAS_COMPARTMENT",
+                "properties": {},
             },
             {
-                "left": "Species",
-                "left_id": "M_dhap_c",
-                "relationship": "HAS_COMPARTMENT",
-                "right": "Compartment",
-                "right_id": "c",
+                "id": "",
+                "from_label": "Species",
+                "to_label": "Compartment",
+                "from_id": "M_dhap_c",
+                "to_id": "c",
+                "label": "HAS_COMPARTMENT",
+                "properties": {},
             },
         ]
+        assert lrels == res
 
     def test_format_relationships_reverse(
         self, sbml_toy, rel_two_dict, node_two, node_three
     ):
         sbml_toy.format_nodes(nodes=[node_two, node_three])
         # Relationship - reverse
-        rel_two = Relationship.from_dict(data=rel_two_dict)
+        rel_two = SRelationship.from_dict(data=rel_two_dict)
         rels = sbml_toy.format_relationships(relationships=[rel_two])
-        assert rels == [
+        lrels = [x.to_dict() for x in rels]
+        res = [
             {
-                "left": "Compartment",
-                "left_id": "c",
-                "relationship": "IN_COMPARTMENT",
-                "right": "Species",
-                "right_id": "M_octapb_c",
+                "id": "",
+                "from_label": "Compartment",
+                "to_label": "Species",
+                "from_id": "c",
+                "to_id": "M_octapb_c",
+                "label": "IN_COMPARTMENT",
+                "properties": {},
             },
             {
-                "left": "Compartment",
-                "left_id": "e",
-                "relationship": "IN_COMPARTMENT",
-                "right": "Species",
-                "right_id": "M_cysi__L_e",
+                "id": "",
+                "from_label": "Compartment",
+                "to_label": "Species",
+                "from_id": "e",
+                "to_id": "M_cysi__L_e",
+                "label": "IN_COMPARTMENT",
+                "properties": {},
             },
             {
-                "left": "Compartment",
-                "left_id": "c",
-                "relationship": "IN_COMPARTMENT",
-                "right": "Species",
-                "right_id": "M_dhap_c",
+                "id": "",
+                "from_label": "Compartment",
+                "to_label": "Species",
+                "from_id": "c",
+                "to_id": "M_dhap_c",
+                "label": "IN_COMPARTMENT",
+                "properties": {},
             },
         ]
+        assert lrels == res

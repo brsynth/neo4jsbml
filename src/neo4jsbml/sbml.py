@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional
 
 import libsbml
 
-from neo4jsbml import _version, arrows
+from neo4jsbml import _version, arrows, snode, srelationship
 
 
 class Sbml(object):
@@ -40,10 +40,6 @@ class Sbml(object):
         Given an object, search a method name by intropection
 
     @classmethod
-    format_results(results: List[Dict[str, Any]]) -> List[Dict[str, Any]]
-        Remove empty values
-
-    @classmethod
     from_sbml(path: str, tag: Optional[str] = None) -> "Sbml"
         Create an Sbml object given a SBML file
     """
@@ -58,27 +54,28 @@ class Sbml(object):
         if self.model is None:
             raise ValueError("No model found")
 
-    def format_nodes(self, nodes: List[arrows.Node]) -> List[Dict[str, Any]]:
+    def format_nodes(self, nodes: List[snode.SNode]) -> List[snode.SNode]:
         """Create nodes, from the schema and the values in the SBML file.
 
         Parameters
         ----------
-        nodes: List[arrows.Node]
+        nodes: List[snode.SNode]
             the nodes stored into the Arrows object
 
         Return
         ------
-        List[Dict[str, Any]]
+        List[node.Node]
         """
         res = []
-        for node in nodes:
-            label = node.labels[0]
-            self.node_map_label[node.id] = label
+        for arrow_node in nodes:
+            label = arrow_node.labels[0]
+            self.node_map_label[arrow_node.id] = label
             for ix, item in enumerate(self.model.getListOfAllElements()):
                 if item.getElementName().lower() != label.lower():
                     continue
-                data: Dict[str, Any] = {"labels": node.labels}
-                for prop in node.properties:
+                dbb_node = snode.SNode(id="", labels=arrow_node.labels, properties={})
+                data: Dict[str, Any] = {}
+                for prop in arrow_node.properties:
                     methods = Sbml.find_method(obj=item, method=prop)
                     if len(methods) == 0:
                         self.logger.warning(
@@ -101,47 +98,53 @@ class Sbml(object):
                 if data.get("id", None) is None or data.get("id", "") == "":
                     data["id"] == "%s.%s" % (label, ix)
                 # Update map
-                if node.id not in self.node_map_item.keys():
-                    self.node_map_item[node.id] = []
-                self.node_map_item[node.id].append(data["id"])
+                if arrow_node.id not in self.node_map_item.keys():
+                    self.node_map_item[arrow_node.id] = []
+                self.node_map_item[arrow_node.id].append(data["id"])
 
-                res.append(data)
-        return Sbml.format_results(res)
+                dbb_node.id = data.pop("id")
+                dbb_node.properties = data
+                dbb_node.clean_properties()
+
+                res.append(dbb_node)
+        return res
 
     def format_relationships(
-        self, relationships: List[arrows.Relationship]
-    ) -> List[Dict[str, Any]]:
+        self, relationships: List[srelationship.SRelationship]
+    ) -> List[srelationship.SRelationship]:
         """Create relationships, from the schema and the values in the SBML file.
 
         Parameters
         ----------
-        relationships: List[arrows.Relationship]
+        relationships: List[relationship.Relationship]
             the relationships stored into the Arrows object
 
         Return
         ------
-        List[Dict[str, Any]]
+        List[relationship.Relationship]
         """
         res = []
         self.logger.debug("node_map_item: " + str(self.node_map_item))
-        for rel in relationships:
-            left_label = self.node_map_label[rel.from_id]
-            right_label = self.node_map_label[rel.to_id]
+        print(self.node_map_label)
+        print(self.node_map_item)
+        for arrow_rel in relationships:
+            left_label = self.node_map_label[arrow_rel.from_id]
+            right_label = self.node_map_label[arrow_rel.to_id]
 
             self.logger.debug("left_label: " + str(left_label))
             self.logger.debug("right_label: " + str(right_label))
-            left_ids = self.node_map_item.get(rel.from_id)
+            left_ids = self.node_map_item.get(arrow_rel.from_id)
             if left_ids is None:
                 self.logger.warning(
                     "Missing data into the model: %s, skip"
-                    % (self.node_map_label.get(rel.from_id),)
+                    % (self.node_map_label.get(arrow_rel.from_id),)
                 )
                 continue
-            right_ids = self.node_map_item.get(rel.to_id)
+            right_ids = self.node_map_item.get(arrow_rel.to_id)
             if right_ids is None:
                 self.logger.warning(
                     "Missing data into the model: %s, skip"
-                    % (self.node_map_label.get(rel.from_id),)
+                    % (self.node_map_label.get(arrow_rel.from_id),)
                 )
                 continue
 
@@ -181,22 +184,27 @@ class Sbml(object):
 
             for left_id in left_ids:
                 for right_id in right_ids:
-                    data = dict(left=left_label, right=right_label)
 
                     left_obj = self.document.getElementBySId(left_id)
                     right_obj = self.document.getElementBySId(right_id)
 
                     cur_id = eval("left_obj.%s()" % (methods[0],))
                     if cur_id == right_id:
-                        data["relationship"] = rel.label
-                        data["left_id"] = left_id
-                        data["right_id"] = right_id
+                        dbb_rel = srelationship.SRelationship(
+                            id="",
+                            from_label=left_label,
+                            to_label=right_label,
+                            from_id=left_id,
+                            to_id=right_id,
+                            label=arrow_rel.label,
+                            properties={},
+                        )
 
                         if not is_forward:
-                            data["left_id"] = right_id
-                            data["right_id"] = left_id
-                        res.append(data)
-        return Sbml.format_results(results=res)
+                            dbb_rel.from_id = right_id
+                            dbb_rel.to_id = left_id
+                        res.append(dbb_rel)
+        return res
 
     @classmethod
     def find_method(cls, obj: Any, method: str) -> List[str]:
@@ -222,29 +230,6 @@ class Sbml(object):
         regex = re.compile(r"get.*" + method, re.IGNORECASE)
         methods = list(filter(regex.search, obj.__dir__()))
         return methods
-
-    @classmethod
-    def format_results(cls, results: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        """Remove empty values.
-
-        Parameters
-        ----------
-        results: List[Dict[str, Any]]
-            a list to format
-
-        Return
-        ------
-        List[Dict[str, Any]]
-        """
-        for ix, result in enumerate(results):
-            keys = []
-            for k, v in result.items():
-                if v is None or v == "":
-                    keys.append(k)
-            for k in keys:
-                del result[k]
-            results[ix] = result
-        return results
 
     @classmethod
     def from_sbml(cls, path: str, tag: Optional[str] = None) -> "Sbml":

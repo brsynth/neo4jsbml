@@ -1,6 +1,7 @@
 import os
 
 import pytest
+
 from neo4jsbml import sbml
 
 cur_dir = os.path.abspath(os.path.dirname(__file__))
@@ -73,6 +74,20 @@ def node_three_dict():
 def rel_one_dict():
     return dict(
         id="n21",
+        from_label="",
+        to_label="",
+        from_id="n13",
+        to_id="n12",
+        label="HAS_COMPARTMENT",
+        properties=dict(),
+        style=dict(),
+    )
+
+
+@pytest.fixture(scope="function")
+def rel_one_arrow():
+    return dict(
+        id="n21",
         fromId="n13",
         toId="n12",
         type="HAS_COMPARTMENT",
@@ -83,6 +98,20 @@ def rel_one_dict():
 
 @pytest.fixture(scope="function")
 def rel_two_dict():
+    return dict(
+        id="n21",
+        from_label="",
+        to_label="",
+        from_id="n12",
+        to_id="n13",
+        label="IN_COMPARTMENT",
+        properties=dict(),
+        style=dict(),
+    )
+
+
+@pytest.fixture(scope="function")
+def rel_two_arrow():
     return dict(
         id="n21",
         fromId="n12",

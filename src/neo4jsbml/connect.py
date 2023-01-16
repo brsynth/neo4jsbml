@@ -28,6 +28,10 @@ class Connect(metaclass=singleton.Singleton):
         the password provided by a file
     batch: Optional[int] (default: 5000)
         number of transactions before a commit for Neo4j
+    stats: Dict[str, str]
+        statistics dictionnary updated by create_nodes(), create_relationships
+        Keys: nodes, relationships
+        Values: number of inserted entities
 
     Methods
     -------
@@ -82,6 +86,7 @@ class Connect(metaclass=singleton.Singleton):
         self.batch = Connect.BATCH
         if batch:
             self.batch = int(batch)
+        self.stats = {}
 
     def is_connected(self) -> bool:
         """Test if the connection is established.
@@ -90,11 +95,12 @@ class Connect(metaclass=singleton.Singleton):
         ------
         bool
         """
+        is_connected = True
         try:
             self.driver.verify_connectivity()
         except neo4j.exceptions.ServiceUnavailable:
-            return False
-        return True
+            is_connected = False
+        return is_connected
 
     @property
     def uri(self) -> str:
@@ -136,10 +142,17 @@ class Connect(metaclass=singleton.Singleton):
                 with self.driver.session(
                     default_access_mode=neo4j.WRITE_ACCESS
                 ) as session:
+                    query = "WITH $nodes as nodes "
+                    "UNWIND nodes as node "
+                    "MERGE (n:$label {id: node.id}) "
+                    "ON CREATE SET n += node.properties "
+                    "YIELD n "
+                    "RETURN count(n)"
+
                     res = session.run(
-                        "WITH $attributes as attributes UNWIND attributes as attribute CALL apoc.merge.node([$label], attribute) YIELD node RETURN count(*)",
+                        query,
                         label=label,
-                        attributes=sub_nodes[i : i + self.batch],
+                        nodes=sub_nodes[i : i + self.batch],
                     )
                     res.single()
 
@@ -151,14 +164,30 @@ class Connect(metaclass=singleton.Singleton):
         relationships: List[Any]
             the relationships to create
         """
-        # List: Dict: EntiteGauche, IdEntiteGauche, Relation, EntiteDroite, IdEntiteDroite, Attributs
-        for i in range(0, len(relationships), self.batch):
-            with self.driver.session(default_access_mode=neo4j.WRITE_ACCESS) as session:
-                res = session.run(
-                    "WITH $relations as relations UNWIND relations as rel MATCH (a:rel.left {id: rel.left_id}) MATCH (b:rel.label {id: rel.right}) CALL apoc.create.relationship(a, rel.right_id, rel.properties, b) YIELD rel RETURN rel",
-                    relationships=relationships[i : i + self.batch],
-                )
-                res.single()
+        labels = set()
+        for rel in relationships:
+            labels.add(label)
+
+        for label in labels:
+            sub_nodes = [x for x in relationships if x["labels"] == list(label)]
+            for i in range(0, len(sub_nodes), self.batch):
+                with self.driver.session(
+                    default_access_mode=neo4j.WRITE_ACCESS
+                ) as session:
+                    query = "WITH $relationships as relationships "
+                    "UNWIND relationships as rel "
+                    "MATCH (a:rel.from_label {id: rel.from_id}) "
+                    "MATCH (b:rel.to_label {id: rel.from_label}) "
+                    "MERGE (a)-[r:%s]->(b) "
+                    "ON CREATE SET r += rel.properties "
+                    "YIELD r "
+                    "RETURN r" % (label,)
+
+                    res = session.run(
+                        query,
+                        relationships=sub_nodes[i : i + self.batch],
+                    )
+                    res.single()
 
     def __del__(self):
         """Close the driver"""
