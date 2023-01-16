@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional
 
 import neo4j
 
-from neo4jsbml import _version, singleton
+from neo4jsbml import _version, singleton, snode, srelationship
 
 
 class Connect(metaclass=singleton.Singleton):
@@ -28,7 +28,7 @@ class Connect(metaclass=singleton.Singleton):
         the password provided by a file
     batch: Optional[int] (default: 5000)
         number of transactions before a commit for Neo4j
-    stats: Dict[str, str]
+    stats: Dict[str, int]
         statistics dictionnary updated by create_nodes(), create_relationships
         Keys: nodes, relationships
         Values: number of inserted entities
@@ -86,7 +86,7 @@ class Connect(metaclass=singleton.Singleton):
         self.batch = Connect.BATCH
         if batch:
             self.batch = int(batch)
-        self.stats = {}
+        self.stats: Dict[str, int] = {}
 
     def is_connected(self) -> bool:
         """Test if the connection is established.
@@ -122,7 +122,7 @@ class Connect(metaclass=singleton.Singleton):
         with open(path) as fid:
             return fid.read().splitlines()[0]
 
-    def create_nodes(self, nodes: List[Dict[str, Any]]) -> None:
+    def create_nodes(self, nodes: List[snode.SNode]) -> None:
         """Insert nodes into Neo4j.
 
         Parameters
@@ -146,7 +146,9 @@ class Connect(metaclass=singleton.Singleton):
                 res = session.run(query)
                 res.single()
 
-    def create_relationships(self, relationships: List[Any]) -> None:
+    def create_relationships(
+        self, relationships: List[srelationship.SRelationship]
+    ) -> None:
         """Insert relationships into Neo4j.
 
         Parameters
@@ -191,7 +193,7 @@ class Connect(metaclass=singleton.Singleton):
         """
         config = configparser.ConfigParser()
         config.read(path)
-        data = {}
+        data: Dict[str, Any] = {}
         if config.has_section("connection"):
             section = config["connection"]
             if section.get("protocol"):

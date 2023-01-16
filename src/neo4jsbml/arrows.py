@@ -85,7 +85,7 @@ class Arrows(object):
             if arrow_rel["type"] == "str":
                 logger.warning(
                     "A relationship must be have a type filled, %s will be skipped"
-                    % (rel["id"],)
+                    % (arrow_rel["id"],)
                 )
                 continue
             relationships.append(srelationship.SRelationship.from_arrow(arrow_rel))

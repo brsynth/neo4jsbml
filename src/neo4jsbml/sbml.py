@@ -170,7 +170,7 @@ class Sbml(object):
             if len(methods) < 1:
                 self.logger.warning(
                     "No method was found for entities: %s and %s, belongs to the relationships: %s"
-                    % (left_label, right_label, rel.label)
+                    % (left_label, right_label, arrow_rel.label)
                 )
                 continue
 

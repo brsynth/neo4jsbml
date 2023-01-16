@@ -42,7 +42,7 @@ class SNode(entity.Entity):
         self.labels = labels
 
     @classmethod
-    def from_arrow(cls, data: Dict[str, Any]) -> "Node":
+    def from_arrow(cls, data: Dict[str, Any]) -> "SNode":
         """Create a Node from a dictionary coming from arrow.
 
         Parameters
@@ -57,7 +57,7 @@ class SNode(entity.Entity):
         return SNode.from_dict(data=data)
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "Node":
+    def from_dict(cls, data: Dict[str, Any]) -> "SNode":
         """Create a Node from a dictionary.
 
         Parameters
