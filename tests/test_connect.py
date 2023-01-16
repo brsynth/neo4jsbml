@@ -2,7 +2,16 @@ import os
 
 import pytest
 from neo4j import GraphDatabase
-from neo4jsbml import connect
+from neo4jsbml import connect, snode
+
+CON = connect.Connect(
+    protocol="bolt",
+    url="localhost",
+    port=7687,
+    user="neo4j",
+    database="neo4j",
+    password="test",
+)
 
 
 @pytest.fixture(scope="module")
@@ -31,23 +40,18 @@ class TestConnect:
     def test_uri(self, init_driver):
         assert init_driver.uri == "bolt://localhost:7687"
 
-    def test_is_connected(self):
-        con = connect.Connect(
-            protocol="b",
-            url="loc",
-            port=0,
-            user="neo4j",
-            database="neo4j",
-            password="test",
-        )
-        assert con.is_connected() == False
+    @pytest.mark.skipif(CON.is_connected(), reason="none Neo4j instance")
+    def test_is_connected(self, init_driver):
+        assert init_driver.is_connected() == False
 
     def test_read_password(self, neo4j_password):
         pwd = connect.Connect.read_password(path=neo4j_password)
         assert pwd == "this_is_not_a_real_password"
 
-    def test_create_nodes(self):
-        pass
+    @pytest.mark.skipif(not CON.is_connected(), reason="none Neo4j instance")
+    def test_create_nodes(self, init_driver, node_one_dict):
+        nod = snode.SNode.from_dict(data=node_one_dict)
+        init_driver.create_nodes(nodes=[nod])
 
     def test_relationships(self):
         pass
