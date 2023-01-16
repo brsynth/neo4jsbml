@@ -12,13 +12,15 @@ class Connect(metaclass=singleton.Singleton):
 
     Attributes
     ----------
-    protocol: str
+    protocol: str (default: neo4j)
         the name of the protocol to connect to the database
-    url: str
+    database: str (default: neo4j)
+        database name
+    url: str (default: localhost)
         the domain name
-    port: int
+    port: int (default: 7687)
         the port number to connect to the database
-    user: str
+    user: str (default: neo4j)
         the username to connect to the database
     password: Optional[str]
         the password to connect to the database
@@ -52,12 +54,12 @@ class Connect(metaclass=singleton.Singleton):
 
     def __init__(
         self,
-        protocol: str,
-        url: str,
-        port: int,
-        user: str,
-        database: str,
-        password: Optional[str],
+        url: str = "localhost",
+        protocol: str = "neo4j",
+        database: str = "neo4j",
+        user: Optional[str] = None,
+        port: int = 7687,
+        password: Optional[str] = None,
         password_path: Optional[str] = None,
         batch: Optional[int] = None,
     ) -> None:
@@ -71,13 +73,15 @@ class Connect(metaclass=singleton.Singleton):
         self.password = password
         if password_path is not None:
             self.password = Connect.read_password(path=password_path)
-
-        self.driver = neo4j.GraphDatabase.driver(
-            self.uri, auth=(self.user, self.password)
-        )
+        if self.user is not None:
+            self.driver = neo4j.GraphDatabase.driver(
+                self.uri, auth=(self.user, self.password)
+            )
+        else:
+            self.driver = neo4j.GraphDatabase.driver(self.uri)
         self.batch = Connect.BATCH
         if batch:
-            self.batch = batch
+            self.batch = int(batch)
 
     def is_connected(self) -> bool:
         """Test if the connection is established.
@@ -88,7 +92,7 @@ class Connect(metaclass=singleton.Singleton):
         """
         try:
             self.driver.verify_connectivity()
-        except Exception:
+        except neo4j.exceptions.ServiceUnavailable:
             return False
         return True
 
@@ -123,10 +127,11 @@ class Connect(metaclass=singleton.Singleton):
         # Order by label
         labels = set()
         for node in nodes:
-            labels.add(node.pop("labels"))
+            label = tuple(node["labels"])
+            labels.add(label)
 
         for label in labels:
-            sub_nodes = [x for x in nodes if x["labels"] == label]
+            sub_nodes = [x for x in nodes if x["labels"] == list(label)]
             for i in range(0, len(sub_nodes), self.batch):
                 with self.driver.session(
                     default_access_mode=neo4j.WRITE_ACCESS
@@ -138,7 +143,7 @@ class Connect(metaclass=singleton.Singleton):
                     )
                     res.single()
 
-    def create_relationships(self, relations: List[Any]) -> None:
+    def create_relationships(self, relationships: List[Any]) -> None:
         """Insert relationships into Neo4j.
 
         Parameters
@@ -147,11 +152,11 @@ class Connect(metaclass=singleton.Singleton):
             the relationships to create
         """
         # List: Dict: EntiteGauche, IdEntiteGauche, Relation, EntiteDroite, IdEntiteDroite, Attributs
-        for i in range(0, len(relations), self.batch):
+        for i in range(0, len(relationships), self.batch):
             with self.driver.session(default_access_mode=neo4j.WRITE_ACCESS) as session:
                 res = session.run(
                     "WITH $relations as relations UNWIND relations as rel MATCH (a:rel.left {id: rel.left_id}) MATCH (b:rel.label {id: rel.right}) CALL apoc.create.relationship(a, rel.right_id, rel.properties, b) YIELD rel RETURN rel",
-                    relations=[x.to_list() for x in relations[i : i + self.batch]],
+                    relationships=relationships[i : i + self.batch],
                 )
                 res.single()
 
@@ -174,13 +179,26 @@ class Connect(metaclass=singleton.Singleton):
         """
         config = configparser.ConfigParser()
         config.read(path)
+        data = {}
+        if config.has_section("connection"):
+            section = config["connection"]
+            if section.get("protocol"):
+                data["protocol"] = section.get("protocol")
+            if section.get("url"):
+                data["url"] = section.get("url")
+            if section.get("port"):
+                data["port"] = section.get("port")
+        if config.has_section("database"):
+            section = config["database"]
+            if section.get("user"):
+                data["user"] = section.get("user")
+            if section.get("name"):
+                data["database"] = section.get("name")
+            if section.get("password"):
+                data["password"] = section.get("password")
+        if config.has_section("parameters"):
+            section = config["parameters"]
+            if section.get("batch"):
+                data["batch"] = section.get("batch")
 
-        return Connect(
-            protocol=config["connection"]["protocol"],
-            url=config["connection"]["url"],
-            port=int(config["connection"]["port"]),
-            user=config["database"]["user"],
-            database=config["database"]["name"],
-            password=config["database"]["password"],
-            batch=int(config["parameters"]["batch"]),
-        )
+        return Connect(**data)
