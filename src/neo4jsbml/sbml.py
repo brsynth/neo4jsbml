@@ -130,8 +130,20 @@ class Sbml(object):
 
             self.logger.debug("left_label: " + str(left_label))
             self.logger.debug("right_label: " + str(right_label))
-            left_ids = self.node_map_item[rel.from_id]
-            right_ids = self.node_map_item[rel.to_id]
+            left_ids = self.node_map_item.get(rel.from_id)
+            if left_ids is None:
+                self.logger.warning(
+                    "Missing data into the model: %s, skip"
+                    % (self.node_map_label.get(rel.from_id),)
+                )
+                continue
+            right_ids = self.node_map_item.get(rel.to_id)
+            if right_ids is None:
+                self.logger.warning(
+                    "Missing data into the model: %s, skip"
+                    % (self.node_map_label.get(rel.from_id),)
+                )
+                continue
 
             self.logger.debug("left_ids: " + str(left_ids))
             self.logger.debug("right_ids: " + str(right_ids))
