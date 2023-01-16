@@ -74,3 +74,14 @@ class Entity(metaclass=ABCMeta):
             label=label
         ):
             self.properties[label] = value
+
+    def properties_to_neo4j(self) -> str:
+        data = "{"
+        for k, v in self.properties.items():
+            data += k
+            data += ': "'
+            data += str(v)
+            data += '", '
+        data = data[:-2]
+        data += "}"
+        return data

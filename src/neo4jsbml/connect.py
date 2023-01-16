@@ -132,15 +132,18 @@ class Connect(metaclass=singleton.Singleton):
         """
         for node in nodes:
             with self.driver.session(default_access_mode=neo4j.WRITE_ACCESS) as session:
-                query = "MERGE (n:" + ":".join(node.labels) + ' {id: $node["id"]}) '
-                'ON CREATE SET n += $node["properties"] '
-                'ON MATCH SET n += $node["properties"] '
-                "RETURN n;"
-
-                res = session.run(
-                    query,
-                    node=node.to_dict(),
+                query = (
+                    "MERGE (n:"
+                    + ":".join(node.labels)
+                    + ' {id:"'
+                    + node.id
+                    + '"}) ON CREATE SET n += '
+                    + node.properties_to_neo4j()
+                    + " ON MATCH SET n += "
+                    + node.properties_to_neo4j()
+                    + " RETURN n;"
                 )
+                res = session.run(query)
                 res.single()
 
     def create_relationships(self, relationships: List[Any]) -> None:
