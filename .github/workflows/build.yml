@@ -19,7 +19,7 @@ jobs:
           fetch-depth: 0
       - name: 'Bump version and push tag - dry run'
         id: tag_raw
-        uses: mathieudutour/github-tag-action@v6.0
+        uses: mathieudutour/github-tag-action@v6.1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           release_branches: stable
@@ -162,6 +162,7 @@ jobs:
       - name: 'Deploying miniconda'
         uses: conda-incubator/setup-miniconda@v2
         with:
+          miniconda-version: "latest"
           environment-file: recipes/workflow.yaml
           mamba-version: "*"
           channel-priority: true
