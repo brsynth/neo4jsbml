@@ -130,31 +130,18 @@ class Connect(metaclass=singleton.Singleton):
         nodes: List[Dict[str, Any]]
             the nodes to create
         """
-        # Order by label
-        labels = set()
         for node in nodes:
-            label = tuple(node["labels"])
-            labels.add(label)
+            with self.driver.session(default_access_mode=neo4j.WRITE_ACCESS) as session:
+                query = "MERGE (n:" + ":".join(node.labels) + ' {id: $node["id"]}) '
+                'ON CREATE SET n += $node["properties"] '
+                'ON MATCH SET n += $node["properties"] '
+                "RETURN n;"
 
-        for label in labels:
-            sub_nodes = [x for x in nodes if x["labels"] == list(label)]
-            for i in range(0, len(sub_nodes), self.batch):
-                with self.driver.session(
-                    default_access_mode=neo4j.WRITE_ACCESS
-                ) as session:
-                    query = "WITH $nodes as nodes "
-                    "UNWIND nodes as node "
-                    "MERGE (n:$label {id: node.id}) "
-                    "ON CREATE SET n += node.properties "
-                    "YIELD n "
-                    "RETURN count(n)"
-
-                    res = session.run(
-                        query,
-                        label=label,
-                        nodes=sub_nodes[i : i + self.batch],
-                    )
-                    res.single()
+                res = session.run(
+                    query,
+                    node=node.to_dict(),
+                )
+                res.single()
 
     def create_relationships(self, relationships: List[Any]) -> None:
         """Insert relationships into Neo4j.
@@ -164,30 +151,23 @@ class Connect(metaclass=singleton.Singleton):
         relationships: List[Any]
             the relationships to create
         """
-        labels = set()
         for rel in relationships:
-            labels.add(label)
+            with self.driver.session(default_access_mode=neo4j.WRITE_ACCESS) as session:
+                query = (
+                    "MATCH (a:"
+                    + rel.from_label
+                    + ' {id: $rel["from_id"]}) MATCH (b:'
+                    + rel.to_label
+                    + ' {id: $rel["to_id"]}) MERGE (a)-[r:'
+                    + rel.label
+                    + ']->(b) ON CREATE SET r += $rel["properties"] RETURN r'
+                )
 
-        for label in labels:
-            sub_nodes = [x for x in relationships if x["labels"] == list(label)]
-            for i in range(0, len(sub_nodes), self.batch):
-                with self.driver.session(
-                    default_access_mode=neo4j.WRITE_ACCESS
-                ) as session:
-                    query = "WITH $relationships as relationships "
-                    "UNWIND relationships as rel "
-                    "MATCH (a:rel.from_label {id: rel.from_id}) "
-                    "MATCH (b:rel.to_label {id: rel.from_label}) "
-                    "MERGE (a)-[r:%s]->(b) "
-                    "ON CREATE SET r += rel.properties "
-                    "YIELD r "
-                    "RETURN r" % (label,)
-
-                    res = session.run(
-                        query,
-                        relationships=sub_nodes[i : i + self.batch],
-                    )
-                    res.single()
+                res = session.run(
+                    query,
+                    rel=rel.to_dict(),
+                )
+                res.single()
 
     def __del__(self):
         """Close the driver"""

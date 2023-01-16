@@ -164,7 +164,6 @@ def main():
     # Import into neo4j
     logger.info("Import into neo4j - nodes")
     con.create_nodes(nodes=nod)
-    sys.exit()
 
     if arr.relationships is not None and len(arr.relationships) > 0:
         logger.info("Import into neo4j - relationships")

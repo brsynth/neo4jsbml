@@ -125,8 +125,6 @@ class Sbml(object):
         """
         res = []
         self.logger.debug("node_map_item: " + str(self.node_map_item))
-        print(self.node_map_label)
-        print(self.node_map_item)
         for arrow_rel in relationships:
             left_label = self.node_map_label[arrow_rel.from_id]
             right_label = self.node_map_label[arrow_rel.to_id]
