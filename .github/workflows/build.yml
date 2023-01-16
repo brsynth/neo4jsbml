@@ -163,7 +163,6 @@ jobs:
         uses: conda-incubator/setup-miniconda@v2
         with:
           environment-file: recipes/workflow.yaml
-          python-version: '3.9'
           mamba-version: "*"
           channel-priority: true
           use-mamba: true
