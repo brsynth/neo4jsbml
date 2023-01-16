@@ -2,7 +2,11 @@
 
 ## [0.8.0](https://github.com/brsynth/neo4jsbml/tree/0.8.0) (2023-01-16)
 
-[Full Changelog](https://github.com/brsynth/neo4jsbml/compare/710ac296807b62182b8280c407d990537bacdce7...0.8.0)
+[Full Changelog](https://github.com/brsynth/neo4jsbml/compare/0.8.1...0.8.0)
+
+## [0.8.1](https://github.com/brsynth/neo4jsbml/tree/0.8.1) (2023-01-16)
+
+[Full Changelog](https://github.com/brsynth/neo4jsbml/compare/710ac296807b62182b8280c407d990537bacdce7...0.8.1)
 
 **Implemented enhancements:**
 
