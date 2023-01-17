@@ -18,6 +18,20 @@ class Entity(metaclass=ABCMeta):
         The properties as defined by arrows.
         Key are the name of the property to search in the SBML.
         Values are unused.
+
+    Methods
+    -------
+    add_property(self, label: str, value: str, overwrite: bool = True) -> None
+        Add a property to the properties attribute
+
+    has_property(self, label: str) -> bool
+        Check if a node has a property
+
+    clean_properties(self)
+        Remove empty values
+
+    properties_to_neo4j() -> str
+        Format properties to insert in query
     """
 
     def __init__(self, id: str, properties: Dict[str, str], *args, **kwargs) -> None:
@@ -76,6 +90,12 @@ class Entity(metaclass=ABCMeta):
             self.properties[label] = value
 
     def properties_to_neo4j(self) -> str:
+        """Format properties to insert in query
+
+        Return
+        ------
+        str
+        """
         data = "{"
         for k, v in self.properties.items():
             data += k
