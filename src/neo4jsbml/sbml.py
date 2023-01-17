@@ -36,7 +36,7 @@ class Sbml(object):
         Create relationships, from the schema and the values in the SBML file
 
     @classmethod
-    find_method(obj: Any, methods: List[str]) -> List[str]
+    find_method(obj: Any, label: str) -> List[str]
         Given an object, search a method name by intropection
 
     @classmethod
@@ -75,7 +75,7 @@ class Sbml(object):
                 dbb_node = snode.SNode(id="", labels=arrow_node.labels, properties={})
                 data: Dict[str, Any] = {}
                 for prop in arrow_node.properties:
-                    methods = Sbml.find_method(obj=item, methods=[prop])
+                    methods = Sbml.find_method(obj=item, label=prop)
                     if len(methods) == 0:
                         logging.warning(
                             "No method found for label: %s with the property: %s"
@@ -123,9 +123,9 @@ class Sbml(object):
         to_obj = self.document.getElementBySId(to_ids[0])
 
         # Search relationships by method name
-        methods = Sbml.find_method(obj=from_obj, methods=[to_label])
+        methods = Sbml.find_method(obj=from_obj, label=to_label)
         if len(methods) == 0:
-            methods = Sbml.find_method(obj=to_obj, methods=[from_label])
+            methods = Sbml.find_method(obj=to_obj, label=from_label)
             if len(methods) == 1:
                 is_forward = False
 
@@ -172,7 +172,7 @@ class Sbml(object):
         for from_id in from_ids:
             from_obj = self.document.getElementBySId(from_id)
             for from_el in from_obj.getListOfAllElements():
-                methods = Sbml.find_method(obj=from_el, methods=[to_label])
+                methods = Sbml.find_method(obj=from_el, label=to_label)
                 if len(methods) == 1:
                     to_id = eval("from_el.%s()" % (methods[0],))
                     dbb_rel = srelationship.SRelationship(
@@ -188,7 +188,7 @@ class Sbml(object):
         for to_id in to_ids:
             to_obj = self.document.getElementBySId(to_id)
             for to_el in to_obj.getListOfAllElements():
-                methods = Sbml.find_method(obj=to_el, methods=[from_label])
+                methods = Sbml.find_method(obj=to_el, label=from_label)
                 if len(methods) == 1:
                     from_id = eval("to_el.%s()" % (methods[0],))
                     dbb_rel = srelationship.SRelationship(
@@ -269,32 +269,28 @@ class Sbml(object):
         return res
 
     @classmethod
-    def find_method(cls, obj: Any, methods: List[str]) -> List[str]:
+    def find_method(cls, obj: Any, label: List[str]) -> List[str]:
         """Given an object, search a method name by intropection.
 
         Parameters
         ----------
         obj: Any
             any object
-        methods: List[str]
+        label: str
             a method to search
 
         Return
         ------
         List[str]
         """
-        candidates = []
-        for method in methods:
-            # Exact match
-            regex = re.compile(r"^get" + method + "$", re.IGNORECASE)
-            candidates = list(filter(regex.match, obj.__dir__()))
-            if len(candidates) == 1:
-                return candidates
-            # Partial match
-            regex = re.compile(r"get.*" + method, re.IGNORECASE)
-            candidates = list(filter(regex.search, obj.__dir__()))
-            if len(candidates) == 1:
-                return candidates
+        # Exact match
+        regex = re.compile(r"^get" + label + "$", re.IGNORECASE)
+        candidates = list(filter(regex.match, obj.__dir__()))
+        if len(candidates) == 1:
+            return candidates
+        # Partial match
+        regex = re.compile(r"get.*" + label, re.IGNORECASE)
+        candidates = list(filter(regex.search, obj.__dir__()))
         return candidates
 
     @classmethod
