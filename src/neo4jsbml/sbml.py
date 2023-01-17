@@ -36,7 +36,7 @@ class Sbml(object):
         Create relationships, from the schema and the values in the SBML file
 
     @classmethod
-    find_method(obj: Any, method: str) -> List[str]
+    find_method(obj: Any, methods: List[str]) -> List[str]
         Given an object, search a method name by intropection
 
     @classmethod
@@ -76,7 +76,7 @@ class Sbml(object):
                 dbb_node = snode.SNode(id="", labels=arrow_node.labels, properties={})
                 data: Dict[str, Any] = {}
                 for prop in arrow_node.properties:
-                    methods = Sbml.find_method(obj=item, method=prop)
+                    methods = Sbml.find_method(obj=item, methods=[prop])
                     if len(methods) == 0:
                         self.logger.warning(
                             "No method found for label: %s with the property: %s"
@@ -109,6 +109,101 @@ class Sbml(object):
                 res.append(dbb_node)
         return res
 
+    def find_by_label(
+        self,
+        arrow_label: str,
+        from_label: str,
+        to_label: str,
+        from_ids: List[str],
+        to_ids: List[str],
+    ) -> List[srelationship.SRelationship]:
+        res = []
+        # Determine forward or reverse
+        is_forward = True
+        from_obj = self.document.getElementBySId(from_ids[0])
+        to_obj = self.document.getElementBySId(to_ids[0])
+
+        # Search relationships by method name
+        methods = Sbml.find_method(obj=from_obj, methods=[to_label])
+        if len(methods) == 0:
+            methods = Sbml.find_method(obj=to_obj, methods=[from_label])
+            if len(methods) == 1:
+                is_forward = False
+
+        if len(methods) > 1 or len(methods) < 1:
+            return res
+
+        if is_forward is False:
+            z_ids = from_ids
+            from_ids = to_ids
+            to_ids = z_ids
+
+        for from_id in from_ids:
+            for to_id in to_ids:
+                from_obj = self.document.getElementBySId(from_id)
+                to_obj = self.document.getElementBySId(to_id)
+
+                cur_id = eval("from_obj.%s()" % (methods[0],))
+                if cur_id == to_id:
+                    dbb_rel = srelationship.SRelationship(
+                        id="",
+                        from_label=from_label,
+                        to_label=to_label,
+                        from_id=from_id,
+                        to_id=to_id,
+                        label=arrow_label,
+                        properties={},
+                    )
+
+                    if is_forward is False:
+                        dbb_rel.from_id = to_id
+                        dbb_rel.to_id = from_id
+                    res.append(dbb_rel)
+        return res
+
+    def find_by_all_elements(
+        self,
+        arrow_label: str,
+        from_label: str,
+        to_label: str,
+        from_ids: List[str],
+        to_ids: List[str],
+    ) -> List[srelationship.SRelationship]:
+        res = []
+        for from_id in from_ids:
+            from_obj = self.document.getElementBySId(from_id)
+            for from_el in from_obj.getListOfAllElements():
+                methods = Sbml.find_method(obj=from_el, methods=[to_label])
+                if len(methods) == 1:
+                    to_id = eval("from_el.%s()" % (methods[0],))
+                    dbb_rel = srelationship.SRelationship(
+                        id="",
+                        from_label=from_label,
+                        to_label=to_label,
+                        from_id=from_id,
+                        to_id=to_id,
+                        label=arrow_label,
+                        properties={},
+                    )
+                    res.append(dbb_rel)
+        for to_id in to_ids:
+            to_obj = self.document.getElementBySId(to_id)
+            for to_el in to_obj.getListOfAllElements():
+                methods = Sbml.find_method(obj=to_el, methods=[from_label])
+                if len(methods) == 1:
+                    from_id = eval("to_el.%s()" % (methods[0],))
+                    dbb_rel = srelationship.SRelationship(
+                        id="",
+                        from_label=from_label,
+                        to_label=to_label,
+                        from_id=from_id,
+                        to_id=to_id,
+                        label=arrow_label,
+                        properties={},
+                    )
+                    res.append(dbb_rel)
+        return res
+
     def format_relationships(
         self, relationships: List[srelationship.SRelationship]
     ) -> List[srelationship.SRelationship]:
@@ -126,108 +221,83 @@ class Sbml(object):
         res = []
         self.logger.debug("node_map_item: " + str(self.node_map_item))
         for arrow_rel in relationships:
-            left_label = self.node_map_label[arrow_rel.from_id]
-            right_label = self.node_map_label[arrow_rel.to_id]
+            is_found = False
+            from_label = self.node_map_label[arrow_rel.from_id]
+            to_label = self.node_map_label[arrow_rel.to_id]
 
-            self.logger.debug("left_label: " + str(left_label))
-            self.logger.debug("right_label: " + str(right_label))
-            left_ids = self.node_map_item.get(arrow_rel.from_id)
-            if left_ids is None:
+            from_ids = self.node_map_item.get(arrow_rel.from_id)
+            to_ids = self.node_map_item.get(arrow_rel.to_id)
+            if from_ids is None or to_ids is None:
                 self.logger.warning(
-                    "Missing data into the model: %s, skip"
-                    % (self.node_map_label.get(arrow_rel.from_id),)
-                )
-                continue
-            right_ids = self.node_map_item.get(arrow_rel.to_id)
-            if right_ids is None:
-                self.logger.warning(
-                    "Missing data into the model: %s, skip"
-                    % (self.node_map_label.get(arrow_rel.from_id),)
+                    "No relationship between: %s - %s"
+                    % (
+                        from_label,
+                        to_label,
+                    )
                 )
                 continue
 
-            self.logger.debug("left_ids: " + str(left_ids))
-            self.logger.debug("right_ids: " + str(right_ids))
-
-            # Determine forward or reverse
-            is_forward = True
-            left_id = left_ids[0]
-            right_id = right_ids[0]
-
-            left_obj = self.document.getElementBySId(left_id)
-            right_obj = self.document.getElementBySId(right_id)
-
-            self.logger.debug("left_id: " + str(left_id))
-            self.logger.debug("right_id: " + str(right_id))
-            self.logger.debug("left_obj: " + str(left_obj))
-            self.logger.debug("right_obj: " + str(right_obj))
-            methods = Sbml.find_method(obj=left_obj, method=right_label)
-            if len(methods) == 0:
-                methods = Sbml.find_method(obj=right_obj, method=left_label)
-                if len(methods) == 1:
-                    is_forward = False
-
-            if len(methods) < 1:
-                self.logger.warning(
-                    "No method was found for entities: %s and %s, belongs to the relationships: %s"
-                    % (left_label, right_label, arrow_rel.label)
+            # Find by label
+            srel = self.find_by_label(
+                arrow_label=arrow_rel.label,
+                from_label=from_label,
+                to_label=to_label,
+                from_ids=from_ids,
+                to_ids=to_ids,
+            )
+            if len(srel) > 0:
+                logging.info("Map entities by their label: %s - %s")
+                res.extend(srel)
+                continue
+            # Find by all elements
+            srel = self.find_by_all_elements(
+                arrow_label=arrow_rel.label,
+                from_label=from_label,
+                to_label=to_label,
+                from_ids=from_ids,
+                to_ids=to_ids,
+            )
+            if len(srel) > 0:
+                logging.info(
+                    "Map entities by their id: %s - %s" % (from_label, to_label)
                 )
+                res.extend(srel)
                 continue
 
-            # Loop over item
-            if not is_forward:
-                z_ids = left_ids
-                left_ids = right_ids
-                right_ids = z_ids
-
-            for left_id in left_ids:
-                for right_id in right_ids:
-
-                    left_obj = self.document.getElementBySId(left_id)
-                    right_obj = self.document.getElementBySId(right_id)
-
-                    cur_id = eval("left_obj.%s()" % (methods[0],))
-                    if cur_id == right_id:
-                        dbb_rel = srelationship.SRelationship(
-                            id="",
-                            from_label=left_label,
-                            to_label=right_label,
-                            from_id=left_id,
-                            to_id=right_id,
-                            label=arrow_rel.label,
-                            properties={},
-                        )
-
-                        if not is_forward:
-                            dbb_rel.from_id = right_id
-                            dbb_rel.to_id = left_id
-                        res.append(dbb_rel)
+            self.logger.warning(
+                "No method was found for entities: %s and %s, belongs to the relationships: %s"
+                % (from_label, to_label, arrow_rel.label)
+            )
         return res
 
     @classmethod
-    def find_method(cls, obj: Any, method: str) -> List[str]:
+    def find_method(cls, obj: Any, methods: List[str]) -> List[str]:
         """Given an object, search a method name by intropection.
 
         Parameters
         ----------
         obj: Any
             any object
-        method: str
+        methods: List[str]
             a method to search
 
         Return
         ------
         List[str]
         """
-        # Exact match
-        regex = re.compile(r"^get" + method + "$", re.IGNORECASE)
-        methods = list(filter(regex.match, obj.__dir__()))
-        if len(methods) == 1:
-            return methods
-        # Partial match
-        regex = re.compile(r"get.*" + method, re.IGNORECASE)
-        methods = list(filter(regex.search, obj.__dir__()))
-        return methods
+        candidates = []
+        for method in methods:
+            # Exact match
+            regex = re.compile(r"^get" + method + "$", re.IGNORECASE)
+            candidates = list(filter(regex.match, obj.__dir__()))
+            if len(candidates) == 1:
+                return candidates
+            # Partial match
+            regex = re.compile(r"get.*" + method, re.IGNORECASE)
+            candidates = list(filter(regex.search, obj.__dir__()))
+            if len(candidates) == 1:
+                return candidates
+        return candidates
 
     @classmethod
     def from_sbml(cls, path: str, tag: Optional[str] = None) -> "Sbml":

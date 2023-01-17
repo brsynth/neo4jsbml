@@ -70,11 +70,12 @@ class Arrows(object):
                 ].pop(id_label)
                 logger.warning(
                     'Entity: %s has an "%s" in properties, but it will be renamed into: %s'
-                    % (" ".join(arrow_node["labels"]), id_label, snode.SNode.LABEL_ID)
+                    % (":".join(arrow_node["labels"]), id_label, snode.SNode.LABEL_ID)
                 )
             if not is_id_found:
                 logger.warning(
                     'Entity: %s has not "id" in properties, it will be added'
+                    % (":".join(arrow_node["labels"]),)
                 )
                 arrow_node["properties"][snode.SNode.LABEL_ID] = "str"
             # Append node
