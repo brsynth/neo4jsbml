@@ -49,7 +49,6 @@ class Arrows(object):
         ------
         Arrows
         """
-        logger = logging.getLogger(name=_version.__app_name__)
         data = {}
         with open(path) as hd:
             data = json.load(hd)

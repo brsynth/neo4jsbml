@@ -116,7 +116,7 @@ class Sbml(object):
         from_ids: List[str],
         to_ids: List[str],
     ) -> List[srelationship.SRelationship]:
-        res = []
+        res: List[srelationship.SRelationship] = []
         # Determine forward or reverse
         is_forward = True
         from_obj = self.document.getElementBySId(from_ids[0])
@@ -168,7 +168,7 @@ class Sbml(object):
         from_ids: List[str],
         to_ids: List[str],
     ) -> List[srelationship.SRelationship]:
-        res = []
+        res: List[srelationship.SRelationship] = []
         for from_id in from_ids:
             from_obj = self.document.getElementBySId(from_id)
             for from_el in from_obj.getListOfAllElements():
@@ -217,9 +217,8 @@ class Sbml(object):
         ------
         List[relationship.Relationship]
         """
-        res = []
+        res: List[srelationship.SRelationship] = []
         for arrow_rel in relationships:
-            is_found = False
             from_label = self.node_map_label[arrow_rel.from_id]
             to_label = self.node_map_label[arrow_rel.to_id]
 
@@ -269,7 +268,7 @@ class Sbml(object):
         return res
 
     @classmethod
-    def find_method(cls, obj: Any, label: List[str]) -> List[str]:
+    def find_method(cls, obj: Any, label: str) -> List[str]:
         """Given an object, search a method name by intropection.
 
         Parameters
