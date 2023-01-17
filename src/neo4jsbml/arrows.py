@@ -68,12 +68,12 @@ class Arrows(object):
                 arrow_node["properties"][snode.SNode.LABEL_ID] = arrow_node[
                     "properties"
                 ].pop(id_label)
-                logger.warning(
+                logging.warning(
                     'Entity: %s has an "%s" in properties, but it will be renamed into: %s'
                     % (":".join(arrow_node["labels"]), id_label, snode.SNode.LABEL_ID)
                 )
             if not is_id_found:
-                logger.warning(
+                logging.warning(
                     'Entity: %s has not "id" in properties, it will be added'
                     % (":".join(arrow_node["labels"]),)
                 )
@@ -84,7 +84,7 @@ class Arrows(object):
         relationships = []
         for arrow_rel in data["relationships"]:
             if arrow_rel["type"] == "str":
-                logger.warning(
+                logging.warning(
                     "A relationship must be have a type filled, %s will be skipped"
                     % (arrow_rel["id"],)
                 )

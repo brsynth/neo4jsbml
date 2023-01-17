@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional
 
 import libsbml
 
-from neo4jsbml import _version, arrows, snode, srelationship
+from neo4jsbml import arrows, snode, srelationship
 
 
 class Sbml(object):
@@ -50,7 +50,6 @@ class Sbml(object):
         self.model = self.document.getModel()
         self.node_map_item: Dict[str, List[str]] = {}
         self.node_map_label: Dict[str, str] = {}
-        self.logger = logging.getLogger(name=_version.__app_name__)
         if self.model is None:
             raise ValueError("No model found")
 
@@ -78,13 +77,13 @@ class Sbml(object):
                 for prop in arrow_node.properties:
                     methods = Sbml.find_method(obj=item, methods=[prop])
                     if len(methods) == 0:
-                        self.logger.warning(
+                        logging.warning(
                             "No method found for label: %s with the property: %s"
                             % (label, prop)
                         )
                         continue
                     if len(methods) > 1:
-                        self.logger.warning(
+                        logging.warning(
                             "Several methods found for label: %s with the property: %s, %s"
                             % (label, prop, " ".join(methods))
                         )
@@ -219,7 +218,6 @@ class Sbml(object):
         List[relationship.Relationship]
         """
         res = []
-        self.logger.debug("node_map_item: " + str(self.node_map_item))
         for arrow_rel in relationships:
             is_found = False
             from_label = self.node_map_label[arrow_rel.from_id]
@@ -228,7 +226,7 @@ class Sbml(object):
             from_ids = self.node_map_item.get(arrow_rel.from_id)
             to_ids = self.node_map_item.get(arrow_rel.to_id)
             if from_ids is None or to_ids is None:
-                self.logger.warning(
+                logging.warning(
                     "No relationship between: %s - %s"
                     % (
                         from_label,
@@ -264,7 +262,7 @@ class Sbml(object):
                 res.extend(srel)
                 continue
 
-            self.logger.warning(
+            logging.warning(
                 "No method was found for entities: %s and %s, belongs to the relationships: %s"
                 % (from_label, to_label, arrow_rel.label)
             )
