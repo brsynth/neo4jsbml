@@ -20,6 +20,9 @@ pip install --no-deps .
 
 Create a schema with [arrows](https://arrows.app) like:  
 ![schema](tests/dataset/PathwayModelisation-1.0.0.png "Schema SBML")
+Rules:
+* Nodes are labelled based on SBML object name as defined in the [SBML specification](https://sbml.org)
+* Properties are labelled based on SBML object properties as defined the [SBML specification](https://sbml.org)
 
 ### Step 2
 
@@ -28,7 +31,6 @@ Export your schema at the JSON format.
 ### Step 3
 
 Import your data with `neo4jsbml` into Neo4j.  
-Several key points:
 * Use either a configuration file `.ini` or individual paramters
 * Password needs to be store in a file for safety security
 * Pass a `tag` to identify the model loaded into the database
@@ -50,4 +52,10 @@ python -m neo4jsbml \
     --input-file-sbml <file> \
     --input-tag-str "" \
     --input-modelisation-json <file>
+```
+
+## Test
+
+```sh
+python -m pytest
 ```
