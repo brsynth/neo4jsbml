@@ -1,0 +1,144 @@
+{
+  "style": {
+    "font-family": "sans-serif",
+    "background-color": "#ffffff",
+    "background-image": "",
+    "background-size": "100%",
+    "node-color": "#ffffff",
+    "border-width": 4,
+    "border-color": "#000000",
+    "radius": 50,
+    "node-padding": 5,
+    "node-margin": 2,
+    "outside-position": "auto",
+    "node-icon-image": "",
+    "node-background-image": "",
+    "icon-position": "inside",
+    "icon-size": 64,
+    "caption-position": "inside",
+    "caption-max-width": 200,
+    "caption-color": "#000000",
+    "caption-font-size": 50,
+    "caption-font-weight": "normal",
+    "label-position": "inside",
+    "label-display": "pill",
+    "label-color": "#000000",
+    "label-background-color": "#ffffff",
+    "label-border-color": "#000000",
+    "label-border-width": 4,
+    "label-font-size": 40,
+    "label-padding": 5,
+    "label-margin": 4,
+    "directionality": "directed",
+    "detail-position": "inline",
+    "detail-orientation": "parallel",
+    "arrow-width": 5,
+    "arrow-color": "#000000",
+    "margin-start": 5,
+    "margin-end": 5,
+    "margin-peer": 20,
+    "attachment-start": "normal",
+    "attachment-end": "normal",
+    "relationship-icon-image": "",
+    "type-color": "#000000",
+    "type-background-color": "#ffffff",
+    "type-border-color": "#000000",
+    "type-border-width": 0,
+    "type-font-size": 16,
+    "type-padding": 5,
+    "property-position": "outside",
+    "property-alignment": "colon",
+    "property-color": "#000000",
+    "property-font-size": 16,
+    "property-font-weight": "normal"
+  },
+  "nodes": [
+    {
+      "id": "n0",
+      "position": {
+        "x": -126.80440499441363,
+        "y": -78.59819688422694
+      },
+      "caption": "",
+      "labels": [
+        "Species"
+      ],
+      "properties": {
+        "id": "str",
+        "metaid": "str",
+        "name": "str",
+        "sboTerm": "int",
+        "initialAmount": "float",
+        "hasOnlySubstanceUnits": "bool",
+        "boundaryCondition": "bool",
+        "constant": "bool"
+      },
+      "style": {}
+    },
+    {
+      "id": "n1",
+      "position": {
+        "x": 282.8700553748535,
+        "y": -315.1238568585382
+      },
+      "caption": "",
+      "labels": [
+        "Reaction"
+      ],
+      "properties": {
+        "id": "str",
+        "metaid": "str",
+        "name": "str",
+        "sboTerm": "str"
+      },
+      "style": {}
+    },
+    {
+      "id": "n2",
+      "position": {
+        "x": -482.6727616300077,
+        "y": -158
+      },
+      "caption": "",
+      "labels": [
+        "Compartment"
+      ],
+      "properties": {
+        "id": "str",
+        "metaid": "str",
+        "name": "str",
+        "sboTerm": "int",
+        "spatialDimensions": "int",
+        "size": "int",
+        "constant": "bool"
+      },
+      "style": {}
+    }
+  ],
+  "relationships": [
+    {
+      "id": "n0",
+      "fromId": "n1",
+      "toId": "n0",
+      "type": "HAS_PRODUCT",
+      "properties": {},
+      "style": {}
+    },
+    {
+      "id": "n1",
+      "fromId": "n0",
+      "toId": "n1",
+      "type": "IS_REACTANT",
+      "properties": {},
+      "style": {}
+    },
+    {
+      "id": "n2",
+      "fromId": "n0",
+      "toId": "n2",
+      "type": "HAS_COMPARTMENT",
+      "properties": {},
+      "style": {}
+    }
+  ]
+}
