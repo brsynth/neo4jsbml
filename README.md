@@ -31,7 +31,7 @@ Export your schema at the JSON format.
 ### Step 3
 
 Import your data with `neo4jsbml` into Neo4j.  
-* Use either a configuration file `.ini` or individual paramters
+* Use either a configuration file `ini`, an example is provided in the `template` directory or individual parameters
 * Password needs to be store in a file for safety security
 * Pass a `tag` to identify the model loaded into the database
 
