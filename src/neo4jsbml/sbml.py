@@ -160,6 +160,73 @@ class Sbml(object):
                     res.append(dbb_rel)
         return res
 
+    def find_by_relationships(
+        self,
+        arrow_label: str,
+        from_label: str,
+        to_label: str,
+        from_ids: List[str],
+        to_ids: List[str],
+    ) -> List[srelationship.SRelationship]:
+        res: List[srelationship.SRelationship] = []
+        for from_id in from_ids:
+            from_obj = self.document.getElementBySId(from_id)
+            methods = []
+            labels = [arrow_label] + arrow_label.split("_")
+            for label in labels:
+                methods = Sbml.find_method(obj=from_obj, label="listof" + label)
+                if len(methods) > 0:
+                    break
+            if len(methods) == 0:
+                continue
+            list_of_els = eval("from_obj.%s()" % (methods[0],))
+            for from_el in list_of_els:
+                from_el_name = from_el.getElementName()
+                if from_el_name.endswith("Reference"):
+                    from_el_name = from_el_name.removesuffix("Reference")
+                    methods = Sbml.find_method(obj=from_el, label=from_el_name)
+                    if len(methods) == 1:
+                        to_id = eval("from_el.%s()" % (methods[0],))
+                        dbb_rel = srelationship.SRelationship(
+                            id="",
+                            from_label=from_label,
+                            to_label=to_label,
+                            from_id=from_id,
+                            to_id=to_id,
+                            label=arrow_label,
+                            properties={},
+                        )
+                        res.append(dbb_rel)
+        for to_id in to_ids:
+            to_obj = self.document.getElementBySId(to_id)
+            methods = []
+            labels = [arrow_label] + arrow_label.split("_")
+            for label in labels:
+                methods = Sbml.find_method(obj=to_obj, label="listof" + label)
+                if len(methods) > 0:
+                    break
+            if len(methods) == 0:
+                continue
+            list_of_els = eval("to_obj.%s()" % (methods[0],))
+            for to_el in list_of_els:
+                to_el_name = to_el.getElementName()
+                if to_el_name.endswith("Reference"):
+                    to_el_name = to_el_name.removesuffix("Reference")
+                    methods = Sbml.find_method(obj=to_el, label=to_el_name)
+                    if len(methods) == 1:
+                        from_id = eval("to_el.%s()" % (methods[0],))
+                        dbb_rel = srelationship.SRelationship(
+                            id="",
+                            from_label=from_label,
+                            to_label=to_label,
+                            from_id=from_id,
+                            to_id=to_id,
+                            label=arrow_label,
+                            properties={},
+                        )
+                        res.append(dbb_rel)
+        return res
+
     def find_by_all_elements(
         self,
         arrow_label: str,
@@ -233,7 +300,6 @@ class Sbml(object):
                     )
                 )
                 continue
-
             # Find by label
             srel = self.find_by_label(
                 arrow_label=arrow_rel.label,
@@ -243,7 +309,24 @@ class Sbml(object):
                 to_ids=to_ids,
             )
             if len(srel) > 0:
-                logging.info("Map entities by their label: %s - %s")
+                logging.info(
+                    "Map entities by their label: %s - %s" % (from_label, to_label)
+                )
+                res.extend(srel)
+                continue
+            # Find by relationships
+            srel = self.find_by_relationships(
+                arrow_label=arrow_rel.label,
+                from_label=from_label,
+                to_label=to_label,
+                from_ids=from_ids,
+                to_ids=to_ids,
+            )
+            if len(srel) > 0:
+                logging.info(
+                    "Map entities by the relationship's name: %s - %s"
+                    % (from_label, to_label)
+                )
                 res.extend(srel)
                 continue
             # Find by all elements
