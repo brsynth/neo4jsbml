@@ -21,3 +21,6 @@ super-linter.log
 build
 debug
 .tox
+papier
+cmd.sh
+*.xml
