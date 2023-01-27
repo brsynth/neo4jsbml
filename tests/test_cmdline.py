@@ -1,4 +1,3 @@
-import imghdr
 import sys
 import tempfile
 
