@@ -57,7 +57,7 @@ jobs:
           echo "$USER $PROJECT"
           github_changelog_generator --user "$USER" --project "$PROJECT" --no-unreleased
       - name: 'Upload Artifact Changelog'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: changelog-artifact
           path: CHANGELOG.md
@@ -82,7 +82,7 @@ jobs:
           echo "version_path=$VERSION_PATH" >> "$GITHUB_OUTPUT"
           echo "version_dir=$VERSION_DIR" >> "$GITHUB_OUTPUT"
       - name: 'Upload Artifact Version'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: version-artifact
           path: ${{ steps.update_version.outputs.version_path }}
@@ -177,7 +177,7 @@ jobs:
           filename=$(find ${{ env.dirbuild }} | head -n 1)
           echo "asset=$filename" >> "$GITHUB_OUTPUT"
       - name: 'Upload Artifact Package'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: package-conda-artifact
           path: ${{ steps.identify_asset.outputs.asset }}

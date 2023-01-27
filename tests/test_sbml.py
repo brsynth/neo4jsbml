@@ -1,4 +1,5 @@
 import pytest
+
 from neo4jsbml.sbml import Sbml
 from neo4jsbml.snode import SNode
 from neo4jsbml.srelationship import SRelationship
@@ -23,11 +24,11 @@ class TestSbml:
         assert sbml.tag == "test"
 
     def test_method(self, sbml_iml):
-        methods = Sbml.find_method(sbml_iml.document, "notes")
+        methods = Sbml.find_method(obj=sbml_iml.document, label="notes")
         assert methods == ["getNotes"]
-        methods = Sbml.find_method(sbml_iml.model, "Id")
+        methods = Sbml.find_method(obj=sbml_iml.model, label="Id")
         assert methods == ["getId"]
-        methods = Sbml.find_method(sbml_iml.model, "Idl")
+        methods = Sbml.find_method(obj=sbml_iml.model, label="Idl")
         assert methods == ["getAllElementIdList", "getAllElementMetaIdList"]
 
     def test_format_nodes(self, sbml_iml, node_two_dict):

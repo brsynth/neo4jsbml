@@ -56,8 +56,8 @@
     {
       "id": "n0",
       "position": {
-        "x": -125,
-        "y": -158
+        "x": -126.80440499441363,
+        "y": -78.59819688422694
       },
       "caption": "",
       "labels": [
@@ -68,7 +68,7 @@
         "metaid": "str",
         "name": "str",
         "sboTerm": "int",
-        "initialAmout": "float",
+        "initialAmount": "float",
         "hasOnlySubstanceUnits": "bool",
         "boundaryCondition": "bool",
         "constant": "bool"
@@ -113,24 +113,6 @@
         "constant": "bool"
       },
       "style": {}
-    },
-    {
-      "id": "n21",
-      "position": {
-        "x": -187.9808249993403,
-        "y": -360.6979696417876
-      },
-      "caption": "",
-      "labels": [
-        "Model"
-      ],
-      "properties": {
-        "id": "str",
-        "name": "str",
-        "metaid": "str",
-        "sboTerm": "str"
-      },
-      "style": {}
     }
   ],
   "relationships": [
@@ -139,9 +121,7 @@
       "fromId": "n1",
       "toId": "n0",
       "type": "HAS_PRODUCT",
-      "properties": {
-        "stochiometry": "float"
-      },
+      "properties": {},
       "style": {}
     },
     {
@@ -149,9 +129,7 @@
       "fromId": "n0",
       "toId": "n1",
       "type": "IS_REACTANT",
-      "properties": {
-        "stochiometry": "float"
-      },
+      "properties": {},
       "style": {}
     },
     {
@@ -159,30 +137,6 @@
       "fromId": "n0",
       "toId": "n2",
       "type": "HAS_COMPARTMENT",
-      "properties": {},
-      "style": {}
-    },
-    {
-      "id": "n32",
-      "fromId": "n0",
-      "toId": "n21",
-      "type": "",
-      "properties": {},
-      "style": {}
-    },
-    {
-      "id": "n33",
-      "fromId": "n2",
-      "toId": "n21",
-      "type": "",
-      "properties": {},
-      "style": {}
-    },
-    {
-      "id": "n34",
-      "fromId": "n1",
-      "toId": "n21",
-      "type": "",
       "properties": {},
       "style": {}
     }

@@ -1,0 +1,12 @@
+version: "2"
+
+services:
+  neo4j:
+    image: neo4j:5.3.0-community
+    container_name: neo4j
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    environment:
+      - NEO4J_PLUGINS=["apoc"]
+      - NEO4J_AUTH=none

@@ -1,7 +1,6 @@
 import os
 
 import pytest
-
 from neo4jsbml import sbml
 
 cur_dir = os.path.abspath(os.path.dirname(__file__))
@@ -14,6 +13,11 @@ def data_directory():
 
 
 @pytest.fixture(scope="session")
+def config_path(data_directory):
+    return os.path.join(data_directory, "localhost.ini")
+
+
+@pytest.fixture(scope="session")
 def iml_path(data_directory):
     return os.path.join(data_directory, "iML1515.xml.gz")
 
@@ -21,6 +25,11 @@ def iml_path(data_directory):
 @pytest.fixture(scope="function")
 def sbml_iml(iml_path):
     return sbml.Sbml.from_sbml(path=iml_path)
+
+
+@pytest.fixture(scope="session")
+def ecore_path(data_directory):
+    return os.path.join(data_directory, "e_coli_core.xml.gz")
 
 
 @pytest.fixture(scope="session")
@@ -35,7 +44,7 @@ def sbml_toy(iml_toy_path):
 
 @pytest.fixture(scope="session")
 def pathway_one_path(data_directory):
-    return os.path.join(data_directory, "PathwayModelisation-0.4.1.json")
+    return os.path.join(data_directory, "PathwayModelisation-1.0.0.json")
 
 
 @pytest.fixture(scope="function")
