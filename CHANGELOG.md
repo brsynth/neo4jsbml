@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.9.0](https://github.com/brsynth/neo4jsbml/tree/0.9.0) (2023-01-27)
+
+[Full Changelog](https://github.com/brsynth/neo4jsbml/compare/0.8.3...0.9.0)
+
+**Merged pull requests:**
+
+- chore\(deps\): bump actions/upload-artifact from 2 to 3 [\#4](https://github.com/brsynth/neo4jsbml/pull/4) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [0.8.3](https://github.com/brsynth/neo4jsbml/tree/0.8.3) (2023-01-16)
 
 [Full Changelog](https://github.com/brsynth/neo4jsbml/compare/0.8.0...0.8.3)
