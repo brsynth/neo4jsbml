@@ -30,6 +30,9 @@ class Entity(metaclass=ABCMeta):
     clean_properties(self)
         Remove empty values
 
+    id_to_neo4j(self) -> str
+        Format id to query Neo4j
+
     properties_to_neo4j() -> str
         Format properties to insert in query
     """
@@ -88,6 +91,26 @@ class Entity(metaclass=ABCMeta):
             label=label
         ):
             self.properties[label] = value
+
+    def id_to_neo4j(self, id: Optional[str] = None) -> str:
+        """Format ids to insert in query
+
+        Parameters
+        ----------
+        id: str (default: None
+        Return
+        ------
+        str
+        """
+        data = "{id: "
+        if id is None:
+            data += '"' + self.id + '"'
+        else:
+            data += id
+        if "tag" in self.properties.keys():
+            data += ', tag: "' + self.properties["tag"] + '"'
+        data += "}"
+        return data
 
     def properties_to_neo4j(self) -> str:
         """Format properties to insert in query

@@ -135,9 +135,9 @@ class Connect(metaclass=singleton.Singleton):
                 query = (
                     "MERGE (n:"
                     + ":".join(node.labels)
-                    + ' {id:"'
-                    + node.id
-                    + '"}) ON CREATE SET n += '
+                    + " "
+                    + node.id_to_neo4j()
+                    + ") ON CREATE SET n += "
                     + node.properties_to_neo4j()
                     + " ON MATCH SET n += "
                     + node.properties_to_neo4j()
@@ -161,13 +161,16 @@ class Connect(metaclass=singleton.Singleton):
                 query = (
                     "MATCH (a:"
                     + rel.from_label
-                    + ' {id: $rel["from_id"]}) MATCH (b:'
+                    + " "
+                    + rel.id_to_neo4j(id='$rel["from_id"]')
+                    + ") MATCH (b:"
                     + rel.to_label
-                    + ' {id: $rel["to_id"]}) MERGE (a)-[r:'
+                    + " "
+                    + rel.id_to_neo4j(id='$rel["to_id"]')
+                    + ") MERGE (a)-[r:"
                     + rel.label
                     + ']->(b) ON CREATE SET r += $rel["properties"] RETURN r'
                 )
-
                 res = session.run(
                     query,
                     rel=rel.to_dict(),

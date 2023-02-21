@@ -499,6 +499,9 @@ class Sbml(object):
                 "No method was found for entities: %s and %s, belongs to the relationships: %s"
                 % (from_label, to_label, arrow_rel.label)
             )
+        if self.tag is not None:
+            for srel in res:
+                srel.add_property(label="tag", value=self.tag)
         return res
 
     def validate_id(self, value: Any) -> bool:
