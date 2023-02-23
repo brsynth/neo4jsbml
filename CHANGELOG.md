@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.9.1](https://github.com/brsynth/neo4jsbml/tree/0.9.1) (2023-02-21)
+
+[Full Changelog](https://github.com/brsynth/neo4jsbml/compare/0.9.0...0.9.1)
+
 ## [0.9.0](https://github.com/brsynth/neo4jsbml/tree/0.9.0) (2023-01-27)
 
 [Full Changelog](https://github.com/brsynth/neo4jsbml/compare/0.8.3...0.9.0)
