@@ -165,7 +165,7 @@ class Sbml(object):
 
                 try:
                     cur_id = eval("from_obj.%s()" % (methods[0],))
-                except:
+                except Exception:
                     continue
                 if cur_id == to_id:
                     dbb_rel = srelationship.SRelationship(
@@ -213,7 +213,7 @@ class Sbml(object):
 
             try:
                 to_id = eval("from_obj.%s()" % (methods[0],))
-            except:
+            except Exception:
                 continue
             if self.validate_id(value=to_id):
                 dbb_rel = srelationship.SRelationship(
@@ -246,7 +246,7 @@ class Sbml(object):
 
             try:
                 from_id = eval("to_obj.%s()" % (methods[0],))
-            except:
+            except Exception:
                 continue
             if self.validate_id(value=from_id):
                 dbb_rel = srelationship.SRelationship(
@@ -500,8 +500,8 @@ class Sbml(object):
                 % (from_label, to_label, arrow_rel.label)
             )
         if self.tag is not None:
-            for srel in res:
-                srel.add_property(label="tag", value=self.tag)
+            for srelation in res:
+                srelation.add_property(label="tag", value=self.tag)
         return res
 
     def validate_id(self, value: Any) -> bool:

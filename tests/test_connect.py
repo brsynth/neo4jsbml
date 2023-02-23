@@ -65,4 +65,3 @@ class TestConnect:
         assert con_b.user == "neo4j"
         assert con_b.database == "neo4j"
         assert con_b.password == "test"
-        assert con_b.batch == 5000

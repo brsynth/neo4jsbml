@@ -44,12 +44,6 @@ def main():
         default="neo4j",
         help="The name of the database",
     )
-    parser_dbb.add_argument(
-        "--input-batch-int",
-        default=connect.Connect.BATCH,
-        type=int,
-        help="The number of items to include in a batch",
-    )
     parser_dbb_config = parser.add_argument_group(
         "Database connection - Configuration file"
     )
@@ -111,7 +105,6 @@ def main():
             user=args.input_user_str,
             database=args.input_database_str,
             password_path=args.input_password_file,
-            batch=args.input_batch_int,
         )
     if con.is_connected() is False:
         logging.error("Unable to connect to the database")
