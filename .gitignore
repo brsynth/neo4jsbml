@@ -24,3 +24,6 @@ debug
 papier
 cmd.sh
 *.xml
+# Docs
+_build
+generated
