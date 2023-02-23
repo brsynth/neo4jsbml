@@ -26,8 +26,6 @@ class Connect(metaclass=singleton.Singleton):
         the password to connect to the database
     password_path: Optional[str]
         the password provided by a file
-    batch: Optional[int] (default: 5000)
-        number of transactions before a commit for Neo4j
     stats: Dict[str, int]
         statistics dictionnary updated by create_nodes(), create_relationships
         Keys: nodes, relationships
@@ -53,7 +51,6 @@ class Connect(metaclass=singleton.Singleton):
         create a Connect from an .ini file
     """
 
-    BATCH = 5000
     PROTOCOLS = ["neo4j", "bolt"]
 
     def __init__(
@@ -65,7 +62,6 @@ class Connect(metaclass=singleton.Singleton):
         port: int = 7687,
         password: Optional[str] = None,
         password_path: Optional[str] = None,
-        batch: Optional[int] = None,
     ) -> None:
         self.protocol = protocol
         self.url = url
@@ -83,9 +79,6 @@ class Connect(metaclass=singleton.Singleton):
             )
         else:
             self.driver = neo4j.GraphDatabase.driver(self.uri)
-        self.batch = Connect.BATCH
-        if batch:
-            self.batch = int(batch)
         self.stats: Dict[str, int] = {}
 
     def is_connected(self) -> bool:
@@ -213,9 +206,5 @@ class Connect(metaclass=singleton.Singleton):
                 data["database"] = section.get("name")
             if section.get("password"):
                 data["password"] = section.get("password")
-        if config.has_section("parameters"):
-            section = config["parameters"]
-            if section.get("batch"):
-                data["batch"] = section.get("batch")
 
         return Connect(**data)

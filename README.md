@@ -44,7 +44,6 @@ python -m neo4jsbml \
     --input-user-str "neo4j" \
     --input-password-file <file> \
     --input-database-str <str> \
-    --input-batch-int <int> \
     # Config file
     --input-config-file <file> \
 

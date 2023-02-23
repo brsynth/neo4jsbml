@@ -1,6 +1,14 @@
 Changelog
 =========
 
+`0.9.1 <https://github.com/brsynth/neo4jsbml/tree/0.9.1>`__ (2023-02-21)
+------------------------------------------------------------------------
+
+`Full
+Changelog <https://github.com/brsynth/neo4jsbml/compare/0.9.0...0.9.1>`__
+
+.. _section-1:
+
 `0.9.0 <https://github.com/brsynth/neo4jsbml/tree/0.9.0>`__ (2023-01-27)
 ------------------------------------------------------------------------
 
@@ -13,7 +21,7 @@ Changelog <https://github.com/brsynth/neo4jsbml/compare/0.8.3...0.9.0>`__
    `#4 <https://github.com/brsynth/neo4jsbml/pull/4>`__
    (`dependabot[bot] <https://github.com/apps/dependabot>`__)
 
-.. _section-1:
+.. _section-2:
 
 `0.8.3 <https://github.com/brsynth/neo4jsbml/tree/0.8.3>`__ (2023-01-16)
 ------------------------------------------------------------------------
@@ -21,7 +29,7 @@ Changelog <https://github.com/brsynth/neo4jsbml/compare/0.8.3...0.9.0>`__
 `Full
 Changelog <https://github.com/brsynth/neo4jsbml/compare/0.8.0...0.8.3>`__
 
-.. _section-2:
+.. _section-3:
 
 `0.8.0 <https://github.com/brsynth/neo4jsbml/tree/0.8.0>`__ (2023-01-16)
 ------------------------------------------------------------------------
