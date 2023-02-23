@@ -17,12 +17,12 @@ CON = connect.Connect(
 
 @pytest.fixture(scope="module")
 def neo4j_password(data_directory):
-    return os.path.join(data_directory, "password.txt")
+    return os.path.join(data_directory, "database", "password.txt")
 
 
 @pytest.fixture(scope="module")
 def neo4j_config(data_directory):
-    return os.path.join(data_directory, "config.ini")
+    return os.path.join(data_directory, "database", "config.ini")
 
 
 @pytest.fixture(scope="function")
