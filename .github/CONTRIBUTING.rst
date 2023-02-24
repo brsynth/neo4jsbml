@@ -53,10 +53,13 @@ Before you submit a pull request, check that it meets these guidelines:
 
 1. If the pull request adds functionality, the docs should be updated. Put
    your new functionality into a function with a docstring.
-2. Passing `pytest`
-   ::
-    $ python -m pytest
-3. Passing `super-linter <https://github.com/marketplace/actions/super-linter>`_.
+2. Passing ``pytest``
+
+   .. code-block:: console
+
+        $ python -m pytest
+
+3. Passing `super-linter <https://github.com/marketplace/actions/super-linter>`_
 
 This policy was modified from
 `planemo project <https://github.com/galaxyproject/planemo/blob/master/CONTRIBUTING.rst>`_

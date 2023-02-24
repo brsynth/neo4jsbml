@@ -8,7 +8,7 @@ Contents
    :maxdepth: 1
 
    usage
-   api
+   example
    conduct
    contributing
    changelog

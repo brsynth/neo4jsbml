@@ -12,15 +12,139 @@ To use neo4jsbml, first install it using conda:
 
 Principles
 ----------
-First of all, the users create a schema defining which entities will be selected from the SBML model, see Figure 1A. Building a schema required several rules. The general idea is to map the name of the different items found in the schema corresponding to items as they are defined in the SBML specifications (Hucka et al., 2019). So, the label of the nodes need to be matched to a SBML component name. In the same way, the properties are selected by their name if they match to the properties of the SBML component. The SBML specifications indicate which components are linked to other components but this relationship is not defined.  However, the relationships can be nested into another. Thus, the label and the direction of the relationship between two SBML components refers to a method which links two components. 
 
-The SBML model is loaded by neo4jsbml, thanks to the libsbml library (Hucka et al., 2019), and the selected data will be loaded in the Neo4j database with the python Neo4j driver from the schema. Lastly, the entities and the relationships from the SBML model are queryable by Cypher into Neo4j (Figure 1B). An identifier can be associated for each entity created into Neo4j to avoid collision when several models are loaded in the same database.
+Import data from SBML into the Neo4j database is conducted in several steps:
+
+1. Define your schema with `Arrows <https://arrows.app>`_ and download the schema at the JSON format
+2. Import your data into Neo4j
+
+
 Define your schema with Arrows
 ------------------------------
 
-Import your data into Neo4j
----------------------------
+**Create the schema**
+First of all, the users create a schema defining which entities will be selected from the SBML model with `arrows <https://arrows.app>`_.
+
+Rules:
+
+* Nodes are labelled based on SBML object name as defined in the `SBML specification <https://sbml.org>`_
+* Properties are labelled based on SBML object properties as defined the `SBML specification <https://sbml.org>`_
+
+**Download the schema**
+
+.. figure:: _static/arrows.dwl.png
+    :align: center
+
 
 Configure access to Neo4j
 -------------------------
 
+The connection to the Neo4j database needs to have several parameters defined:
+
+* protocol: ``neo4j`` or ``bolt`` (default: ``neo4j``)
+* url (default: ``localhost``)
+* port (default: ``7687``)
+* user name (default: ``neo4j``)
+* password (default: ``None``)
+* database name (default: ``neo4j``)
+
+The user has two options: passing arguments individually by the command line or by an ``ini`` file with this structure:
+
+**Command line**
+
+``--input-protocol-str``
+    Protocol to communicate with the database
+
+``--input-url-str``
+    Url of Neo4j
+
+``--input-port-int``
+    Port number tot communicate with the database
+
+``--input-user-str``
+    Username to log with the database
+
+``--input-password-file``
+    Password to log with the database
+
+``--input-database-str``
+    Database name
+
+**Configuration file**
+
+``--input-config-file``
+    An ``ìni`` file containing all these informations above
+
+.. code-block:: text
+
+    [connection]
+    protocol = neo4j
+    url = localhost
+    port = 7687
+
+    [database]
+    user = neo4j
+    password = mypassword
+    name = neo4j
+
+.. note::
+    For safety, passing a password through the command line must be given by a file.
+    No extra character must be in the file, otherwise it would be consider as the password.
+
+Import your data into Neo4j
+---------------------------
+
+Command line
+~~~~~~~~~~~~
+To import your data with ``neo4jsbml`` into Neo4j, you will need:
+1. the database parameters
+2. the ``SBML`` file, the model
+3. the ``JSON`` file downloaded from `arrows <https://arrows.app>`_
+
+.. code-block:: console
+
+    $ neo4jsbml \
+        <database parameters>
+
+        --input-file-sbml <file> \
+        --input-modelisation-json <file>
+
+.. note::
+    If you have multiple model in the database, pass a ``tag`` to identify the model loaded into the database if you want to avoid collision with the argument ``--input-tag-str``
+
+API
+~~~
+.. code-block:: console
+
+    from neo4jsbml import arrows, connect, sbml
+
+    # Either you have a configuration file or overwrite individually
+    path_config = None
+    con = connect.Connect.from_config(path=path_config)
+    # Or
+    path_password = None
+    con = connect.Connect(
+        protocol="neo4j",
+        url="localhost",
+        port=7687,
+        user="neo4j"
+        database="neo4j",
+        password_path=path_password,
+    )
+
+    # Load model - Define a tag here if needed
+    tag = None
+    path_model = ""
+    sbm = sbml.Sbml.from_sbml(path=path_model, tag=tag)
+
+    # Load modelisation
+    path_modelisation = ""
+    arr = arrows.Arrows.from_json(path=path_modelisation)
+
+    # Mapping
+    nod = sbm.format_nodes(nodes=arr.nodes)
+    rel = sbm.format_relationships(relationships=arr.relationships)
+
+    # Import into neo4j
+    con.create_nodes(nodes=nod)
+    con.create_relationships(relationships=rel)
