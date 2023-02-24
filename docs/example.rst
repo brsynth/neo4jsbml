@@ -26,7 +26,7 @@ View shared metabolite, fumarat, between two models: *iAF1260* and *iML1515* ava
 
 **Query Cypher**
 
-.. code-block:: console
+.. code-block:: cypher
 
     MATCH p=((c:Compartment)<--(n:Species {id: "M_fum_c"})-->(r:Reaction)) RETURN p
 
@@ -57,7 +57,7 @@ Visualization of the Phosphoenolpyruvate and its precursors at exactly two react
 
 Flag the metabolite nodes implied in more than 10 reactions.
 
-.. code-block:: console
+.. code-block:: cypher
 
     MATCH (s:Species)
     WITH s, size ([p=(s)-[:IS_SUBSTRATE]->() | p]) as sz order by sz desc
@@ -66,7 +66,7 @@ Flag the metabolite nodes implied in more than 10 reactions.
 
 Select the nodes to highlight them
 
-.. code-block::
+.. code-block:: cypher
 
     MATCH path=(:Compartment)<-[:IN_COMPARTMENT]-(s1:Species {id: "M_pep_c"})<-[:HAS_PRODUCT|IS_SUBSTRATE*2]-(s2:Species)<-[:HAS_PRODUCT|IS_SUBSTRATE*2]-(s3:Species)-[:IN_COMPARTMENT]->(:Compartment)
     WHERE NOT "Hub" IN apoc.coll.flatten([n in nodes(path) | labels(n)])
@@ -79,4 +79,3 @@ Select the nodes to highlight them
 .. figure:: _static/3.2-0-1.png
     :align: center
     :width: 45%
-

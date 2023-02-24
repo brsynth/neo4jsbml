@@ -75,7 +75,7 @@ The user has two options: passing arguments individually by the command line or 
 ``--input-config-file``
     An ``ìni`` file containing all these informations above
 
-.. code-block:: text
+.. code-block:: toml
 
     [connection]
     protocol = neo4j
@@ -114,7 +114,7 @@ To import your data with ``neo4jsbml`` into Neo4j, you will need:
 
 API
 ~~~
-.. code-block:: console
+.. code-block:: python
 
     from neo4jsbml import arrows, connect, sbml
 
