@@ -26,7 +26,8 @@ Rules:
 
 ### Step 2
 
-Export your schema at the JSON format.
+Export your schema at the JSON format.  
+![schema](docs/_static/arrows.dwl.png "Download JSON")
 
 ### Step 3
 
