@@ -10,18 +10,18 @@ View shared metabolite, fumarat, between two models: *iAF1260* and *iML1515* ava
 
     $ neo4jsbml \
         --input-config-file tests/dataset/database/localhost.ini \
-        --input-modelisation-json tests/dataset/modelisation/PathwayModelisation-2.0.1.json \
+        --input-modelisation-json tests/dataset/modelisation/PathwayModelisation-2.0.2.json \
         --input-file-sbml tests/dataset/model/iML1515.xml.gz \
         --input-tag-str iML1515
     $ neo4jsbml \
         --input-config-file tests/datasets/database/localhost.ini \
-        --input-modelisation-json tests/dataset/modelisation/PathwayModelisation-2.0.1.json \
+        --input-modelisation-json tests/dataset/modelisation/PathwayModelisation-2.0.2.json \
         --input-file-sbml tests/dataset/model/iAF1260.xml.gz \
         --input-tag-str iAF1260
 
 **Arrows modelisation**
 
-.. figure:: _static/PathwayModelisation-2.0.1.png
+.. figure:: _static/PathwayModelisation-2.0.2.png
     :align: center
 
 **Query Cypher**
@@ -32,7 +32,7 @@ View shared metabolite, fumarat, between two models: *iAF1260* and *iML1515* ava
 
 **Neo4j View**
 
-.. figure:: _static/1.2-0-1.png
+.. figure:: _static/1.2-0-2.png
     :align: center
     :width: 65%
 
@@ -45,12 +45,12 @@ Visualization of the Phosphoenolpyruvate and its precursors at exactly two react
 
     $ neo4jsbml \
         --input-config-file tests/dataset/database/localhost.ini \
-        --input-modelisation-json tests/dataset/modelisation/PathwayModelisation-2.0.1.json \
+        --input-modelisation-json tests/dataset/modelisation/PathwayModelisation-2.0.2.json \
         --input-file-sbml tests/dataset/model/e_coli_core.xml.gz
 
 **Arrows modelisation**
 
-.. figure:: _static/PathwayModelisation-2.0.1.png
+.. figure:: _static/PathwayModelisation-2.0.2.png
     :align: center
 
 **Query Cypher**
@@ -76,6 +76,6 @@ Select the nodes to highlight them
 
 **Neo4j View**
 
-.. figure:: _static/3.2-0-1.png
+.. figure:: _static/3.2-0-2.png
     :align: center
     :width: 45%
