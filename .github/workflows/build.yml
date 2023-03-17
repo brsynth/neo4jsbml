@@ -87,6 +87,9 @@ jobs:
           sed -i "2s/.*/__version__ = \"$TAG\"/" "$VERSION_PATH"
           echo "version_path=$VERSION_PATH" >> "$GITHUB_OUTPUT"
           echo "version_dir=$VERSION_DIR" >> "$GITHUB_OUTPUT"
+
+          RECIPE_PATH=$(find . -name meta.yaml | head -n 1)
+          sed -i "2s/.*/{% set version = \"$TAG\" %}/" "$RECIPE_PATH"
       - name: 'Upload Artifact Version'
         uses: actions/upload-artifact@v3
         with:
