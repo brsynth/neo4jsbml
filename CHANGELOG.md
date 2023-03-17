@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.10.0](https://github.com/brsynth/neo4jsbml/tree/0.10.0) (2023-03-17)
+
+[Full Changelog](https://github.com/brsynth/neo4jsbml/compare/0.9.2...0.10.0)
+
+**Merged pull requests:**
+
+- chore\(deps\): bump mathieudutour/github-tag-action from 6.0 to 6.1 [\#6](https://github.com/brsynth/neo4jsbml/pull/6) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Read the docs [\#5](https://github.com/brsynth/neo4jsbml/pull/5) ([guillaume-gricourt](https://github.com/guillaume-gricourt))
+
 ## [0.9.2](https://github.com/brsynth/neo4jsbml/tree/0.9.2) (2023-02-23)
 
 [Full Changelog](https://github.com/brsynth/neo4jsbml/compare/0.9.1...0.9.2)
