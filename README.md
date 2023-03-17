@@ -2,7 +2,7 @@
 
 [![Github Version](https://img.shields.io/github/v/release/brsynth/neo4jsbml?display_name=tag&sort=semver)](version)  
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)  
-[![GitHub Super-Linter](https://github.com/brsynth/brsynth/workflows/Tests/badge.svg)](https://github.com/marketplace/actions/super-linter) [![Coverage](https://img.shields.io/coveralls/github/brsynth/neo4jsbml)](coveralls)  
+[![Documentation Status](https://readthedocs.org/projects/neo4jsbml/badge/?version=latest)](https://neo4jsbml.readthedocs.io/en/latest/?badge=latest) [![GitHub Super-Linter](https://github.com/brsynth/neo4jsbml/workflows/Tests/badge.svg)](https://github.com/marketplace/actions/super-linter) [![Coverage](https://img.shields.io/coveralls/github/brsynth/neo4jsbml)](coveralls)  
 [![DOI](https://zenodo.org/badge/585859244.svg)](https://zenodo.org/badge/latestdoi/585859244)  
 
 ## Install
