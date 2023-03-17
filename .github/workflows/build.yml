@@ -42,14 +42,11 @@ jobs:
           fetch-depth: 0
       - name: 'Check file present'
         run: |
-          [[ -f CHANGELOG.rst ]] || touch CHANGELOG.rst
+          [[ -f CHANGELOG.md ]] || touch CHANGELOG.md
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3 # Not needed with a .ruby-version file
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
-      - uses: docker://pandoc/core:2.9
-        with:
-          args: -o CHANGELOG.md CHANGELOG.rst
       - name: 'Generate CHANGELOG'
         env:
           CHANGELOG_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -58,14 +55,20 @@ jobs:
           USER=$(echo "$GITHUB_REPOSITORY" | sed -e 's/\// /g' | awk '{print $1}')
           PROJECT=$(echo "$GITHUB_REPOSITORY" | sed -e 's/\// /g' | awk '{print $2}')
           echo "$USER $PROJECT"
-          sudo github_changelog_generator --user "$USER" --project "$PROJECT" --no-unreleased
+          github_changelog_generator --user "$USER" --project "$PROJECT" --no-unreleased
       - uses: docker://pandoc/core:2.9
         with:
           args: -o CHANGELOG.rst CHANGELOG.md
-      - name: 'Upload Artifact Changelog'
+      - name: 'Upload Artifact Changelog - md'
         uses: actions/upload-artifact@v3
         with:
-          name: changelog-artifact
+          name: changelog-md-artifact
+          path: CHANGELOG.md
+          retention-days: 1
+      - name: 'Upload Artifact Changelog - rst'
+        uses: actions/upload-artifact@v3
+        with:
+          name: changelog-rst-artifact
           path: CHANGELOG.rst
           retention-days: 1
 
@@ -111,10 +114,15 @@ jobs:
         with:
           name: version-artifact
           path: ${{ needs.Version.outputs.version_dir }}
-      - name: 'Download Artifact Changelog'
+      - name: 'Download Artifact Changelog - md'
         uses: actions/download-artifact@v3
         with:
-          name: changelog-artifact
+          name: changelog-md-artifact
+      - name: 'Download Artifact Changelog - rst'
+        uses: actions/download-artifact@v3
+        with:
+          name: changelog-rst-artifact
+          path: docs/CHANGELOG.rst
       # Commit
       - name: 'Commit files'
         run: |
