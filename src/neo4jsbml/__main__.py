@@ -9,7 +9,7 @@ from neo4jsbml import _version, arrows, connect, sbml
 def main():
     """Entrypoint for neo4jsbml"""
     desc = "Import SBML file into Neo4"
-    parser = argparse.ArgumentParser(description=desc, prog="python -m neo4jsbml")
+    parser = argparse.ArgumentParser(description=desc, prog=_version.__app_name__)
 
     # Database connection
     parser_dbb = parser.add_argument_group("Database connection - Individual parameter")

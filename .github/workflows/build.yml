@@ -42,11 +42,14 @@ jobs:
           fetch-depth: 0
       - name: 'Check file present'
         run: |
-          [[ -f CHANGELOG.md ]] || touch CHANGELOG.md
+          [[ -f CHANGELOG.rst ]] || touch CHANGELOG.rst
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3 # Not needed with a .ruby-version file
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+      - uses: docker://pandoc/core:2.9
+        with:
+          args: -o CHANGELOG.md CHANGELOG.rst
       - name: 'Generate CHANGELOG'
         env:
           CHANGELOG_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -56,11 +59,14 @@ jobs:
           PROJECT=$(echo "$GITHUB_REPOSITORY" | sed -e 's/\// /g' | awk '{print $2}')
           echo "$USER $PROJECT"
           github_changelog_generator --user "$USER" --project "$PROJECT" --no-unreleased
+      - uses: docker://pandoc/core:2.9
+        with:
+          args: -o CHANGELOG.rst CHANGELOG.md
       - name: 'Upload Artifact Changelog'
         uses: actions/upload-artifact@v3
         with:
           name: changelog-artifact
-          path: CHANGELOG.md
+          path: CHANGELOG.rst
           retention-days: 1
 
   Version:
@@ -81,6 +87,9 @@ jobs:
           sed -i "2s/.*/__version__ = \"$TAG\"/" "$VERSION_PATH"
           echo "version_path=$VERSION_PATH" >> "$GITHUB_OUTPUT"
           echo "version_dir=$VERSION_DIR" >> "$GITHUB_OUTPUT"
+
+          RECIPE_PATH=$(find . -name meta.yaml | head -n 1)
+          sed -i "2s/.*/{% set version = \"$TAG\" %}/" "$RECIPE_PATH"
       - name: 'Upload Artifact Version'
         uses: actions/upload-artifact@v3
         with:
@@ -139,7 +148,7 @@ jobs:
           fetch-depth: 0
       - name: 'Bump version and push tag'
         id: tag
-        uses: mathieudutour/github-tag-action@v6.0
+        uses: mathieudutour/github-tag-action@v6.1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           release_branches: stable
