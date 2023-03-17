@@ -35,8 +35,6 @@ jobs:
 
   Changelog:
     runs-on: ubuntu-latest
-    container:
-      options: --user root
     steps:
       - uses: actions/checkout@v3
         with:
@@ -60,7 +58,7 @@ jobs:
           USER=$(echo "$GITHUB_REPOSITORY" | sed -e 's/\// /g' | awk '{print $1}')
           PROJECT=$(echo "$GITHUB_REPOSITORY" | sed -e 's/\// /g' | awk '{print $2}')
           echo "$USER $PROJECT"
-          github_changelog_generator --user "$USER" --project "$PROJECT" --no-unreleased
+          sudo github_changelog_generator --user "$USER" --project "$PROJECT" --no-unreleased
       - uses: docker://pandoc/core:2.9
         with:
           args: -o CHANGELOG.rst CHANGELOG.md
