@@ -22,6 +22,8 @@ requirements:
   run:
     - python-libsbml
     - neo4j-python-driver
+    - sphinx
+    - sphinx_rtd_theme
 
 test:
   imports:
