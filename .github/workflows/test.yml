@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.8, 3.9]
+        python-version: [3.8, 3.9, 3.10, 3.11]
     defaults:
       run:
         shell: bash -l {0}
@@ -70,7 +70,8 @@ jobs:
           coverage run -m pytest
           coverage lcov
       - name: 'Coveralls'
-        uses: coverallsapp/github-action@master
+        uses: coverallsapp/github-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          path-to-lcov: ./coverage.lcov
+          file: ./coverage.lcov
+          format: lcov
