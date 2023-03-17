@@ -35,6 +35,8 @@ jobs:
 
   Changelog:
     runs-on: ubuntu-latest
+    container:
+      options: --user root
     steps:
       - uses: actions/checkout@v3
         with:
