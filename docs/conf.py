@@ -12,9 +12,10 @@
 #
 import os
 import sys
+
 import sphinx_rtd_theme
 
-project_root = os.path.dirname(os.getcwd())
+project_root = os.path.join(os.path.dirname(os.getcwd()), "src")
 sys.path.insert(0, project_root)
 
 from neo4jsbml._version import __app_name__, __version__
