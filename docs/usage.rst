@@ -8,7 +8,7 @@ To use neo4jsbml, first install it using conda:
 
 .. code-block:: console
 
-   $ conda install -c conda-forge -n neo4jsbml
+   $ conda install -c conda-forge neo4jsbml
 
 Principles
 ----------

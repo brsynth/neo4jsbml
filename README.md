@@ -8,11 +8,7 @@
 ## Install
 
 ```sh
-git clone git@github.com:brsynth/neo4jsbml.git
-cd neo4jsbml
-conda env create -n neo4jsbml -f recipes/workflow.yml
-conda activate neo4jsbml
-pip install --no-deps .
+conda install -c conda-forge neo4jsbml
 ```
 
 ## Usage
