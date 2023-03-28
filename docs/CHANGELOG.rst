@@ -1,6 +1,14 @@
 Changelog
 =========
 
+`0.10.1 <https://github.com/brsynth/neo4jsbml/tree/0.10.1>`__ (2023-03-17)
+--------------------------------------------------------------------------
+
+`Full
+Changelog <https://github.com/brsynth/neo4jsbml/compare/0.10.0...0.10.1>`__
+
+.. _section-1:
+
 `0.10.0 <https://github.com/brsynth/neo4jsbml/tree/0.10.0>`__ (2023-03-17)
 --------------------------------------------------------------------------
 
@@ -15,7 +23,7 @@ Changelog <https://github.com/brsynth/neo4jsbml/compare/0.9.2...0.10.0>`__
 -  Read the docs `#5 <https://github.com/brsynth/neo4jsbml/pull/5>`__
    (`guillaume-gricourt <https://github.com/guillaume-gricourt>`__)
 
-.. _section-1:
+.. _section-2:
 
 `0.9.2 <https://github.com/brsynth/neo4jsbml/tree/0.9.2>`__ (2023-02-23)
 ------------------------------------------------------------------------
@@ -23,7 +31,7 @@ Changelog <https://github.com/brsynth/neo4jsbml/compare/0.9.2...0.10.0>`__
 `Full
 Changelog <https://github.com/brsynth/neo4jsbml/compare/0.9.1...0.9.2>`__
 
-.. _section-2:
+.. _section-3:
 
 `0.9.1 <https://github.com/brsynth/neo4jsbml/tree/0.9.1>`__ (2023-02-21)
 ------------------------------------------------------------------------
@@ -31,7 +39,7 @@ Changelog <https://github.com/brsynth/neo4jsbml/compare/0.9.1...0.9.2>`__
 `Full
 Changelog <https://github.com/brsynth/neo4jsbml/compare/0.9.0...0.9.1>`__
 
-.. _section-3:
+.. _section-4:
 
 `0.9.0 <https://github.com/brsynth/neo4jsbml/tree/0.9.0>`__ (2023-01-27)
 ------------------------------------------------------------------------
@@ -45,7 +53,7 @@ Changelog <https://github.com/brsynth/neo4jsbml/compare/0.8.3...0.9.0>`__
    `#4 <https://github.com/brsynth/neo4jsbml/pull/4>`__
    (`dependabot[bot] <https://github.com/apps/dependabot>`__)
 
-.. _section-4:
+.. _section-5:
 
 `0.8.3 <https://github.com/brsynth/neo4jsbml/tree/0.8.3>`__ (2023-01-16)
 ------------------------------------------------------------------------
@@ -53,7 +61,7 @@ Changelog <https://github.com/brsynth/neo4jsbml/compare/0.8.3...0.9.0>`__
 `Full
 Changelog <https://github.com/brsynth/neo4jsbml/compare/0.8.0...0.8.3>`__
 
-.. _section-5:
+.. _section-6:
 
 `0.8.0 <https://github.com/brsynth/neo4jsbml/tree/0.8.0>`__ (2023-01-16)
 ------------------------------------------------------------------------
