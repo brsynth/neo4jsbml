@@ -41,7 +41,7 @@ Configure access to Neo4j
 
 The connection to the Neo4j database needs to have several parameters defined:
 
-* protocol: ``neo4j`` or ``bolt`` (default: ``neo4j``)
+* protocol: ``neo4j``, ``neo4j+s``, ``neo4j+ssc``, ``bolt``, ``bolt+s``, ``bolt+ssc`` (default: ``neo4j``)
 * url (default: ``localhost``)
 * port (default: ``7687``)
 * user name (default: ``neo4j``)

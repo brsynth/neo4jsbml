@@ -51,7 +51,7 @@ class Connect(metaclass=singleton.Singleton):
         create a Connect from an .ini file
     """
 
-    PROTOCOLS = ["neo4j", "bolt"]
+    PROTOCOLS = ["neo4j", "neo4j+s", "neo4j+ssc", "bolt", "bolt+s", "bolt+ssc"]
 
     def __init__(
         self,

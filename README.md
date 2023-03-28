@@ -36,7 +36,7 @@ Import your data with `neo4jsbml` into Neo4j.
 ```sh
 neo4jsbml \
     # Database parameters
-    --input-protocol-str ["neo4j", "bolt"] \
+    --input-protocol-str ["neo4j", "neo4j+s", "neo4j+ssc", "bolt", "bolt+s", "bolt+ssc"] \
     --input-url-str "localhost" \
     --input-port-int 7687 \
     --input-user-str "neo4j" \
