@@ -4,7 +4,7 @@ Example
 View shared metabolite
 ----------------------
 
-View shared metabolite, fumarat, between two models: *iAF1260* and *iML1515* available from `BiGG <http://bigg.ucsd.edu>`_
+View shared metabolite, fumarate, between two models: *iAF1260* and *iML1515* available from `BiGG <http://bigg.ucsd.edu>`_
 
 .. code-block:: console
 
