@@ -4,7 +4,7 @@ Usage
 Installation
 ------------
 
-To use neo4jsbml, first install it using conda:
+With conda:
 
 .. code-block:: console
 
@@ -15,7 +15,7 @@ Principles
 
 Import data from SBML into the Neo4j database is conducted in several steps:
 
-1. Define your schema with `Arrows <https://arrows.app>`_ and download the schema at the JSON format
+1. Define your schema with `Arrows <https://arrows.app>`_ and download the schema at the ``JSON`` format
 2. Import your data into Neo4j
 
 
@@ -98,7 +98,7 @@ Command line
 ~~~~~~~~~~~~
 To import your data with ``neo4jsbml`` into Neo4j, you will need:
 1. the database parameters
-2. the ``SBML`` file, the model
+2. the ``SBML`` file, e.g. the model
 3. the ``JSON`` file downloaded from `arrows <https://arrows.app>`_
 
 .. code-block:: console
