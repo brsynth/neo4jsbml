@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.11.0](https://github.com/brsynth/neo4jsbml/tree/0.11.0) (2023-03-28)
+
+[Full Changelog](https://github.com/brsynth/neo4jsbml/compare/0.10.1...0.11.0)
+
+**Implemented enhancements:**
+
+- feat\(neo4jsbml\): enable encryption in url [\#7](https://github.com/brsynth/neo4jsbml/pull/7) ([guillaume-gricourt](https://github.com/guillaume-gricourt))
+
 ## [0.10.1](https://github.com/brsynth/neo4jsbml/tree/0.10.1) (2023-03-17)
 
 [Full Changelog](https://github.com/brsynth/neo4jsbml/compare/0.10.0...0.10.1)
