@@ -58,7 +58,7 @@ jobs:
           github_changelog_generator --user "$USER" --project "$PROJECT" --no-unreleased
       - uses: docker://pandoc/core:2.9
         with:
-          args: -o CHANGELOG.rst CHANGELOG.md
+          args: -o CHANGELOG.data.rst CHANGELOG.md
       - name: 'Upload Artifact Changelog - md'
         uses: actions/upload-artifact@v3
         with:
@@ -69,7 +69,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: changelog-rst-artifact
-          path: CHANGELOG.rst
+          path: CHANGELOG.data.rst
           retention-days: 1
 
   Version:
