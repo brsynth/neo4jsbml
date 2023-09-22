@@ -13,7 +13,7 @@ jobs:
      tag: ${{ steps.tag_label.outputs.tag }}
      changelog: ${{ steps.tag_raw.outputs.changelog }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false
           fetch-depth: 0
@@ -36,7 +36,7 @@ jobs:
   Changelog:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false
           fetch-depth: 0
@@ -56,11 +56,20 @@ jobs:
           PROJECT=$(echo "$GITHUB_REPOSITORY" | sed -e 's/\// /g' | awk '{print $2}')
           echo "$USER $PROJECT"
           github_changelog_generator --user "$USER" --project "$PROJECT" --no-unreleased
-      - name: 'Upload Artifact Changelog'
+      - uses: docker://pandoc/core:2.9
+        with:
+          args: -o CHANGELOG.data.rst CHANGELOG.md
+      - name: 'Upload Artifact Changelog - md'
         uses: actions/upload-artifact@v3
         with:
-          name: changelog-artifact
+          name: changelog-md-artifact
           path: CHANGELOG.md
+          retention-days: 1
+      - name: 'Upload Artifact Changelog - rst'
+        uses: actions/upload-artifact@v3
+        with:
+          name: changelog-rst-artifact
+          path: CHANGELOG.data.rst
           retention-days: 1
 
   Version:
@@ -70,7 +79,7 @@ jobs:
       version_path: ${{ steps.update_version.outputs.version_path }}
       version_dir: ${{ steps.update_version.outputs.version_dir }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: 'Update _version.py'
         id: update_version
         env:
@@ -81,6 +90,9 @@ jobs:
           sed -i "2s/.*/__version__ = \"$TAG\"/" "$VERSION_PATH"
           echo "version_path=$VERSION_PATH" >> "$GITHUB_OUTPUT"
           echo "version_dir=$VERSION_DIR" >> "$GITHUB_OUTPUT"
+
+          RECIPE_PATH=$(find . -name meta.yaml | head -n 1)
+          sed -i "2s/.*/{% set version = \"$TAG\" %}/" "$RECIPE_PATH"
       - name: 'Upload Artifact Version'
         uses: actions/upload-artifact@v3
         with:
@@ -93,7 +105,7 @@ jobs:
     steps:
       # Get Data
       - name: 'Checkout'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           persist-credentials: false
           fetch-depth: 0
@@ -102,10 +114,15 @@ jobs:
         with:
           name: version-artifact
           path: ${{ needs.Version.outputs.version_dir }}
-      - name: 'Download Artifact Changelog'
+      - name: 'Download Artifact Changelog - md'
         uses: actions/download-artifact@v3
         with:
-          name: changelog-artifact
+          name: changelog-md-artifact
+      - name: 'Download Artifact Changelog - rst'
+        uses: actions/download-artifact@v3
+        with:
+          name: changelog-rst-artifact
+          path: docs/
       # Commit
       - name: 'Commit files'
         run: |
@@ -133,13 +150,13 @@ jobs:
     needs: [Commit, TagRaw]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false
           fetch-depth: 0
       - name: 'Bump version and push tag'
         id: tag
-        uses: mathieudutour/github-tag-action@v6.0
+        uses: mathieudutour/github-tag-action@v6.1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           release_branches: stable
@@ -158,7 +175,7 @@ jobs:
         shell: bash -l {0} # activate env conda
     steps:
       - name: 'Checkout'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: 'Deploying miniconda'
         uses: conda-incubator/setup-miniconda@v2
         with:

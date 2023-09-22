@@ -1,17 +1,13 @@
 # Neo4jSbml
 
-[![Github Version](https://img.shields.io/github/v/release/brsynth/neo4jsbml?display_name=tag&sort=semver)](version)  
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)  
-[![GitHub Super-Linter](https://github.com/brsynth/brsynth/workflows/Tests/badge.svg)](https://github.com/marketplace/actions/super-linter) [![Coverage](https://img.shields.io/coveralls/github/brsynth/neo4jsbml)](coveralls)  
+[![Github Version](https://img.shields.io/github/v/release/brsynth/neo4jsbml?display_name=tag&sort=semver)](version) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)  
+[![Documentation Status](https://readthedocs.org/projects/neo4jsbml/badge/?version=latest)](https://neo4jsbml.readthedocs.io/en/latest/?badge=latest) [![GitHub Super-Linter](https://github.com/brsynth/neo4jsbml/workflows/Tests/badge.svg)](https://github.com/marketplace/actions/super-linter)  
+[![DOI](https://zenodo.org/badge/585859244.svg)](https://zenodo.org/badge/latestdoi/585859244)  
 
 ## Install
 
 ```sh
-git clone git@github.com:brsynth/neo4jsbml.git
-cd neo4jsbml
-conda env create -n neo4jsbml -f recipes/workflow.yml
-conda activate neo4jsbml
-pip install --no-deps .
+conda install -c conda-forge neo4jsbml
 ```
 
 ## Usage
@@ -19,26 +15,27 @@ pip install --no-deps .
 ### Step 1
 
 Create a schema with [arrows](https://arrows.app) like:  
-![schema](tests/dataset/PathwayModelisation-1.0.0.png "Schema SBML")
+![schema](docs/_static/PathwayModelisation-1.0.0.arrows.png "Schema SBML")  
 Rules:
 * Nodes are labelled based on SBML object name as defined in the [SBML specification](https://sbml.org)
 * Properties are labelled based on SBML object properties as defined the [SBML specification](https://sbml.org)
 
 ### Step 2
 
-Export your schema at the JSON format.
+Export your schema at the JSON format.  
+![schema](docs/_static/arrows.dwl.png "Download JSON")
 
 ### Step 3
 
 Import your data with `neo4jsbml` into Neo4j.  
-* Use either a configuration file `ini`, an example is provided in the `template` directory or individual parameters
+* Use either a configuration file `ini` or individual parameters
 * Password needs to be store in a file for safety security
-* Pass a `tag` to identify the model loaded into the database
+* If you have multiple model in the database, pass a `tag` to identify the model loaded into the database if you want to avoid collision
 
 ```sh
-python -m neo4jsbml \
+neo4jsbml \
     # Database parameters
-    --input-protocol-str ["neo4j", "bolt"] \
+    --input-protocol-str ["neo4j", "neo4j+s", "neo4j+ssc", "bolt", "bolt+s", "bolt+ssc"] \
     --input-url-str "localhost" \
     --input-port-int 7687 \
     --input-user-str "neo4j" \
@@ -51,10 +48,4 @@ python -m neo4jsbml \
     --input-file-sbml <file> \
     --input-tag-str "" \
     --input-modelisation-json <file>
-```
-
-## Test
-
-```sh
-python -m pytest
 ```

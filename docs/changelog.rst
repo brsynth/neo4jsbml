@@ -1,0 +1,1 @@
+.. include:: ./CHANGELOG.data.rst

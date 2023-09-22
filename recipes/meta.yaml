@@ -22,12 +22,14 @@ requirements:
   run:
     - python-libsbml
     - neo4j-python-driver
+    - sphinx
+    - sphinx_rtd_theme
 
 test:
   imports:
     - {{ name }}
   commands:
-    - python -m {{ name }} --help
+    - {{ name }} --help
 
 about:
   home: https://github.com/brsynth/{{ name }}

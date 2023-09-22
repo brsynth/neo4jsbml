@@ -288,7 +288,7 @@ class Sbml(object):
                 from_el_name = from_el.getElementName()
                 from_el_id = from_el.getId()
                 if from_el_name.endswith("Reference"):
-                    from_el_name = from_el_name.removesuffix("Reference")
+                    from_el_name = re.sub(r"Reference$", "", from_el_name)
                     methods = Sbml.find_method(obj=from_el, label=from_el_name)
                     if len(methods) == 1:
                         to_id = eval("from_el.%s()" % (methods[0],))
@@ -332,7 +332,7 @@ class Sbml(object):
                 to_el_name = to_el.getElementName()
                 to_el_id = to_el.getId()
                 if to_el_name.endswith("Reference"):
-                    to_el_name = to_el_name.removesuffix("Reference")
+                    to_el_name = re.sub(r"Reference$", "", to_el_name)
                     methods = Sbml.find_method(obj=to_el, label=to_el_name)
                     if len(methods) == 1:
                         from_id = eval("to_el.%s()" % (methods[0],))

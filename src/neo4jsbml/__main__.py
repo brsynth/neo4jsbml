@@ -9,7 +9,7 @@ from neo4jsbml import _version, arrows, connect, sbml
 def main():
     """Entrypoint for neo4jsbml"""
     desc = "Import SBML file into Neo4"
-    parser = argparse.ArgumentParser(description=desc, prog="python -m neo4jsbml")
+    parser = argparse.ArgumentParser(description=desc, prog=_version.__app_name__)
 
     # Database connection
     parser_dbb = parser.add_argument_group("Database connection - Individual parameter")
@@ -57,7 +57,7 @@ def main():
     parser_input.add_argument(
         "--input-file-sbml",
         required=True,
-        help="",
+        help="SBML file model",
     )
     parser_input.add_argument(
         "--input-tag-str",
@@ -67,6 +67,14 @@ def main():
         "--input-modelisation-json",
         required=True,
         help="Modelisation created and downloaded from arrow",
+    )
+
+    # Parameters
+    parser_params = parser.add_argument_group("Parameters")
+    parser_params.add_argument(
+        "--parameters-dry-run",
+        action="store_true",
+        help="Dry run: parse Schema file only",
     )
 
     # Compute
@@ -91,6 +99,11 @@ def main():
         )
         parser.exit(1)
 
+    is_dry_run = False
+    if args.parameters_dry_run:
+        logging.info("Dry run mode, no data will be loaded into the database")
+        is_dry_run = True
+
     # Connection to database
     logging.info("Connection to database")
     con = None
@@ -106,7 +119,7 @@ def main():
             database=args.input_database_str,
             password_path=args.input_password_file,
         )
-    if con.is_connected() is False:
+    if con.is_connected() is False and is_dry_run is False:
         logging.error("Unable to connect to the database")
         parser.exit(1)
 
@@ -126,14 +139,15 @@ def main():
     rel = sbm.format_relationships(relationships=arr.relationships)
 
     # Import into neo4j
-    logging.info("Import into neo4j - nodes")
-    con.create_nodes(nodes=nod)
+    if is_dry_run is False:
+        logging.info("Import into neo4j - nodes")
+        con.create_nodes(nodes=nod)
 
-    if arr.relationships is not None and len(arr.relationships) > 0:
-        logging.info("Import into neo4j - relationships")
-        con.create_relationships(relationships=rel)
-    else:
-        logging.info("None relationship created")
+        if arr.relationships is not None and len(arr.relationships) > 0:
+            logging.info("Import into neo4j - relationships")
+            con.create_relationships(relationships=rel)
+        else:
+            logging.info("None relationship created")
 
     logging.info("End - %s" % (_version.__app_name__,))
 

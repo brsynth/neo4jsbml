@@ -14,12 +14,12 @@ def data_directory():
 
 @pytest.fixture(scope="session")
 def config_path(data_directory):
-    return os.path.join(data_directory, "localhost.ini")
+    return os.path.join(data_directory, "database", "localhost.ini")
 
 
 @pytest.fixture(scope="session")
 def iml_path(data_directory):
-    return os.path.join(data_directory, "iML1515.xml.gz")
+    return os.path.join(data_directory, "model", "iML1515.xml.gz")
 
 
 @pytest.fixture(scope="function")
@@ -29,12 +29,12 @@ def sbml_iml(iml_path):
 
 @pytest.fixture(scope="session")
 def ecore_path(data_directory):
-    return os.path.join(data_directory, "e_coli_core.xml.gz")
+    return os.path.join(data_directory, "model", "e_coli_core.xml.gz")
 
 
 @pytest.fixture(scope="session")
 def iml_toy_path(data_directory):
-    return os.path.join(data_directory, "iML1515.toy.xml.gz")
+    return os.path.join(data_directory, "model", "iML1515.toy.xml.gz")
 
 
 @pytest.fixture(scope="function")
@@ -44,7 +44,9 @@ def sbml_toy(iml_toy_path):
 
 @pytest.fixture(scope="session")
 def pathway_one_path(data_directory):
-    return os.path.join(data_directory, "PathwayModelisation-1.0.0.json")
+    return os.path.join(
+        data_directory, "modelisation", "PathwayModelisation-1.0.0.json"
+    )
 
 
 @pytest.fixture(scope="function")
