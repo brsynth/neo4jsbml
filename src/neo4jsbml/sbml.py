@@ -1,7 +1,7 @@
 import hashlib
 import logging
 import re
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Generator, List, Optional
 
 import libsbml
 
@@ -318,20 +318,20 @@ class Sbml(object):
                 from_el_name = from_el.getElementName()
                 from_el_id = from_el.getId()
                 if from_el_name.endswith("Reference"):
-                    from_el_name = re.sub(r"Reference$", "", from_el_name)
-                    methods = Sbml.find_method(obj=from_el, label=from_el_name)
-                    if len(methods) == 1:
-                        to_id = eval("from_el.%s()" % (methods[0],))
-                        dbb_rel = srelationship.SRelationship(
-                            id="",
-                            from_label=from_label,
-                            to_label=to_label,
-                            from_id=from_id,
-                            to_id=to_id,
-                            label=arrow_label,
-                            properties={},
-                        )
-                        res.append(dbb_rel)
+                    for attribute in self.iterate_over_attribute(obj=from_el):
+                        to_id = eval("from_el.%s" % (attribute,))
+                        if self.validate_id(value=to_id):
+                            dbb_rel = srelationship.SRelationship(
+                                id="",
+                                from_label=from_label,
+                                to_label=to_label,
+                                from_id=from_id,
+                                to_id=to_id,
+                                label=arrow_label,
+                                properties={},
+                            )
+                            res.append(dbb_rel)
+                            break
                 elif self.validate_id(value=from_el_id):
                     dbb_rel = srelationship.SRelationship(
                         id="",
@@ -362,20 +362,20 @@ class Sbml(object):
                 to_el_name = to_el.getElementName()
                 to_el_id = to_el.getId()
                 if to_el_name.endswith("Reference"):
-                    to_el_name = re.sub(r"Reference$", "", to_el_name)
-                    methods = Sbml.find_method(obj=to_el, label=to_el_name)
-                    if len(methods) == 1:
-                        from_id = eval("to_el.%s()" % (methods[0],))
-                        dbb_rel = srelationship.SRelationship(
-                            id="",
-                            from_label=from_label,
-                            to_label=to_label,
-                            from_id=from_id,
-                            to_id=to_id,
-                            label=arrow_label,
-                            properties={},
-                        )
-                        res.append(dbb_rel)
+                    for attribute in self.iterate_over_attribute(obj=to_el):
+                        from_id = eval("to_el.%s" % (attribute,))
+                        if self.validate_id(value=from_id):
+                            dbb_rel = srelationship.SRelationship(
+                                id="",
+                                from_label=from_label,
+                                to_label=to_label,
+                                from_id=from_id,
+                                to_id=to_id,
+                                label=arrow_label,
+                                properties={},
+                            )
+                            res.append(dbb_rel)
+                            break
                 elif self.validate_id(value=to_el_id):
                     dbb_rel = srelationship.SRelationship(
                         id="",
@@ -635,6 +635,30 @@ class Sbml(object):
         for plugin in self.plugins:
             candidates.append(obj.getPlugin(plugin))
         return candidates
+
+    @classmethod
+    def iterate_over_attribute(cls, obj: Any) -> Generator:
+        """Iterate over attributes of an object
+
+        Parameters
+        ----------
+        obj: Any
+            any object
+
+        Return
+        ------
+        Generator
+        """
+        # Exact match
+        for attribute in dir(obj):
+            if not attribute.startswith("__"):
+                attr = None
+                try:
+                    attr = getattr(obj, attribute)
+                except Exception:
+                    pass
+                if attr and not callable(attr):
+                    yield attribute
 
     @classmethod
     def find_method(cls, obj: Any, label: str, exact: bool = False) -> List[str]:
