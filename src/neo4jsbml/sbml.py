@@ -142,16 +142,19 @@ class Sbml(object):
         res: List[srelationship.SRelationship] = []
         # Determine forward or reverse
         is_forward = True
-        from_obj = self.get_element_by_id(value=from_ids[0])
-        to_obj = self.get_element_by_id(value=to_ids[0])
 
-        # Search relationships by method name
-        methods = Sbml.find_method(obj=from_obj, label=to_label)
-        if len(methods) == 0:
-            methods = Sbml.find_method(obj=to_obj, label=from_label)
-            if len(methods) == 1:
+        # Search relationships by method name, at least one exists
+        methods = []
+        for from_id in from_ids:
+            from_obj = self.get_element_by_id(value=from_id)
+            methods.extend(Sbml.find_method(obj=from_obj, label=to_label))
+        if len(set(methods)) == 0:
+            for to_id in to_ids:
+                to_obj = self.get_element_by_id(value=to_id)
+                methods.extend(Sbml.find_method(obj=to_obj, label=from_label))
+            if len(set(methods)) == 1:
                 is_forward = False
-
+        methods = list(set(methods))
         if len(methods) > 1 or len(methods) < 1:
             return res
 
@@ -230,7 +233,7 @@ class Sbml(object):
             for obj in objs:
                 from_obj = obj
                 for label in labels:
-                    methods = Sbml.find_method(obj=from_obj, label=label)
+                    methods = Sbml.find_method(obj=from_obj, label=label, exact=True)
                     if len(methods) > 0:
                         break
                 if len(methods) > 0:
@@ -263,7 +266,7 @@ class Sbml(object):
             for obj in objs:
                 to_obj = obj
                 for label in labels:
-                    methods = Sbml.find_method(obj=to_obj, label=label)
+                    methods = Sbml.find_method(obj=to_obj, label=label, exact=True)
                     if len(methods) > 0:
                         break
                 if len(methods) > 0:
