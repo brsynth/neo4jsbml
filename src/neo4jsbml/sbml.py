@@ -55,7 +55,9 @@ class Sbml(object):
 
     PLUGINS = ["fbc"]
 
-    def __init__(self, document: libsbml.SBML_DOCUMENT, tag: Optional[str]) -> None:
+    def __init__(
+        self, document: libsbml.SBML_DOCUMENT, tag: Optional[str] = None
+    ) -> None:
         self.tag = tag
         self.document = document
         self.model = self.document.getModel()
@@ -417,12 +419,12 @@ class Sbml(object):
             if from_obj is None:
                 continue
             for element in from_obj.getListOfAllElements():
-                to_id = None
+                to_id = ""
                 methods = Sbml.find_method(obj=element, label=to_label, exact=True)
                 if len(methods) == 1:
                     try:
                         to_id = eval("element.%s()" % (methods[0],))
-                    except:
+                    except Exception:
                         pass
                 if (
                     to_id is None
@@ -446,12 +448,12 @@ class Sbml(object):
             if to_obj is None:
                 continue
             for element in to_obj.getListOfAllElements():
-                from_id = None
+                from_id = ""
                 methods = Sbml.find_method(obj=element, label=from_label, exact=True)
                 if len(methods) == 1:
                     try:
                         from_id = eval("element.%s()" % (methods[0],))
-                    except:
+                    except Exception:
                         pass
                 if (
                     from_id is None
