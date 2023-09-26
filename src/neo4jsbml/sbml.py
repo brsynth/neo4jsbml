@@ -64,6 +64,8 @@ class Sbml(object):
         self.node_map_item: Dict[str, List[str]] = {}
         self.node_map_label: Dict[str, str] = {}
         self.elements: Dict[str, Any] = {}
+        self.element_alls: Dict[str, Any] = {}  # speed up element retrievial
+
         if self.model is None:
             raise ValueError("No model found")
         self.plugins = []
@@ -144,6 +146,10 @@ class Sbml(object):
                 dbb_node.clean_properties()
 
                 res.append(dbb_node)
+
+        # Populate element_alls
+        for item in self.document.getListOfAllElements():
+            self.element_alls[self.create_id(value=item)] = item
         return res
 
     def find_by_label(
@@ -587,13 +593,9 @@ class Sbml(object):
             return False
         if self.elements.get(value):
             return True
-        for element in self.model.getListOfAllElements():
-            id_current = self.create_id(value=element)
-            if value == id_current:
-                return True
         if self.document.getElementBySId(value) is not None:
             return True
-        return False
+        return value in self.element_alls.keys()
 
     def get_element_by_id(self, value: str) -> Optional[Any]:
         """Return an element belonging to the model from its ID.
@@ -612,10 +614,7 @@ class Sbml(object):
             return self.document.getElementBySId(value)
         if self.elements.get(value):
             return self.elements.get(value)
-        for element in self.model.getListOfAllElements():
-            if self.create_id(value=element) == value:
-                return element
-        return None
+        return self.element_alls.get(value, None)
 
     def create_id(self, value: Any) -> str:
         """Sometimes an element of the model has no ID.
@@ -676,12 +675,19 @@ class Sbml(object):
         """
         # Exact match
         for attribute in dir(obj):
-            if not attribute.startswith("__"):
-                attr = None
-                try:
-                    attr = getattr(obj, attribute)
-                except Exception:
-                    pass
+            if (
+                not attribute.startswith("__")
+                and not attribute.startswith("enable")
+                and not attribute.startswith("get")
+                and not attribute.startswith("is")
+                and not attribute.startswith("matches")
+                and not attribute.startswith("remove")
+                and not attribute.startswith("set")
+                and not attribute.startswith("unset")
+                and not attribute.startswith("write")
+            ):
+                attr = getattr(obj, attribute, None)
+
                 if attr and not callable(attr):
                     yield attribute
 
