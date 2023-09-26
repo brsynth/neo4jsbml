@@ -126,9 +126,9 @@ class Sbml(object):
                 # Fill tag if needed
                 if self.tag is not None:
                     data["tag"] = self.tag
-                # item has no id in the SMBL, fix this
-                if data.get("id", None) is None or data.get("id", "") == "":
-                    data["id"] = self.create_id(value=item)
+                # Overwrite id attribute
+                data["id"] = self.create_id(value=item)
+                # Add name attribute
                 if data.get("name", None) is None or data.get("name", "") == "":
                     data["name"] = data["id"]
                 # Update map
@@ -195,7 +195,7 @@ class Sbml(object):
                         cur_obj = eval(
                             'from_obj.%s("%s")' % (methods[0], to_obj.getId())
                         )
-                        cur_id = cur_obj.getId()
+                        cur_id = self.create_id(value=cur_obj)
                         is_found = True
                     except Exception:
                         pass
@@ -203,7 +203,7 @@ class Sbml(object):
                 if is_found is False:
                     try:
                         cur_obj = eval("from_obj.%s(%s)" % (methods[0], to_obj.getId()))
-                        cur_id = cur_obj.getId()
+                        cur_id = self.create_id(value=cur_obj)
                         is_found = True
                     except Exception:
                         pass
@@ -329,7 +329,7 @@ class Sbml(object):
             list_of_els = eval("from_obj.%s()" % (methods[0],))
             for from_el in list_of_els:
                 from_el_name = from_el.getElementName()
-                from_el_id = from_el.getId()
+                from_el_id = self.create_id(value=from_el)
                 if from_el_name.endswith("Reference"):
                     for attribute in self.iterate_over_attribute(obj=from_el):
                         to_id = eval("from_el.%s" % (attribute,))
@@ -373,7 +373,7 @@ class Sbml(object):
             list_of_els = eval("to_obj.%s()" % (methods[0],))
             for to_el in list_of_els:
                 to_el_name = to_el.getElementName()
-                to_el_id = to_el.getId()
+                to_el_id = self.create_id(value=to_el)
                 if to_el_name.endswith("Reference"):
                     for attribute in self.iterate_over_attribute(obj=to_el):
                         from_id = eval("to_el.%s" % (attribute,))
@@ -568,12 +568,12 @@ class Sbml(object):
                 srelation.add_property(label="tag", value=self.tag)
         return res
 
-    def validate_id(self, value: Any) -> bool:
+    def validate_id(self, value: str) -> bool:
         """Check if an ID is in the SBML document.
 
         Paramerters
         -----------
-        value: Any
+        value: str
             an ID to check
 
         Return
@@ -583,16 +583,20 @@ class Sbml(object):
         """
         if not isinstance(value, str):
             return False
-        if self.document.getElementBySId(value) is not None:
-            return True
         if self.elements.get(value):
             return True
-        return value in set(x.getId() for x in self.model.getListOfAllElements())
+        for element in self.model.getListOfAllElements():
+            id_current = self.create_id(value=element)
+            if value == id_current:
+                return True
+        if self.document.getElementBySId(value) is not None:
+            return True
+        return False
 
     def get_element_by_id(self, value: str) -> Optional[Any]:
         """Return an element belonging to the model from its ID.
 
-        Paramerters
+        Parameters
         -----------
         value: str
             the ID of the element to retrieve
@@ -607,7 +611,7 @@ class Sbml(object):
         if self.elements.get(value):
             return self.elements.get(value)
         for element in self.model.getListOfAllElements():
-            if element.getId() == value:
+            if self.create_id(value=element) == value:
                 return element
         return None
 
@@ -615,7 +619,7 @@ class Sbml(object):
         """Sometimes an element of the model has no ID.
         If the ID exists it will be returned otherwise, an hash computed on the string representation is used.
 
-        Paramerters
+        Parameters
         -----------
         value: Any
             An element of the model
@@ -625,9 +629,15 @@ class Sbml(object):
         str
             The ID of the element
         """
+        # Use Id or IdAttribute if it set
         ident = value.getId()
+        if self.has_method(obj=value, method="getIdAttribute"):
+            id_attribute = value.getIdAttribute()
+            if id_attribute != "" and id_attribute != ident:
+                ident += "-" + id_attribute
         if ident and ident != "":
             return ident
+        # Use str representation
         value_str = value.toXMLNode().toXMLString()
         ident = hashlib.md5(value_str.encode("utf8")).hexdigest()
         return ident
@@ -672,6 +682,21 @@ class Sbml(object):
                     pass
                 if attr and not callable(attr):
                     yield attribute
+
+    @classmethod
+    def has_method(cls, obj: Any, method: str) -> bool:
+        """Given an object, check if an object as a method.
+
+        Parameters
+        ----------
+        obj: Any
+            any object
+
+        Return
+        ------
+        bool
+        """
+        return method in obj.__dir__()
 
     @classmethod
     def find_method(cls, obj: Any, label: str, exact: bool = False) -> List[str]:
