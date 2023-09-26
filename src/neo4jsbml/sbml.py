@@ -109,7 +109,20 @@ class Sbml(object):
                         continue
                     if prop.lower() == "id":
                         prop = "id"
-                    data[prop] = eval("item.%s()" % (methods[0],))
+                    # Check if value need to be formatted: str, math, ... (?)
+                    value = eval("item.%s()" % (methods[0],))
+                    if type(value) == libsbml.XMLNode:
+                        try:
+                            value = value.toXMLString()
+                        except Exception:
+                            pass
+                    elif type(value) == libsbml.ASTNode:
+                        try:
+                            value = libsbml.formulaToL3String(value)
+                        except Exception:
+                            pass
+                    data[prop] = value
+
                 # Fill tag if needed
                 if self.tag is not None:
                     data["tag"] = self.tag
