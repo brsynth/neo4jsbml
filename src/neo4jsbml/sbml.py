@@ -1,6 +1,7 @@
+import hashlib
 import logging
 import re
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Generator, List, Optional
 
 import libsbml
 
@@ -54,12 +55,17 @@ class Sbml(object):
 
     PLUGINS = ["fbc"]
 
-    def __init__(self, document: libsbml.SBML_DOCUMENT, tag: Optional[str]) -> None:
+    def __init__(
+        self, document: libsbml.SBML_DOCUMENT, tag: Optional[str] = None
+    ) -> None:
         self.tag = tag
         self.document = document
         self.model = self.document.getModel()
         self.node_map_item: Dict[str, List[str]] = {}
         self.node_map_label: Dict[str, str] = {}
+        self.elements: Dict[str, Any] = {}
+        self.element_alls: Dict[str, Any] = {}  # speed up element retrievial
+
         if self.model is None:
             raise ValueError("No model found")
         self.plugins = []
@@ -107,24 +113,43 @@ class Sbml(object):
                         continue
                     if prop.lower() == "id":
                         prop = "id"
-                    data[prop] = eval("item.%s()" % (methods[0],))
+                    # Check if value need to be formatted: str, math, ... (?)
+                    value = eval("item.%s()" % (methods[0],))
+                    if type(value) == libsbml.XMLNode:
+                        try:
+                            value = value.toXMLString()
+                        except Exception:
+                            pass
+                    elif type(value) == libsbml.ASTNode:
+                        try:
+                            value = libsbml.formulaToL3String(value)
+                        except Exception:
+                            pass
+                    data[prop] = value
+
                 # Fill tag if needed
                 if self.tag is not None:
                     data["tag"] = self.tag
-                if data.get("id", None) is None or data.get("id", "") == "":
-                    data["id"] = "%s.%s" % (label, ix)
+                # Overwrite id attribute
+                data["id"] = self.create_id(value=item)
+                # Add name attribute
                 if data.get("name", None) is None or data.get("name", "") == "":
                     data["name"] = data["id"]
                 # Update map
                 if arrow_node.id not in self.node_map_item.keys():
                     self.node_map_item[arrow_node.id] = []
                 self.node_map_item[arrow_node.id].append(data["id"])
+                self.elements[data["id"]] = item
 
                 dbb_node.id = data.pop("id")
                 dbb_node.properties = data
                 dbb_node.clean_properties()
 
                 res.append(dbb_node)
+
+        # Populate element_alls
+        for item in self.document.getListOfAllElements():
+            self.element_alls[self.create_id(value=item)] = item
         return res
 
     def find_by_label(
@@ -138,16 +163,19 @@ class Sbml(object):
         res: List[srelationship.SRelationship] = []
         # Determine forward or reverse
         is_forward = True
-        from_obj = self.document.getElementBySId(from_ids[0])
-        to_obj = self.document.getElementBySId(to_ids[0])
 
-        # Search relationships by method name
-        methods = Sbml.find_method(obj=from_obj, label=to_label)
-        if len(methods) == 0:
-            methods = Sbml.find_method(obj=to_obj, label=from_label)
-            if len(methods) == 1:
+        # Search relationships by method name, at least one exists
+        methods = []
+        for from_id in from_ids:
+            from_obj = self.get_element_by_id(value=from_id)
+            methods.extend(Sbml.find_method(obj=from_obj, label=to_label))
+        if len(set(methods)) == 0:
+            for to_id in to_ids:
+                to_obj = self.get_element_by_id(value=to_id)
+                methods.extend(Sbml.find_method(obj=to_obj, label=from_label))
+            if len(set(methods)) == 1:
                 is_forward = False
-
+        methods = list(set(methods))
         if len(methods) > 1 or len(methods) < 1:
             return res
 
@@ -158,14 +186,37 @@ class Sbml(object):
 
         for from_id in from_ids:
             for to_id in to_ids:
-                from_obj = self.document.getElementBySId(from_id)
-                to_obj = self.document.getElementBySId(to_id)
+                from_obj = self.get_element_by_id(value=from_id)
+                to_obj = self.get_element_by_id(value=to_id)
                 if from_obj is None or to_obj is None:
                     continue
-
+                is_found = False
+                # Try without argument
                 try:
                     cur_id = eval("from_obj.%s()" % (methods[0],))
+                    is_found = True
                 except Exception:
+                    pass
+                # Try str argument
+                if is_found is False:
+                    try:
+                        cur_obj = eval(
+                            'from_obj.%s("%s")' % (methods[0], to_obj.getId())
+                        )
+                        cur_id = self.create_id(value=cur_obj)
+                        is_found = True
+                    except Exception:
+                        pass
+                # Try int argument
+                if is_found is False:
+                    try:
+                        cur_obj = eval("from_obj.%s(%s)" % (methods[0], to_obj.getId()))
+                        cur_id = self.create_id(value=cur_obj)
+                        is_found = True
+                    except Exception:
+                        pass
+
+                if is_found is False:
                     continue
                 if cur_id == to_id:
                     dbb_rel = srelationship.SRelationship(
@@ -194,7 +245,7 @@ class Sbml(object):
     ) -> List[srelationship.SRelationship]:
         res: List[srelationship.SRelationship] = []
         for from_id in from_ids:
-            from_obj = self.document.getElementBySId(from_id)
+            from_obj = self.get_element_by_id(value=from_id)
             if from_obj is None:
                 continue
             methods = []
@@ -203,7 +254,7 @@ class Sbml(object):
             for obj in objs:
                 from_obj = obj
                 for label in labels:
-                    methods = Sbml.find_method(obj=from_obj, label=label)
+                    methods = Sbml.find_method(obj=from_obj, label=label, exact=True)
                     if len(methods) > 0:
                         break
                 if len(methods) > 0:
@@ -227,7 +278,7 @@ class Sbml(object):
                 )
                 res.append(dbb_rel)
         for to_id in to_ids:
-            to_obj = self.document.getElementBySId(to_id)
+            to_obj = self.get_element_by_id(value=to_id)
             if to_obj is None:
                 continue
             methods = []
@@ -236,7 +287,7 @@ class Sbml(object):
             for obj in objs:
                 to_obj = obj
                 for label in labels:
-                    methods = Sbml.find_method(obj=to_obj, label=label)
+                    methods = Sbml.find_method(obj=to_obj, label=label, exact=True)
                     if len(methods) > 0:
                         break
                 if len(methods) > 0:
@@ -271,7 +322,7 @@ class Sbml(object):
     ) -> List[srelationship.SRelationship]:
         res: List[srelationship.SRelationship] = []
         for from_id in from_ids:
-            from_obj = self.document.getElementBySId(from_id)
+            from_obj = self.get_element_by_id(value=from_id)
             if from_obj is None:
                 continue
             methods = []
@@ -286,22 +337,22 @@ class Sbml(object):
             list_of_els = eval("from_obj.%s()" % (methods[0],))
             for from_el in list_of_els:
                 from_el_name = from_el.getElementName()
-                from_el_id = from_el.getId()
+                from_el_id = self.create_id(value=from_el)
                 if from_el_name.endswith("Reference"):
-                    from_el_name = re.sub(r"Reference$", "", from_el_name)
-                    methods = Sbml.find_method(obj=from_el, label=from_el_name)
-                    if len(methods) == 1:
-                        to_id = eval("from_el.%s()" % (methods[0],))
-                        dbb_rel = srelationship.SRelationship(
-                            id="",
-                            from_label=from_label,
-                            to_label=to_label,
-                            from_id=from_id,
-                            to_id=to_id,
-                            label=arrow_label,
-                            properties={},
-                        )
-                        res.append(dbb_rel)
+                    for attribute in self.iterate_over_attribute(obj=from_el):
+                        to_id = eval("from_el.%s" % (attribute,))
+                        if self.validate_id(value=to_id):
+                            dbb_rel = srelationship.SRelationship(
+                                id="",
+                                from_label=from_label,
+                                to_label=to_label,
+                                from_id=from_id,
+                                to_id=to_id,
+                                label=arrow_label,
+                                properties={},
+                            )
+                            res.append(dbb_rel)
+                            break
                 elif self.validate_id(value=from_el_id):
                     dbb_rel = srelationship.SRelationship(
                         id="",
@@ -315,7 +366,7 @@ class Sbml(object):
                     res.append(dbb_rel)
 
         for to_id in to_ids:
-            to_obj = self.document.getElementBySId(to_id)
+            to_obj = self.get_element_by_id(value=to_id)
             if to_obj is None:
                 continue
             methods = []
@@ -330,22 +381,22 @@ class Sbml(object):
             list_of_els = eval("to_obj.%s()" % (methods[0],))
             for to_el in list_of_els:
                 to_el_name = to_el.getElementName()
-                to_el_id = to_el.getId()
+                to_el_id = self.create_id(value=to_el)
                 if to_el_name.endswith("Reference"):
-                    to_el_name = re.sub(r"Reference$", "", to_el_name)
-                    methods = Sbml.find_method(obj=to_el, label=to_el_name)
-                    if len(methods) == 1:
-                        from_id = eval("to_el.%s()" % (methods[0],))
-                        dbb_rel = srelationship.SRelationship(
-                            id="",
-                            from_label=from_label,
-                            to_label=to_label,
-                            from_id=from_id,
-                            to_id=to_id,
-                            label=arrow_label,
-                            properties={},
-                        )
-                        res.append(dbb_rel)
+                    for attribute in self.iterate_over_attribute(obj=to_el):
+                        from_id = eval("to_el.%s" % (attribute,))
+                        if self.validate_id(value=from_id):
+                            dbb_rel = srelationship.SRelationship(
+                                id="",
+                                from_label=from_label,
+                                to_label=to_label,
+                                from_id=from_id,
+                                to_id=to_id,
+                                label=arrow_label,
+                                properties={},
+                            )
+                            res.append(dbb_rel)
+                            break
                 elif self.validate_id(value=to_el_id):
                     dbb_rel = srelationship.SRelationship(
                         id="",
@@ -370,13 +421,24 @@ class Sbml(object):
     ) -> List[srelationship.SRelationship]:
         res: List[srelationship.SRelationship] = []
         for from_id in from_ids:
-            from_obj = self.document.getElementBySId(from_id)
+            from_obj = self.get_element_by_id(value=from_id)
             if from_obj is None:
                 continue
-            for from_el in from_obj.getListOfAllElements():
-                methods = Sbml.find_method(obj=from_el, label=to_label)
+            for element in from_obj.getListOfAllElements():
+                to_id = ""
+                methods = Sbml.find_method(obj=element, label=to_label, exact=True)
                 if len(methods) == 1:
-                    to_id = eval("from_el.%s()" % (methods[0],))
+                    try:
+                        to_id = eval("element.%s()" % (methods[0],))
+                    except Exception:
+                        pass
+                if (
+                    to_id is None
+                    and element.getElementName().lower() == to_label.lower()
+                ):
+                    to_id = self.create_id(value=element)
+
+                if to_id and to_id != "":
                     dbb_rel = srelationship.SRelationship(
                         id="",
                         from_label=from_label,
@@ -388,13 +450,23 @@ class Sbml(object):
                     )
                     res.append(dbb_rel)
         for to_id in to_ids:
-            to_obj = self.document.getElementBySId(to_id)
+            to_obj = self.get_element_by_id(value=to_id)
             if to_obj is None:
                 continue
-            for to_el in to_obj.getListOfAllElements():
-                methods = Sbml.find_method(obj=to_el, label=from_label)
+            for element in to_obj.getListOfAllElements():
+                from_id = ""
+                methods = Sbml.find_method(obj=element, label=from_label, exact=True)
                 if len(methods) == 1:
-                    from_id = eval("to_el.%s()" % (methods[0],))
+                    try:
+                        from_id = eval("element.%s()" % (methods[0],))
+                    except Exception:
+                        pass
+                if (
+                    from_id is None
+                    and element.getElementName().lower() == to_label.lower()
+                ):
+                    from_id = self.create_id(value=element)
+                if from_id and from_id != "":
                     dbb_rel = srelationship.SRelationship(
                         id="",
                         from_label=from_label,
@@ -504,12 +576,12 @@ class Sbml(object):
                 srelation.add_property(label="tag", value=self.tag)
         return res
 
-    def validate_id(self, value: Any) -> bool:
+    def validate_id(self, value: str) -> bool:
         """Check if an ID is in the SBML document.
 
         Paramerters
         -----------
-        value: Any
+        value: str
             an ID to check
 
         Return
@@ -519,9 +591,57 @@ class Sbml(object):
         """
         if not isinstance(value, str):
             return False
+        if self.elements.get(value):
+            return True
         if self.document.getElementBySId(value) is not None:
             return True
-        return value in set(x.getId() for x in self.model.getListOfAllElements())
+        return value in self.element_alls.keys()
+
+    def get_element_by_id(self, value: str) -> Optional[Any]:
+        """Return an element belonging to the model from its ID.
+
+        Parameters
+        -----------
+        value: str
+            the ID of the element to retrieve
+
+        Return
+        ------
+        Any
+            An element in the model
+        """
+        if self.document.getElementBySId(value):
+            return self.document.getElementBySId(value)
+        if self.elements.get(value):
+            return self.elements.get(value)
+        return self.element_alls.get(value, None)
+
+    def create_id(self, value: Any) -> str:
+        """Sometimes an element of the model has no ID.
+        If the ID exists it will be returned otherwise, an hash computed on the string representation is used.
+
+        Parameters
+        -----------
+        value: Any
+            An element of the model
+
+        Return
+        ------
+        str
+            The ID of the element
+        """
+        # Use Id or IdAttribute if it set
+        ident = value.getId()
+        if self.has_method(obj=value, method="getIdAttribute"):
+            id_attribute = value.getIdAttribute()
+            if id_attribute != "" and id_attribute != ident:
+                ident += "-" + id_attribute
+        if ident and ident != "":
+            return ident
+        # Use str representation
+        value_str = value.toXMLNode().toXMLString()
+        ident = hashlib.md5(value_str.encode("utf8")).hexdigest()
+        return ident
 
     def candidate_obj_plugin(self, obj: Any) -> List[Any]:
         """Check if an object can activate one or several plugins
@@ -541,7 +661,53 @@ class Sbml(object):
         return candidates
 
     @classmethod
-    def find_method(cls, obj: Any, label: str) -> List[str]:
+    def iterate_over_attribute(cls, obj: Any) -> Generator:
+        """Iterate over attributes of an object
+
+        Parameters
+        ----------
+        obj: Any
+            any object
+
+        Return
+        ------
+        Generator
+        """
+        # Exact match
+        for attribute in dir(obj):
+            if (
+                not attribute.startswith("__")
+                and not attribute.startswith("enable")
+                and not attribute.startswith("get")
+                and not attribute.startswith("is")
+                and not attribute.startswith("matches")
+                and not attribute.startswith("remove")
+                and not attribute.startswith("set")
+                and not attribute.startswith("unset")
+                and not attribute.startswith("write")
+            ):
+                attr = getattr(obj, attribute, None)
+
+                if attr and not callable(attr):
+                    yield attribute
+
+    @classmethod
+    def has_method(cls, obj: Any, method: str) -> bool:
+        """Given an object, check if an object as a method.
+
+        Parameters
+        ----------
+        obj: Any
+            any object
+
+        Return
+        ------
+        bool
+        """
+        return method in obj.__dir__()
+
+    @classmethod
+    def find_method(cls, obj: Any, label: str, exact: bool = False) -> List[str]:
         """Given an object, search a method name by intropection.
 
         Parameters
@@ -550,6 +716,8 @@ class Sbml(object):
             any object
         label: str
             a method to search
+        exact: bool
+            expect exact match
 
         Return
         ------
@@ -560,6 +728,8 @@ class Sbml(object):
         candidates = list(filter(regex.match, obj.__dir__()))
         if len(candidates) == 1:
             return candidates
+        if exact:
+            return []
         # Partial match
         regex = re.compile(r"get.*" + label, re.IGNORECASE)
         candidates = list(filter(regex.search, obj.__dir__()))
