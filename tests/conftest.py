@@ -1,7 +1,7 @@
 import os
 
 import pytest
-from neo4jsbml import sbml
+from neo4jsbml import connect, sbml
 
 cur_dir = os.path.abspath(os.path.dirname(__file__))
 data_dir = os.path.join(cur_dir, "dataset")
@@ -131,3 +131,39 @@ def rel_two_arrow():
         properties=dict(),
         style=dict(),
     )
+
+
+@pytest.fixture(scope="function")
+def init_driver():
+    return connect.Connect(
+        protocol="neo4j",
+        url="localhost",
+        port=7687,
+        user="neo4j",
+        database="neo4j",
+        password="",
+    )
+
+
+is_connected = pytest.mark.skipif(
+    not connect.Connect(
+        protocol="neo4j",
+        url="localhost",
+        port=7687,
+        user="neo4j",
+        database="neo4j",
+        password="",
+    ).is_connected(),
+    reason="not connected",
+)
+is_not_connected = pytest.mark.skipif(
+    connect.Connect(
+        protocol="neo4j",
+        url="localhost",
+        port=7687,
+        user="neo4j",
+        database="neo4j",
+        password="",
+    ).is_connected(),
+    reason="connected",
+)
