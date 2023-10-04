@@ -28,6 +28,11 @@ def sbml_iml(iml_path):
 
 
 @pytest.fixture(scope="session")
+def iaf1260_path(data_directory):
+    return os.path.join(data_directory, "model", "iAF1260.xml.gz")
+
+
+@pytest.fixture(scope="session")
 def ecore_path(data_directory):
     return os.path.join(data_directory, "model", "e_coli_core.xml.gz")
 
@@ -46,6 +51,13 @@ def sbml_toy(iml_toy_path):
 def pathway_one_path(data_directory):
     return os.path.join(
         data_directory, "modelisation", "PathwayModelisation-1.0.0.json"
+    )
+
+
+@pytest.fixture(scope="session")
+def pathway_two_path(data_directory):
+    return os.path.join(
+        data_directory, "modelisation", "PathwayModelisation-2.0.2.json"
     )
 
 
