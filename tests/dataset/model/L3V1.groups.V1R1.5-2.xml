@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" xmlns:groups="http://www.sbml.org/sbml/level3/version1/groups/version1" level="3" version="1" groups:required="false">
+  <model id="cell" name="cell">
+    <listOfCompartments>
+      <compartment id="compartment" spatialDimensions="3" size="1" constant="true"/>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species id="Dose1" compartment="compartment" initialConcentration="0" constant="false" hasOnlySubstanceUnits="false" boundaryCondition="true"/>
+      <species id="Dose2" compartment="compartment" initialConcentration="0" constant="false" hasOnlySubstanceUnits="false" boundaryCondition="true"/>
+    </listOfSpecies>
+    <listOfRules>
+      <assignmentRule metaid="D1" variable="Dose1">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <piecewise>
+            <piece>
+              <cn type="integer"> 2 </cn>
+              <apply>
+                <lt/>
+                <csymbol encoding="text" definitionURL="http://www.sbml.org/sbml/symbols/time"> time </csymbol>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </piece>
+            <otherwise>
+              <cn type="integer"> 0 </cn>
+            </otherwise>
+          </piecewise>
+        </math>
+      </assignmentRule>
+      <assignmentRule metaid="D2" variable="Dose2">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <piecewise>
+            <piece>
+              <cn> 1.5 </cn>
+              <apply>
+                <and/>
+                <apply>
+                  <gt/>
+                  <csymbol encoding="text" definitionURL="http://www.sbml.org/sbml/symbols/time"> time </csymbol>
+                  <cn type="integer"> 5 </cn>
+                </apply>
+                <apply>
+                  <lt/>
+                  <csymbol encoding="text" definitionURL="http://www.sbml.org/sbml/symbols/time"> time </csymbol>
+                  <cn type="integer"> 6 </cn>
+                </apply>
+              </apply>
+            </piece>
+            <otherwise>
+              <cn type="integer"> 0 </cn>
+            </otherwise>
+          </piecewise>
+        </math>
+      </assignmentRule>
+    </listOfRules>
+    <groups:listOfGroups>
+      <groups:group groups:id="effectB" groups:kind="collection">
+        <notes>
+          <p xmlns="http://www.w3.org/1999/xhtml"> These two rules are in the model as approximation
+                  for effect B</p>
+        </notes>
+        <groups:listOfMembers>
+          <groups:member groups:metaIdRef="D1"/>
+          <groups:member groups:metaIdRef="D2"/>
+        </groups:listOfMembers>
+      </groups:group>
+    </groups:listOfGroups>
+  </model>
+</sbml>

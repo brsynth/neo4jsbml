@@ -49,16 +49,12 @@ def sbml_toy(iml_toy_path):
 
 @pytest.fixture(scope="session")
 def pathway_one_path(data_directory):
-    return os.path.join(
-        data_directory, "modelisation", "PathwayModelisation-1.0.0.json"
-    )
+    return os.path.join(data_directory, "arrows", "PathwayModelisation-1.0.0.json")
 
 
 @pytest.fixture(scope="session")
 def pathway_two_path(data_directory):
-    return os.path.join(
-        data_directory, "modelisation", "PathwayModelisation-2.0.2.json"
-    )
+    return os.path.join(data_directory, "arrows", "PathwayModelisation-2.0.2.json")
 
 
 @pytest.fixture(scope="function")

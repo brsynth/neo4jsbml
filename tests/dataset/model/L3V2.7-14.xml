@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" xmlns:math="http://www.w3.org/1998/Math/MathML" level="3" version="2">
+  <model id="PersistentEvent" timeUnits="second">
+    <listOfUnitDefinitions>
+      <unitDefinition id="mol_per_l">
+        <listOfUnits>
+          <unit kind="mole" exponent="1" scale="0" multiplier="1"/>
+          <unit kind="litre" exponent="-1" scale="0" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="l_per_s">
+        <listOfUnits>
+          <unit kind="litre" exponent="1" scale="0" multiplier="1"/>
+          <unit kind="second" exponent="-1" scale="0" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+    </listOfUnitDefinitions>
+    <listOfCompartments>
+      <compartment id="compartment" size="1" units="litre" spatialDimensions="3" constant="true"/>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species id="d" initialConcentration="0" boundaryCondition="true" compartment="compartment" substanceUnits="mole" hasOnlySubstanceUnits="false" constant="false"/>
+      <species id="a" initialConcentration="2" boundaryCondition="false" compartment="compartment" substanceUnits="mole" hasOnlySubstanceUnits="false" constant="false"/>
+      <species id="b" initialConcentration="0" boundaryCondition="false" compartment="compartment" substanceUnits="mole" hasOnlySubstanceUnits="false" constant="false"/>
+      <species id="c" initialConcentration="0" boundaryCondition="false" compartment="compartment" substanceUnits="mole" hasOnlySubstanceUnits="false" constant="false"/>
+      <species id="e" initialConcentration="0" boundaryCondition="false" compartment="compartment" substanceUnits="mole" hasOnlySubstanceUnits="false" constant="false"/>
+    </listOfSpecies>
+    <listOfParameters>
+      <parameter id="k1" value="0.2" constant="true" units="l_per_s"/>
+    </listOfParameters>
+    <listOfRules>
+      <assignmentRule variable="e">
+        <math xmlns="http://www.w3.org/1998/Math/MathML" xmlns:sbml="http://www.sbml.org/sbml/level3/version2/core">
+          <cn type="integer" sbml:units="mol_per_l">1</cn>
+        </math>
+      </assignmentRule>
+    </listOfRules>
+    <listOfReactions>
+      <reaction id="_J0" reversible="false">
+        <listOfReactants>
+          <speciesReference species="a" constant="true" stoichiometry="1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="d" constant="true" stoichiometry="1"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> k1 </ci>
+              <ci> a </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+    </listOfReactions>
+    <listOfEvents>
+      <event useValuesFromTriggerTime="true">
+        <!-- If persistent is ’false’, c won’t be set to ’6’, but if it’s ’true’, it will. -->
+        <trigger persistent="false" initialValue="true">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <and/>
+              <apply>
+                <leq/>
+                <ci> a </ci>
+                <cn> 1.001 </cn>
+              </apply>
+              <apply>
+                <geq/>
+                <ci> a </ci>
+                <cn> 0.999 </cn>
+              </apply>
+            </apply>
+          </math>
+        </trigger>
+        <delay>
+          <math xmlns="http://www.w3.org/1998/Math/MathML" xmlns:sbml="http://www.sbml.org/sbml/level3/version2/core">
+            <cn type="integer" sbml:units="second"> 3 </cn>
+          </math>
+        </delay>
+        <listOfEventAssignments>
+          <eventAssignment variable="c">
+            <math xmlns="http://www.w3.org/1998/Math/MathML" xmlns:sbml="http://www.sbml.org/sbml/level3/version2/core">
+              <cn type="integer" sbml:units="mol_per_l"> 6 </cn>
+            </math>
+          </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+    </listOfEvents>
+  </model>
+</sbml>
