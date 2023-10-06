@@ -1,29 +1,15 @@
-__pycache__
 .DS_Store
-.pypirc
-.pytest_cache
-package.json
-package-lock.json
-node_modules
-*.code-workspace
-.coverage*
-.vscode
-_exclude
-/docsource/_build/
-/docsource/_autosummary
-cicd-toolkit
-*.swp
-dist
+# Python
+__pycache__
 *.egg-info
-*.dtd
+# Editor
+.vscode
+*.swp
 super-linter.log
-.eggs
+# Other
 build
 debug
-.tox
 papier
 cmd.sh
-*.xml
 # Docs
-_build
-generated
+docs/_build
