@@ -1,0 +1,343 @@
+{
+  "style": {
+    "font-family": "sans-serif",
+    "background-color": "#ffffff",
+    "background-image": "",
+    "background-size": "100%",
+    "node-color": "#ffffff",
+    "border-width": 4,
+    "border-color": "#000000",
+    "radius": 50,
+    "node-padding": 5,
+    "node-margin": 2,
+    "outside-position": "auto",
+    "node-icon-image": "",
+    "node-background-image": "",
+    "icon-position": "inside",
+    "icon-size": 64,
+    "caption-position": "inside",
+    "caption-max-width": 200,
+    "caption-color": "#000000",
+    "caption-font-size": 50,
+    "caption-font-weight": "normal",
+    "label-position": "inside",
+    "label-display": "pill",
+    "label-color": "#000000",
+    "label-background-color": "#ffffff",
+    "label-border-color": "#000000",
+    "label-border-width": 4,
+    "label-font-size": 40,
+    "label-padding": 5,
+    "label-margin": 4,
+    "directionality": "directed",
+    "detail-position": "inline",
+    "detail-orientation": "parallel",
+    "arrow-width": 5,
+    "arrow-color": "#000000",
+    "margin-start": 5,
+    "margin-end": 5,
+    "margin-peer": 20,
+    "attachment-start": "normal",
+    "attachment-end": "normal",
+    "relationship-icon-image": "",
+    "type-color": "#000000",
+    "type-background-color": "#ffffff",
+    "type-border-color": "#000000",
+    "type-border-width": 0,
+    "type-font-size": 16,
+    "type-padding": 5,
+    "property-position": "outside",
+    "property-alignment": "colon",
+    "property-color": "#000000",
+    "property-font-size": 16,
+    "property-font-weight": "normal"
+  },
+  "nodes": [
+    {
+      "id": "n1",
+      "position": {
+        "x": 189.0265622806584,
+        "y": 526.1988699360794
+      },
+      "caption": "",
+      "labels": [
+        "UnitDefinition"
+      ],
+      "properties": {
+        "id": "",
+        "name": "",
+        "metaid": "",
+        "sboTerm": ""
+      },
+      "style": {}
+    },
+    {
+      "id": "n2",
+      "position": {
+        "x": 831.7594637903728,
+        "y": 138.63615219814355
+      },
+      "caption": "",
+      "labels": [
+        "compartment"
+      ],
+      "properties": {
+        "id": "",
+        "name": "",
+        "spatialDimensions": "",
+        "size": "",
+        "constant": ""
+      },
+      "style": {}
+    },
+    {
+      "id": "n3",
+      "position": {
+        "x": 520.1383841335534,
+        "y": 317.9821631811607
+      },
+      "caption": "",
+      "labels": [
+        "model"
+      ],
+      "properties": {
+        "id": "str",
+        "name": "str",
+        "metaid": "str",
+        "sboTerm": "str"
+      },
+      "style": {}
+    },
+    {
+      "id": "n4",
+      "position": {
+        "x": 520.1383841335534,
+        "y": 650.8389510012296
+      },
+      "caption": "",
+      "labels": [
+        "unit"
+      ],
+      "properties": {
+        "id": "",
+        "name": "",
+        "exponent": "",
+        "scale": "",
+        "multiplier": ""
+      },
+      "style": {}
+    },
+    {
+      "id": "n5",
+      "position": {
+        "x": 129,
+        "y": 138.63615219814355
+      },
+      "caption": "",
+      "labels": [
+        "Species"
+      ],
+      "properties": {
+        "initialAmount": "",
+        "id": ""
+      },
+      "style": {}
+    },
+    {
+      "id": "n7",
+      "position": {
+        "x": 129,
+        "y": 317.9821631811607
+      },
+      "caption": "",
+      "labels": [
+        "assignmentRule"
+      ],
+      "properties": {
+        "variable": "",
+        "math": ""
+      },
+      "style": {}
+    },
+    {
+      "id": "n8",
+      "position": {
+        "x": 831.7594637903728,
+        "y": 317.9821631811606
+      },
+      "caption": "",
+      "labels": [
+        "event"
+      ],
+      "properties": {
+        "useValuesFromTriggerTime": ""
+      },
+      "style": {}
+    },
+    {
+      "id": "n9",
+      "position": {
+        "x": 1159.3498437003802,
+        "y": 317.9821631811607
+      },
+      "caption": "",
+      "labels": [
+        "trigger"
+      ],
+      "properties": {
+        "persistent": "",
+        "initialValue": "",
+        "math": ""
+      },
+      "style": {}
+    },
+    {
+      "id": "n10",
+      "position": {
+        "x": 1159.3498437003802,
+        "y": 507.1165572061351
+      },
+      "caption": "",
+      "labels": [
+        "eventAssignment"
+      ],
+      "properties": {
+        "id": "",
+        "math": "",
+        "idAttribute": ""
+      },
+      "style": {}
+    },
+    {
+      "id": "n11",
+      "position": {
+        "x": 935.9145102191391,
+        "y": 588.4503242222444
+      },
+      "caption": "",
+      "style": {},
+      "labels": [
+        "delay"
+      ],
+      "properties": {
+        "id": "",
+        "math": ""
+      }
+    },
+    {
+      "id": "n12",
+      "position": {
+        "x": 728.3550908884721,
+        "y": 526.1988699360794
+      },
+      "caption": "",
+      "style": {},
+      "labels": [
+        "parameter"
+      ],
+      "properties": {
+        "id": "",
+        "value": "",
+        "constant": ""
+      }
+    }
+  ],
+  "relationships": [
+    {
+      "id": "n0",
+      "fromId": "n3",
+      "toId": "n2",
+      "type": "HAS_COMPARTMENT",
+      "properties": {},
+      "style": {}
+    },
+    {
+      "id": "n1",
+      "fromId": "n1",
+      "toId": "n4",
+      "type": "IS_COMPOSED",
+      "properties": {},
+      "style": {}
+    },
+    {
+      "id": "n2",
+      "fromId": "n3",
+      "toId": "n1",
+      "type": "HAS_UNITDEFINITION",
+      "properties": {},
+      "style": {}
+    },
+    {
+      "id": "n3",
+      "fromId": "n3",
+      "toId": "n5",
+      "type": "HAS_SPECIES",
+      "properties": {},
+      "style": {}
+    },
+    {
+      "id": "n4",
+      "fromId": "n5",
+      "toId": "n2",
+      "type": "IN_COMPARTMENT",
+      "properties": {},
+      "style": {}
+    },
+    {
+      "id": "n6",
+      "type": "HAS_ASSIGNMENTRULE",
+      "style": {},
+      "properties": {},
+      "fromId": "n3",
+      "toId": "n7"
+    },
+    {
+      "id": "n7",
+      "fromId": "n3",
+      "toId": "n8",
+      "type": "HAS_EVENT",
+      "properties": {},
+      "style": {}
+    },
+    {
+      "id": "n8",
+      "fromId": "n8",
+      "toId": "n9",
+      "type": "HAS_TRIGGER",
+      "properties": {},
+      "style": {}
+    },
+    {
+      "id": "n9",
+      "fromId": "n8",
+      "toId": "n10",
+      "type": "HAS_EVENTASSIGNMENT",
+      "properties": {},
+      "style": {}
+    },
+    {
+      "id": "n10",
+      "type": "HAS_DELAY",
+      "style": {},
+      "properties": {},
+      "fromId": "n8",
+      "toId": "n11"
+    },
+    {
+      "id": "n11",
+      "type": "HAS_PARAMETER",
+      "style": {},
+      "properties": {},
+      "fromId": "n3",
+      "toId": "n12"
+    },
+    {
+      "id": "n12",
+      "type": "HAS_UNITS",
+      "style": {},
+      "properties": {},
+      "fromId": "n12",
+      "toId": "n1"
+    }
+  ]
+}

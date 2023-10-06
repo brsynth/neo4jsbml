@@ -8,6 +8,7 @@ Contents
    :maxdepth: 1
 
    usage
+   applications
    example
    conduct
    contributing
