@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.11.1](https://github.com/brsynth/neo4jsbml/tree/0.11.1) (2023-09-22)
+
+[Full Changelog](https://github.com/brsynth/neo4jsbml/compare/0.11.0...0.11.1)
+
+**Merged pull requests:**
+
+- Add `dry-run` argument [\#10](https://github.com/brsynth/neo4jsbml/pull/10) ([guillaume-gricourt](https://github.com/guillaume-gricourt))
+- chore\(deps\): bump actions/checkout from 3 to 4 [\#9](https://github.com/brsynth/neo4jsbml/pull/9) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump github/super-linter from 4 to 5 [\#8](https://github.com/brsynth/neo4jsbml/pull/8) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [0.11.0](https://github.com/brsynth/neo4jsbml/tree/0.11.0) (2023-03-28)
 
 [Full Changelog](https://github.com/brsynth/neo4jsbml/compare/0.10.1...0.11.0)
