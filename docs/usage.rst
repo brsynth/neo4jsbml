@@ -43,8 +43,8 @@ The connection to the Neo4j database needs to have several parameters defined:
 
 * protocol: ``neo4j``, ``neo4j+s``, ``neo4j+ssc``, ``bolt``, ``bolt+s``, ``bolt+ssc`` (default: ``neo4j``)
 * url (default: ``localhost``)
-* port (default: ``7687``)
 * user name (default: ``neo4j``)
+* port (default: ``None``)
 * password (default: ``None``)
 * database name (default: ``neo4j``)
 
@@ -71,6 +71,7 @@ The user has two options: passing arguments individually by the command line or 
     Database name
 
 **Configuration file**
+Several options, either
 
 ``--input-config-file``
     An ``ìni`` file containing all these informations above
@@ -90,6 +91,21 @@ The user has two options: passing arguments individually by the command line or 
 .. note::
     For safety, passing a password through the command line must be given by a file.
     No extra character must be in the file, otherwise it would be consider as the password.
+
+or either
+
+``--input-auradb-file``
+    A ``txt`` file provided by AuraDB
+
+.. code-block:: bash
+
+    # one comment
+    NEO4J_URI=neo4j+s://test.neo4j.io
+    NEO4J_USERNAME=neo4j
+    NEO4J_PASSWORD=thepassword
+    # second comment
+    AURA_INSTANCEID=422DEf4
+    AURA_INSTANCENAME=Instance01
 
 Import your data into Neo4j
 ---------------------------
@@ -126,7 +142,7 @@ API
     con = connect.Connect(
         protocol="neo4j",
         url="localhost",
-        port=7687,
+        port="7687",
         user="neo4j"
         database="neo4j",
         password_path=path_password,

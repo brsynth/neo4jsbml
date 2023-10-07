@@ -18,6 +18,11 @@ def config_path(data_directory):
 
 
 @pytest.fixture(scope="session")
+def auradb_path(data_directory):
+    return os.path.join(data_directory, "database", "auradb.txt")
+
+
+@pytest.fixture(scope="session")
 def iml_path(data_directory):
     return os.path.join(data_directory, "model", "iML1515.xml.gz")
 
