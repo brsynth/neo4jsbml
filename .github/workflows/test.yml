@@ -56,4 +56,5 @@ jobs:
           distribution: 'temurin'
       - name: 'Build with maven'
         run: |
+          mvn install:install-file -Dfile=neo4jefmtool/lib/metabolic-efm-all.jar -DgroupId=ch.javasoft -DartifactId=metabolic-efm -Dversion=4.7.1 -Dpackaging=jar
           mvn clean package -f neo4jefmtool/pom.xml
