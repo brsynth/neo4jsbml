@@ -26,8 +26,6 @@ def main():
     )
     parser_dbb.add_argument(
         "--input-port-int",
-        default=7687,
-        type=int,
         help="Port number to connect to the database Neo4j",
     )
     parser_dbb.add_argument(
@@ -50,6 +48,10 @@ def main():
     parser_dbb_config.add_argument(
         "--input-config-file",
         help='A configuration file, format "ini"',
+    )
+    parser_dbb_config.add_argument(
+        "--input-auradb-file",
+        help='A configuration file provided by AuraDB, format "txt"',
     )
 
     # Input
@@ -110,6 +112,11 @@ def main():
     if args.input_config_file:
         logging.warning("Configuration file is provided, ignore indiviual arguments")
         con = connect.Connect.from_config(path=args.input_config_file)
+    elif args.input_auradb_file:
+        logging.warning(
+            "Configuration file AuraDB is provided, ignore indiviual arguments"
+        )
+        con = connect.Connect.from_auradb(path=args.input_auradb_file)
     else:
         con = connect.Connect(
             protocol=args.input_protocol_str,

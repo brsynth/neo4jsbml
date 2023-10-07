@@ -37,15 +37,47 @@ neo4jsbml \
     # Database parameters
     --input-protocol-str ["neo4j", "neo4j+s", "neo4j+ssc", "bolt", "bolt+s", "bolt+ssc"] \
     --input-url-str "localhost" \
-    --input-port-int 7687 \
     --input-user-str "neo4j" \
+    --input-port-int <port> \
     --input-password-file <file> \
     --input-database-str <str> \
     # Config file
     --input-config-file <file> \
+    # AuraDB file
+    --input-auradb-file <file> \
 
     # Input
     --input-file-sbml <file> \
     --input-tag-str "" \
     --input-modelisation-json <file>
+```
+
+## Config file
+
+### Neo4jsbml
+
+A config file is expected `.ini`
+```ini
+[connection]
+protocol = neo4j
+url = localhost
+port = 7687
+
+[database]
+user = neo4j
+password = abc
+name = neo4j
+```
+
+### AuraDB
+
+A file provided by AuraDB
+```bash
+# one comment
+NEO4J_URI=neo4j+s://test.neo4j.io
+NEO4J_USERNAME=neo4j
+NEO4J_PASSWORD=thepassword
+# second comment
+AURA_INSTANCEID=422DEf4
+AURA_INSTANCENAME=Instance01
 ```

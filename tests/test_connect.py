@@ -3,7 +3,7 @@ import os
 import pytest
 from neo4j import GraphDatabase
 
-from neo4jsbml import connect, snode
+from neo4jsbml import connect, singleton, snode
 from conftest import is_connected, is_not_connected
 
 
@@ -42,10 +42,21 @@ class TestConnect:
         pass
 
     def test_from_config(self, neo4j_config):
+        singleton.Singleton.clean()
         con_b = connect.Connect.from_config(path=neo4j_config)
         assert con_b.protocol == "neo4j"
         assert con_b.url == "localhost"
-        assert con_b.port == 7687
+        assert con_b.port == "7687"
         assert con_b.user == "neo4j"
         assert con_b.database == "neo4j"
-        assert con_b.password == ""
+        assert con_b.password == "abc"
+
+    def test_from_auradb(self, auradb_path):
+        singleton.Singleton.clean()
+        con_c = connect.Connect.from_auradb(path=auradb_path)
+        assert con_c.protocol == "neo4j+s"
+        assert con_c.url == "test.neo4j.io"
+        assert con_c.port is None
+        assert con_c.user == "neo4j"
+        assert con_c.database == "Instance01"
+        assert con_c.password == "thepassword"
