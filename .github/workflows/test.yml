@@ -44,7 +44,7 @@ jobs:
           pip install --no-deps .
           python -m pytest tests
 
-  Test:
+  Neo4jefmtool:
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout'
