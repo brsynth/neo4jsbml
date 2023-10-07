@@ -45,7 +45,6 @@ jobs:
           python -m pytest tests
 
   Test:
-    needs: Lint
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout'
