@@ -125,7 +125,7 @@ class Connect(metaclass=singleton.Singleton):
         """
         for node in nodes:
             with self.driver.session(default_access_mode=neo4j.WRITE_ACCESS) as session:
-                query = (
+                que = (
                     "MERGE (n:"
                     + ":".join(node.labels)
                     + " "
@@ -136,7 +136,7 @@ class Connect(metaclass=singleton.Singleton):
                     + node.properties_to_neo4j()
                     + " RETURN n;"
                 )
-                res = session.run(query)
+                res = session.run(que)
                 res.single()
 
     def create_relationships(
@@ -151,7 +151,7 @@ class Connect(metaclass=singleton.Singleton):
         """
         for rel in relationships:
             with self.driver.session(default_access_mode=neo4j.WRITE_ACCESS) as session:
-                query = (
+                que = (
                     "MATCH (a:"
                     + rel.from_label
                     + " "
@@ -165,10 +165,33 @@ class Connect(metaclass=singleton.Singleton):
                     + ']->(b) ON CREATE SET r += $rel["properties"] RETURN r'
                 )
                 res = session.run(
-                    query,
+                    que,
                     rel=rel.to_dict(),
                 )
                 res.single()
+
+    def query(
+        self, value: str, expect_data: bool = False
+    ) -> Optional[List[Dict[str, Any]]]:
+        """Execute query into Neo4j.
+
+        Parameters
+        ----------
+        value: str
+            the query
+        expect_data: bool
+            return or not a value
+
+        Return
+        ------
+        A list of results if expect_data is set
+        """
+        with self.driver.session(default_access_mode=neo4j.WRITE_ACCESS) as session:
+            res = session.run(value)
+            if expect_data:
+                return res.data()
+            res.single()
+            return None
 
     def __del__(self):
         """Close the driver"""

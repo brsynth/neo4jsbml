@@ -1,7 +1,7 @@
 import os
 
 import pytest
-from neo4jsbml import sbml
+from neo4jsbml import connect, sbml
 
 cur_dir = os.path.abspath(os.path.dirname(__file__))
 data_dir = os.path.join(cur_dir, "dataset")
@@ -28,6 +28,11 @@ def sbml_iml(iml_path):
 
 
 @pytest.fixture(scope="session")
+def iaf1260_path(data_directory):
+    return os.path.join(data_directory, "model", "iAF1260.xml.gz")
+
+
+@pytest.fixture(scope="session")
 def ecore_path(data_directory):
     return os.path.join(data_directory, "model", "e_coli_core.xml.gz")
 
@@ -44,9 +49,12 @@ def sbml_toy(iml_toy_path):
 
 @pytest.fixture(scope="session")
 def pathway_one_path(data_directory):
-    return os.path.join(
-        data_directory, "modelisation", "PathwayModelisation-1.0.0.json"
-    )
+    return os.path.join(data_directory, "arrows", "PathwayModelisation-1.0.0.json")
+
+
+@pytest.fixture(scope="session")
+def pathway_two_path(data_directory):
+    return os.path.join(data_directory, "arrows", "PathwayModelisation-2.0.2.json")
 
 
 @pytest.fixture(scope="function")
@@ -131,3 +139,39 @@ def rel_two_arrow():
         properties=dict(),
         style=dict(),
     )
+
+
+@pytest.fixture(scope="function")
+def init_driver():
+    return connect.Connect(
+        protocol="neo4j",
+        url="localhost",
+        port=7687,
+        user="neo4j",
+        database="neo4j",
+        password="",
+    )
+
+
+is_connected = pytest.mark.skipif(
+    not connect.Connect(
+        protocol="neo4j",
+        url="localhost",
+        port=7687,
+        user="neo4j",
+        database="neo4j",
+        password="",
+    ).is_connected(),
+    reason="not connected",
+)
+is_not_connected = pytest.mark.skipif(
+    connect.Connect(
+        protocol="neo4j",
+        url="localhost",
+        port=7687,
+        user="neo4j",
+        database="neo4j",
+        password="",
+    ).is_connected(),
+    reason="connected",
+)

@@ -15,7 +15,7 @@ conda install -c conda-forge neo4jsbml
 ### Step 1
 
 Create a schema with [arrows](https://arrows.app) like:  
-![schema](docs/_static/PathwayModelisation-1.0.0.arrows.png "Schema SBML")  
+![schema](docs/_static/usage/PathwayModelisation-1.0.0.arrows.png "Schema SBML")  
 Rules:
 * Nodes are labelled based on SBML object name as defined in the [SBML specification](https://sbml.org)
 * Properties are labelled based on SBML object properties as defined the [SBML specification](https://sbml.org)
@@ -23,7 +23,7 @@ Rules:
 ### Step 2
 
 Export your schema at the JSON format.  
-![schema](docs/_static/arrows.dwl.png "Download JSON")
+![schema](docs/_static/usage/arrows.dwl.png "Download JSON")
 
 ### Step 3
 

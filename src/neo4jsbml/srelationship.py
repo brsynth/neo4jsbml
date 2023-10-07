@@ -28,6 +28,9 @@ class SRelationship(entity.Entity):
     __init__(id: str, from_id: str, to_id: str, label: str, properties: Dict[str, str])
         Instanciate a new object. All parameters are required.
 
+    swap() -> None
+    Invert "from" and "to" attributes
+
     @classmethod
     from_arrow(data: Dict[str, Any]) -> "Relationship":
         Create a SRelationship from a dictionary coming from arrow.
@@ -59,6 +62,20 @@ class SRelationship(entity.Entity):
         self.from_id = from_id
         self.to_id = to_id
         self.label = label
+
+    def swap(self) -> None:
+        """Invert relationships.
+        Return
+        ------
+        None
+        """
+        from_label = self.from_label
+        from_id = self.from_id
+
+        self.from_label = self.to_label
+        self.from_id = self.to_id
+        self.to_label = from_label
+        self.to_id = from_id
 
     @classmethod
     def from_arrow(cls, data: Dict[str, Any]) -> "SRelationship":

@@ -32,7 +32,7 @@ Rules:
 
 **Download the schema**
 
-.. figure:: _static/arrows.dwl.png
+.. figure:: _static/usage/arrows.dwl.png
     :align: center
 
 
