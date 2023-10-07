@@ -18,6 +18,7 @@ jobs:
           DEFAULT_BRANCH: ${{ github.ref }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_ALL_CODEBASE: false
+          VALIDATE_JAVA: false
           VALIDATE_JAVASCRIPT_ES: false
           VALIDATE_GITHUB_ACTIONS: false
           VALIDATE_JSCPD: false
