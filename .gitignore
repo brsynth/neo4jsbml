@@ -6,6 +6,9 @@ __pycache__
 .vscode
 *.swp
 super-linter.log
+# neo4jefmtool
+neo4jefmtool/target
+!neo4jefmtool/target/neo4jefmtool-0.1.0-SNAPSHOT.jar
 # Other
 build
 debug
