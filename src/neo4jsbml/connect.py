@@ -1,5 +1,4 @@
 import configparser
-import logging
 from typing import Any, Dict, List, Optional
 
 import neo4j
@@ -18,10 +17,10 @@ class Connect(metaclass=singleton.Singleton):
         database name
     url: str (default: localhost)
         the domain name
-    port: int (default: 7687)
-        the port number to connect to the database
     user: str (default: neo4j)
         the username to connect to the database
+    port: Optional[str]
+        the port number to connect to the database
     password: Optional[str]
         the password to connect to the database
     password_path: Optional[str]
@@ -56,24 +55,22 @@ class Connect(metaclass=singleton.Singleton):
     def __init__(
         self,
         url: str = "localhost",
-        protocol: str = "neo4j",
+        protocol: str = "7687",
         database: str = "neo4j",
         user: Optional[str] = None,
-        port: int = 7687,
+        port: Optional[str] = None,
         password: Optional[str] = None,
         password_path: Optional[str] = None,
     ) -> None:
-        self.protocol = protocol
         self.url = url
-        self.port = port
-
-        self.user = user
+        self.protocol = protocol
         self.database = database
-
+        self.user = user
+        self.port = port
         self.password = password
-        if password_path is not None:
+        if password_path:
             self.password = Connect.read_password(path=password_path)
-        if self.user is not None:
+        if self.user:
             self.driver = neo4j.GraphDatabase.driver(
                 self.uri, auth=(self.user, self.password)
             )
@@ -97,7 +94,9 @@ class Connect(metaclass=singleton.Singleton):
 
     @property
     def uri(self) -> str:
-        return self.protocol + "://" + self.url + ":" + str(self.port)
+        if self.port:
+            return self.protocol + "://" + self.url + ":" + str(self.port)
+        return self.protocol + "://" + self.url
 
     @classmethod
     def read_password(cls, path: str) -> str:
@@ -125,7 +124,7 @@ class Connect(metaclass=singleton.Singleton):
         """
         for node in nodes:
             with self.driver.session(default_access_mode=neo4j.WRITE_ACCESS) as session:
-                query = (
+                que = (
                     "MERGE (n:"
                     + ":".join(node.labels)
                     + " "
@@ -136,7 +135,7 @@ class Connect(metaclass=singleton.Singleton):
                     + node.properties_to_neo4j()
                     + " RETURN n;"
                 )
-                res = session.run(query)
+                res = session.run(que)
                 res.single()
 
     def create_relationships(
@@ -151,7 +150,7 @@ class Connect(metaclass=singleton.Singleton):
         """
         for rel in relationships:
             with self.driver.session(default_access_mode=neo4j.WRITE_ACCESS) as session:
-                query = (
+                que = (
                     "MATCH (a:"
                     + rel.from_label
                     + " "
@@ -165,10 +164,33 @@ class Connect(metaclass=singleton.Singleton):
                     + ']->(b) ON CREATE SET r += $rel["properties"] RETURN r'
                 )
                 res = session.run(
-                    query,
+                    que,
                     rel=rel.to_dict(),
                 )
                 res.single()
+
+    def query(
+        self, value: str, expect_data: bool = False
+    ) -> Optional[List[Dict[str, Any]]]:
+        """Execute query into Neo4j.
+
+        Parameters
+        ----------
+        value: str
+            the query
+        expect_data: bool
+            return or not a value
+
+        Return
+        ------
+        A list of results if expect_data is set
+        """
+        with self.driver.session(default_access_mode=neo4j.WRITE_ACCESS) as session:
+            res = session.run(value)
+            if expect_data:
+                return res.data()
+            res.single()
+            return None
 
     def __del__(self):
         """Close the driver"""
@@ -206,5 +228,36 @@ class Connect(metaclass=singleton.Singleton):
                 data["database"] = section.get("name")
             if section.get("password"):
                 data["password"] = section.get("password")
+        return Connect(**data)
 
+    @classmethod
+    def from_auradb(cls, path: str) -> "Connect":
+        """Create a Connect from a file provided by AuraDB
+
+        Parameters
+        ----------
+        path: str
+            a path of the file file
+
+        Return
+        ------
+        Connect
+        """
+        data: Dict[str, Any] = {}
+        with open(path) as fid:
+            lines = fid.read().splitlines()
+            for line in lines:
+                if not line.startswith("#") and "=" in line:
+                    tab = line.split("=")
+                    if len(tab) > 2:
+                        continue
+                    var, value = tab
+                    if var == "NEO4J_URI":
+                        data["protocol"], data["url"] = value.split("://")
+                    elif var == "NEO4J_USERNAME":
+                        data["user"] = value
+                    elif var == "NEO4J_PASSWORD":
+                        data["password"] = value
+                    elif var == "AURA_INSTANCENAME":
+                        data["database"] = value
         return Connect(**data)

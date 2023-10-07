@@ -1,0 +1,222 @@
+{
+  "style": {
+    "font-family": "sans-serif",
+    "background-color": "#ffffff",
+    "background-image": "",
+    "background-size": "100%",
+    "node-color": "#ffffff",
+    "border-width": 4,
+    "border-color": "#000000",
+    "radius": 50,
+    "node-padding": 5,
+    "node-margin": 2,
+    "outside-position": "auto",
+    "node-icon-image": "",
+    "node-background-image": "",
+    "icon-position": "inside",
+    "icon-size": 64,
+    "caption-position": "inside",
+    "caption-max-width": 200,
+    "caption-color": "#000000",
+    "caption-font-size": 50,
+    "caption-font-weight": "normal",
+    "label-position": "inside",
+    "label-display": "pill",
+    "label-color": "#000000",
+    "label-background-color": "#ffffff",
+    "label-border-color": "#000000",
+    "label-border-width": 4,
+    "label-font-size": 40,
+    "label-padding": 5,
+    "label-margin": 4,
+    "directionality": "directed",
+    "detail-position": "inline",
+    "detail-orientation": "parallel",
+    "arrow-width": 5,
+    "arrow-color": "#000000",
+    "margin-start": 5,
+    "margin-end": 5,
+    "margin-peer": 20,
+    "attachment-start": "normal",
+    "attachment-end": "normal",
+    "relationship-icon-image": "",
+    "type-color": "#000000",
+    "type-background-color": "#ffffff",
+    "type-border-color": "#000000",
+    "type-border-width": 0,
+    "type-font-size": 16,
+    "type-padding": 5,
+    "property-position": "outside",
+    "property-alignment": "colon",
+    "property-color": "#000000",
+    "property-font-size": 16,
+    "property-font-weight": "normal"
+  },
+  "nodes": [
+    {
+      "id": "n1",
+      "position": {
+        "x": 89.40234302760337,
+        "y": 354.33948905873604
+      },
+      "caption": "",
+      "labels": [
+        "Compartment"
+      ],
+      "properties": {
+        "id": "",
+        "name": "",
+        "constant": ""
+      },
+      "style": {}
+    },
+    {
+      "id": "n2",
+      "position": {
+        "x": -216.9525154067195,
+        "y": 577.5759457648857
+      },
+      "caption": "",
+      "labels": [
+        "model"
+      ],
+      "properties": {
+        "id": "str"
+      },
+      "style": {}
+    },
+    {
+      "id": "n3",
+      "position": {
+        "x": -216.9525154067195,
+        "y": 198.51418972897196
+      },
+      "caption": "",
+      "labels": [
+        "qualitativeSpecies"
+      ],
+      "properties": {
+        "id": "",
+        "constant": "",
+        "compartment": "",
+        "maxLevel": ""
+      },
+      "style": {}
+    },
+    {
+      "id": "n4",
+      "position": {
+        "x": 162.10924062919423,
+        "y": 577.5759457648857
+      },
+      "caption": "",
+      "labels": [
+        "transition"
+      ],
+      "properties": {
+        "id": ""
+      },
+      "style": {}
+    },
+    {
+      "id": "n5",
+      "position": {
+        "x": 356.22695603819176,
+        "y": 383.4582303558882
+      },
+      "caption": "",
+      "labels": [
+        "input"
+      ],
+      "properties": {
+        "id": "",
+        "qualitativeSpecies": "",
+        "thresholdLevel": "",
+        "transitionEffect": "",
+        "sign": ""
+      },
+      "style": {}
+    },
+    {
+      "id": "n6",
+      "position": {
+        "x": 436.6331464574792,
+        "y": 577.5759457648857
+      },
+      "caption": "",
+      "labels": [
+        "output"
+      ],
+      "properties": {
+        "transitionEffect": "",
+        "qualitativeSpecies": ""
+      },
+      "style": {}
+    },
+    {
+      "id": "n7",
+      "position": {
+        "x": 374.63178639628086,
+        "y": 751.350346675646
+      },
+      "caption": "",
+      "labels": [
+        "functionTerm"
+      ],
+      "properties": {
+        "math": ""
+      },
+      "style": {}
+    }
+  ],
+  "relationships": [
+    {
+      "id": "n0",
+      "fromId": "n2",
+      "toId": "n3",
+      "type": "HAS_QUALITATIVESPECIES",
+      "properties": {},
+      "style": {}
+    },
+    {
+      "id": "n1",
+      "fromId": "n2",
+      "toId": "n4",
+      "type": "HAS_TRANSITION",
+      "properties": {},
+      "style": {}
+    },
+    {
+      "id": "n2",
+      "fromId": "n2",
+      "toId": "n1",
+      "type": "HAS_COMPARTMENT",
+      "properties": {},
+      "style": {}
+    },
+    {
+      "id": "n3",
+      "fromId": "n4",
+      "toId": "n5",
+      "type": "HAS_INPUT",
+      "properties": {},
+      "style": {}
+    },
+    {
+      "id": "n4",
+      "fromId": "n4",
+      "toId": "n6",
+      "type": "HAS_OUTPUT",
+      "properties": {},
+      "style": {}
+    },
+    {
+      "id": "n5",
+      "fromId": "n4",
+      "toId": "n7",
+      "type": "HAS_FUNCTIONTERM",
+      "properties": {},
+      "style": {}
+    }
+  ]
+}

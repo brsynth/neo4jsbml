@@ -1,0 +1,132 @@
+{
+  "style": {
+    "font-family": "sans-serif",
+    "background-color": "#ffffff",
+    "background-image": "",
+    "background-size": "100%",
+    "node-color": "#ffffff",
+    "border-width": 4,
+    "border-color": "#000000",
+    "radius": 50,
+    "node-padding": 5,
+    "node-margin": 2,
+    "outside-position": "auto",
+    "node-icon-image": "",
+    "node-background-image": "",
+    "icon-position": "inside",
+    "icon-size": 64,
+    "caption-position": "inside",
+    "caption-max-width": 200,
+    "caption-color": "#000000",
+    "caption-font-size": 50,
+    "caption-font-weight": "normal",
+    "label-position": "inside",
+    "label-display": "pill",
+    "label-color": "#000000",
+    "label-background-color": "#ffffff",
+    "label-border-color": "#000000",
+    "label-border-width": 4,
+    "label-font-size": 40,
+    "label-padding": 5,
+    "label-margin": 4,
+    "directionality": "directed",
+    "detail-position": "inline",
+    "detail-orientation": "parallel",
+    "arrow-width": 5,
+    "arrow-color": "#000000",
+    "margin-start": 5,
+    "margin-end": 5,
+    "margin-peer": 20,
+    "attachment-start": "normal",
+    "attachment-end": "normal",
+    "relationship-icon-image": "",
+    "type-color": "#000000",
+    "type-background-color": "#ffffff",
+    "type-border-color": "#000000",
+    "type-border-width": 0,
+    "type-font-size": 16,
+    "type-padding": 5,
+    "property-position": "outside",
+    "property-alignment": "colon",
+    "property-color": "#000000",
+    "property-font-size": 16,
+    "property-font-weight": "normal"
+  },
+  "nodes": [
+    {
+      "id": "n3",
+      "position": {
+        "x": 552.161343345072,
+        "y": 204.94864525928796
+      },
+      "caption": "",
+      "labels": [
+        "SpeciesReference"
+      ],
+      "properties": {
+        "id": "",
+        "stoichiometry": "",
+        "constant": ""
+      },
+      "style": {}
+    },
+    {
+      "id": "n5",
+      "position": {
+        "x": 911.4042829893231,
+        "y": 204.9486452592879
+      },
+      "caption": "",
+      "labels": [
+        "Reaction"
+      ],
+      "properties": {
+        "id": "",
+        "name": "",
+        "reversible": ""
+      },
+      "style": {}
+    },
+    {
+      "id": "n6",
+      "position": {
+        "x": 303.3945879706581,
+        "y": 204.94864525928796
+      },
+      "caption": "",
+      "style": {},
+      "labels": [
+        "Species"
+      ],
+      "properties": {
+        "id": ""
+      }
+    }
+  ],
+  "relationships": [
+    {
+      "id": "n1",
+      "fromId": "n5",
+      "toId": "n3",
+      "type": "HAS_PRODUCT",
+      "properties": {},
+      "style": {}
+    },
+    {
+      "id": "n7",
+      "fromId": "n3",
+      "toId": "n5",
+      "type": "HAS_REACTANT",
+      "properties": {},
+      "style": {}
+    },
+    {
+      "id": "n8",
+      "type": "HAS_SPECIES",
+      "style": {},
+      "properties": {},
+      "fromId": "n3",
+      "toId": "n6"
+    }
+  ]
+}

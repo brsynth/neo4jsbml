@@ -1,0 +1,274 @@
+{
+  "style": {
+    "font-family": "sans-serif",
+    "background-color": "#ffffff",
+    "background-image": "",
+    "background-size": "100%",
+    "node-color": "#ffffff",
+    "border-width": 4,
+    "border-color": "#000000",
+    "radius": 50,
+    "node-padding": 5,
+    "node-margin": 2,
+    "outside-position": "auto",
+    "node-icon-image": "",
+    "node-background-image": "",
+    "icon-position": "inside",
+    "icon-size": 64,
+    "caption-position": "inside",
+    "caption-max-width": 200,
+    "caption-color": "#000000",
+    "caption-font-size": 50,
+    "caption-font-weight": "normal",
+    "label-position": "inside",
+    "label-display": "pill",
+    "label-color": "#000000",
+    "label-background-color": "#ffffff",
+    "label-border-color": "#000000",
+    "label-border-width": 4,
+    "label-font-size": 40,
+    "label-padding": 5,
+    "label-margin": 4,
+    "directionality": "directed",
+    "detail-position": "inline",
+    "detail-orientation": "parallel",
+    "arrow-width": 5,
+    "arrow-color": "#000000",
+    "margin-start": 5,
+    "margin-end": 5,
+    "margin-peer": 20,
+    "attachment-start": "normal",
+    "attachment-end": "normal",
+    "relationship-icon-image": "",
+    "type-color": "#000000",
+    "type-background-color": "#ffffff",
+    "type-border-color": "#000000",
+    "type-border-width": 0,
+    "type-font-size": 16,
+    "type-padding": 5,
+    "property-position": "outside",
+    "property-alignment": "colon",
+    "property-color": "#000000",
+    "property-font-size": 16,
+    "property-font-weight": "normal"
+  },
+  "nodes": [
+    {
+      "id": "n1",
+      "position": {
+        "x": 884.6635137872787,
+        "y": 512.4882057789567
+      },
+      "caption": "",
+      "labels": [
+        "Compartment"
+      ],
+      "properties": {
+        "id": "",
+        "spatialDimensions": "",
+        "size": "",
+        "constant": "",
+        "units": ""
+      },
+      "style": {}
+    },
+    {
+      "id": "n2",
+      "position": {
+        "x": 560.2494455950304,
+        "y": 512.4882057789567
+      },
+      "caption": "",
+      "labels": [
+        "Species"
+      ],
+      "properties": {
+        "id": "",
+        "initialConcentration": "",
+        "substanceUnits": "",
+        "hasOnlySubstanceUnits": "",
+        "constant": "",
+        "boundaryCondition": ""
+      },
+      "style": {}
+    },
+    {
+      "id": "n3",
+      "position": {
+        "x": 432.24944559503035,
+        "y": 337.0786965503655
+      },
+      "caption": "",
+      "labels": [
+        "Parameter"
+      ],
+      "properties": {
+        "id": "",
+        "sboTerm": "",
+        "value": "",
+        "constant": ""
+      },
+      "style": {}
+    },
+    {
+      "id": "n4",
+      "position": {
+        "x": 833.1523435518487,
+        "y": 337.07869655036575
+      },
+      "caption": "",
+      "labels": [
+        "Reaction"
+      ],
+      "properties": {
+        "id": "",
+        "reversible": "",
+        "fast": "",
+        "lowerFluxBound": "",
+        "upperFluxBound": ""
+      },
+      "style": {}
+    },
+    {
+      "id": "n5",
+      "position": {
+        "x": 129,
+        "y": 337.0786965503655
+      },
+      "caption": "",
+      "labels": [
+        "model"
+      ],
+      "properties": {
+        "id": "str",
+        "timeUnits": "str",
+        "strict": "str"
+      },
+      "style": {}
+    },
+    {
+      "id": "n6",
+      "position": {
+        "x": 129,
+        "y": -4
+      },
+      "caption": "",
+      "labels": [
+        "UnitDefinition"
+      ],
+      "properties": {
+        "id": "",
+        "name": "",
+        "metaid": "",
+        "sboTerm": ""
+      },
+      "style": {}
+    },
+    {
+      "id": "n7",
+      "position": {
+        "x": 432.24944559503035,
+        "y": 86.30477335080269
+      },
+      "caption": "",
+      "labels": [
+        "objective"
+      ],
+      "properties": {
+        "id": "",
+        "type": ""
+      },
+      "style": {}
+    },
+    {
+      "id": "n8",
+      "position": {
+        "x": 833.1523435518487,
+        "y": 86.30477335080269
+      },
+      "caption": "",
+      "labels": [
+        "fluxObjective"
+      ],
+      "properties": {
+        "reaction": "",
+        "coefficient": ""
+      },
+      "style": {}
+    }
+  ],
+  "relationships": [
+    {
+      "id": "n0",
+      "fromId": "n2",
+      "toId": "n1",
+      "type": "IN_COMPARTMENT",
+      "properties": {},
+      "style": {}
+    },
+    {
+      "id": "n1",
+      "fromId": "n4",
+      "toId": "n2",
+      "type": "HAS_PRODUCT",
+      "properties": {},
+      "style": {}
+    },
+    {
+      "id": "n2",
+      "fromId": "n4",
+      "toId": "n3",
+      "type": "HAS_LOWERFLUXBOUND",
+      "properties": {},
+      "style": {}
+    },
+    {
+      "id": "n3",
+      "fromId": "n5",
+      "toId": "n3",
+      "type": "HAS_PARAMETER",
+      "properties": {},
+      "style": {}
+    },
+    {
+      "id": "n4",
+      "fromId": "n4",
+      "toId": "n3",
+      "type": "HAS_UPPERFLUXBOUND",
+      "properties": {},
+      "style": {}
+    },
+    {
+      "id": "n5",
+      "fromId": "n2",
+      "toId": "n4",
+      "type": "IS_REACTANT",
+      "properties": {},
+      "style": {}
+    },
+    {
+      "id": "n6",
+      "fromId": "n5",
+      "toId": "n7",
+      "type": "HAS_OBJECTIVE",
+      "properties": {},
+      "style": {}
+    },
+    {
+      "id": "n7",
+      "fromId": "n7",
+      "toId": "n8",
+      "type": "HAS_FLUXOBJECTIVE",
+      "properties": {},
+      "style": {}
+    },
+    {
+      "id": "n8",
+      "fromId": "n5",
+      "toId": "n6",
+      "type": "HAS_UNITDEFINITION",
+      "properties": {},
+      "style": {}
+    }
+  ]
+}
