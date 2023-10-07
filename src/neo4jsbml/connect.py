@@ -191,6 +191,7 @@ class Connect(metaclass=singleton.Singleton):
             if expect_data:
                 return res.data()
             res.single()
+            return None
 
     def __del__(self):
         """Close the driver"""

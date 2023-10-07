@@ -26,7 +26,7 @@ class TestConnect:
         assert init_driver.is_connected() is True
 
     @is_not_connected
-    def test_is_connected(self, init_driver):
+    def test_is_not_connected(self, init_driver):
         assert init_driver.is_connected() is False
 
     def test_read_password(self, neo4j_password):
