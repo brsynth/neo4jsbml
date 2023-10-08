@@ -1,6 +1,26 @@
 Changelog
 =========
 
+`0.11.2 <https://github.com/brsynth/neo4jsbml/tree/0.11.2>`__ (2023-10-07)
+--------------------------------------------------------------------------
+
+`Full
+Changelog <https://github.com/brsynth/neo4jsbml/compare/0.11.1...0.11.2>`__
+
+**Merged pull requests:**
+
+-  AuraDB config `#14 <https://github.com/brsynth/neo4jsbml/pull/14>`__
+   (`guillaume-gricourt <https://github.com/guillaume-gricourt>`__)
+-  Neo4jefmtool `#13 <https://github.com/brsynth/neo4jsbml/pull/13>`__
+   (`guillaume-gricourt <https://github.com/guillaume-gricourt>`__)
+-  Manage plugins `#12 <https://github.com/brsynth/neo4jsbml/pull/12>`__
+   (`guillaume-gricourt <https://github.com/guillaume-gricourt>`__)
+-  Fix Id association
+   `#11 <https://github.com/brsynth/neo4jsbml/pull/11>`__
+   (`guillaume-gricourt <https://github.com/guillaume-gricourt>`__)
+
+.. _section-1:
+
 `0.11.1 <https://github.com/brsynth/neo4jsbml/tree/0.11.1>`__ (2023-09-22)
 --------------------------------------------------------------------------
 
@@ -19,7 +39,7 @@ Changelog <https://github.com/brsynth/neo4jsbml/compare/0.11.0...0.11.1>`__
    `#8 <https://github.com/brsynth/neo4jsbml/pull/8>`__
    (`dependabot[bot] <https://github.com/apps/dependabot>`__)
 
-.. _section-1:
+.. _section-2:
 
 `0.11.0 <https://github.com/brsynth/neo4jsbml/tree/0.11.0>`__ (2023-03-28)
 --------------------------------------------------------------------------
@@ -33,7 +53,7 @@ Changelog <https://github.com/brsynth/neo4jsbml/compare/0.10.1...0.11.0>`__
    `#7 <https://github.com/brsynth/neo4jsbml/pull/7>`__
    (`guillaume-gricourt <https://github.com/guillaume-gricourt>`__)
 
-.. _section-2:
+.. _section-3:
 
 `0.10.1 <https://github.com/brsynth/neo4jsbml/tree/0.10.1>`__ (2023-03-17)
 --------------------------------------------------------------------------
@@ -41,7 +61,7 @@ Changelog <https://github.com/brsynth/neo4jsbml/compare/0.10.1...0.11.0>`__
 `Full
 Changelog <https://github.com/brsynth/neo4jsbml/compare/0.10.0...0.10.1>`__
 
-.. _section-3:
+.. _section-4:
 
 `0.10.0 <https://github.com/brsynth/neo4jsbml/tree/0.10.0>`__ (2023-03-17)
 --------------------------------------------------------------------------
@@ -57,7 +77,7 @@ Changelog <https://github.com/brsynth/neo4jsbml/compare/0.9.2...0.10.0>`__
 -  Read the docs `#5 <https://github.com/brsynth/neo4jsbml/pull/5>`__
    (`guillaume-gricourt <https://github.com/guillaume-gricourt>`__)
 
-.. _section-4:
+.. _section-5:
 
 `0.9.2 <https://github.com/brsynth/neo4jsbml/tree/0.9.2>`__ (2023-02-23)
 ------------------------------------------------------------------------
@@ -65,7 +85,7 @@ Changelog <https://github.com/brsynth/neo4jsbml/compare/0.9.2...0.10.0>`__
 `Full
 Changelog <https://github.com/brsynth/neo4jsbml/compare/0.9.1...0.9.2>`__
 
-.. _section-5:
+.. _section-6:
 
 `0.9.1 <https://github.com/brsynth/neo4jsbml/tree/0.9.1>`__ (2023-02-21)
 ------------------------------------------------------------------------
@@ -73,7 +93,7 @@ Changelog <https://github.com/brsynth/neo4jsbml/compare/0.9.1...0.9.2>`__
 `Full
 Changelog <https://github.com/brsynth/neo4jsbml/compare/0.9.0...0.9.1>`__
 
-.. _section-6:
+.. _section-7:
 
 `0.9.0 <https://github.com/brsynth/neo4jsbml/tree/0.9.0>`__ (2023-01-27)
 ------------------------------------------------------------------------
@@ -87,7 +107,7 @@ Changelog <https://github.com/brsynth/neo4jsbml/compare/0.8.3...0.9.0>`__
    `#4 <https://github.com/brsynth/neo4jsbml/pull/4>`__
    (`dependabot[bot] <https://github.com/apps/dependabot>`__)
 
-.. _section-7:
+.. _section-8:
 
 `0.8.3 <https://github.com/brsynth/neo4jsbml/tree/0.8.3>`__ (2023-01-16)
 ------------------------------------------------------------------------
@@ -95,7 +115,7 @@ Changelog <https://github.com/brsynth/neo4jsbml/compare/0.8.3...0.9.0>`__
 `Full
 Changelog <https://github.com/brsynth/neo4jsbml/compare/0.8.0...0.8.3>`__
 
-.. _section-8:
+.. _section-9:
 
 `0.8.0 <https://github.com/brsynth/neo4jsbml/tree/0.8.0>`__ (2023-01-16)
 ------------------------------------------------------------------------
