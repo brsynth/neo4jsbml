@@ -110,9 +110,19 @@ def main():
     logging.info("Connection to database")
     con = None
     if args.input_config_file:
+        if not os.path.isfile(args.input_config_file):
+            logging.error(
+                "File provided does not exist: %s" % (args.input_config_file,)
+            )
+            parser.exit(1)
         logging.warning("Configuration file is provided, ignore indiviual arguments")
         con = connect.Connect.from_config(path=args.input_config_file)
     elif args.input_auradb_file:
+        if not os.path.isfile(args.input_auradb_file):
+            logging.error(
+                "File provided does not exist: %s" % (args.input_auradb_file,)
+            )
+            parser.exit(1)
         logging.warning(
             "Configuration file AuraDB is provided, ignore indiviual arguments"
         )
