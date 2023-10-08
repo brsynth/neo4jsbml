@@ -43,17 +43,24 @@ class Entity(metaclass=ABCMeta):
 
     def clean_properties(self):
         """Remove empty values.
+        Sanitize string:
+            - remove return line
+            - append a backslash in front of double quotes
 
         Return
         ------
         None
         """
         keys = []
-        for k, v in self.properties.items():
-            if v is None or v == "":
-                keys.append(k)
-        for k in keys:
-            del self.properties[k]
+        for key, value in self.properties.items():
+            if value is None or value == "":
+                keys.append(key)
+            elif isinstance(value, str):
+                value = value.replace('"', '\\"')
+                value = value.replace("\n", "")
+                self.properties[key] = value
+        for key in keys:
+            del self.properties[key]
 
     def has_property(self, label: str) -> bool:
         """Check if a node has a property.
