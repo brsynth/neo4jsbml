@@ -261,3 +261,27 @@ class Connect(metaclass=singleton.Singleton):
                     elif var == "AURA_INSTANCENAME":
                         data["database"] = value
         return Connect(**data)
+
+    def __repr__(self):
+        msg = []
+        msg.append("Url: %s" % (self.url,))
+        msg.append("Protocol: %s" % (self.protocol,))
+        msg.append("Database: %s" % (self.database,))
+        user = "<empty>"
+        if self.user:
+            user = self.user
+        msg.append("User: %s" % (user,))
+        port = "<empty>"
+        if self.port:
+            port = self.port
+        msg.append("Port: %s" % (port,))
+        password = "<empty>"
+        if self.password:
+            password = "initialized"
+        msg.append("Password: " + password)
+        msg.append("Uri: " + self.uri)
+        is_connected = "false"
+        if self.is_connected():
+            is_connected = "true"
+        msg.append("Connected: " + is_connected)
+        return "\n".join(msg)

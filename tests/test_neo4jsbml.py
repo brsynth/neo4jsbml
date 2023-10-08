@@ -46,7 +46,6 @@ def load_iAF1260(init_driver, config_path, pathway_two_path, iaf1260_path):
 class TestiML1515:
     def test_nodes(self, init_driver, load_iML1515):
         query = "CALL db.labels() YIELD label CALL apoc.cypher.run('MATCH (:`'+label+'`) RETURN count(*) as count',{}) YIELD value RETURN label, value.count"
-        singleton.Singleton.clean()
         data = init_driver.query(value=query, expect_data=True)
 
         assert data == [
@@ -61,7 +60,6 @@ class TestiML1515:
 
     def test_relationships(self, init_driver, load_iML1515):
         query = "CALL db.relationshipTypes() YIELD relationshipType as type CALL apoc.cypher.run('MATCH ()-[:`'+type+'`]->() RETURN count(*) as count',{}) YIELD value RETURN type, value.count"
-        singleton.Singleton.clean()
         data = init_driver.query(value=query, expect_data=True)
 
         assert data == [
@@ -80,7 +78,6 @@ class TestiML1515:
 class TestiAF1260:
     def test_nodes(self, init_driver, load_iAF1260):
         query = "CALL db.labels() YIELD label CALL apoc.cypher.run('MATCH (:`'+label+'`) RETURN count(*) as count',{}) YIELD value RETURN label, value.count"
-        singleton.Singleton.clean()
         data = init_driver.query(value=query, expect_data=True)
 
         assert data == [
@@ -95,7 +92,6 @@ class TestiAF1260:
 
     def test_relationships(self, init_driver, load_iAF1260):
         query = "CALL db.relationshipTypes() YIELD relationshipType as type CALL apoc.cypher.run('MATCH ()-[:`'+type+'`]->() RETURN count(*) as count',{}) YIELD value RETURN type, value.count"
-        singleton.Singleton.clean()
         data = init_driver.query(value=query, expect_data=True)
 
         assert data == [

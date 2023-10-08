@@ -1,7 +1,7 @@
 import os
 
 import pytest
-from neo4jsbml import connect, sbml
+from neo4jsbml import connect, sbml, singleton
 
 cur_dir = os.path.abspath(os.path.dirname(__file__))
 data_dir = os.path.join(cur_dir, "dataset")
@@ -148,6 +148,7 @@ def rel_two_arrow():
 
 @pytest.fixture(scope="function")
 def init_driver():
+    singleton.Singleton.clean()
     return connect.Connect(
         protocol="neo4j",
         url="localhost",
