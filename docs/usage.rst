@@ -64,7 +64,7 @@ The user has two options: passing arguments individually by the command line or 
 ``--input-user-str``
     Username to log with the database
 
-``--input-password-file``
+``--input-password-txt``
     Password to log with the database
 
 ``--input-database-str``
@@ -73,7 +73,7 @@ The user has two options: passing arguments individually by the command line or 
 **Configuration file**
 Several options, either
 
-``--input-config-file``
+``--input-config-ini``
     An ``ìni`` file containing all these informations above
 
 .. code-block:: toml
@@ -94,7 +94,7 @@ Several options, either
 
 or either
 
-``--input-auradb-file``
+``--input-auradb-txt``
     A ``txt`` file provided by AuraDB
 
 .. code-block:: bash
@@ -119,14 +119,14 @@ To import your data with ``neo4jsbml`` into Neo4j, you will need:
 
 .. code-block:: console
 
-    $ neo4jsbml \
+    $ neo4jsbml sbml-to-neo4j
         <database parameters>
 
-        --input-file-sbml <file> \
-        --input-modelisation-json <file>
+        --input-model-sbml <file> \
+        --input-arrows-json <file>
 
 .. note::
-    If you have multiple model in the database, pass a ``tag`` to identify the model loaded into the database if you want to avoid collision with the argument ``--input-tag-str``
+    If you have multiple model in the database, pass a ``tag`` to identify the model loaded into the database if you want to avoid collision with the argument ``--parameter-tag-property-str``
 
 API
 ~~~

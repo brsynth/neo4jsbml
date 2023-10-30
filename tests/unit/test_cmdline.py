@@ -11,20 +11,20 @@ class TestAnalyzingModel:
         with tempfile.NamedTemporaryFile() as fd:
             fname = fd.name
 
-        args = ["python", "-m", __app_name__]
-        args += ["--input-config-file", config_path]
-        args += ["--input-modelisation-json", fname]
-        args += ["--input-file-sbml", ecore_path]
+        args = ["python", "-m", __app_name__, "sbml-to-neo4j"]
+        args += ["--input-config-ini", config_path]
+        args += ["--input-arrows-json", fname]
+        args += ["--input-model-sbml", ecore_path]
 
         ret = run(args)
         assert ret.returncode != 0
 
     def test_dry_run(self, ecore_path, config_path, pathway_one_path):
-        args = ["python", "-m", __app_name__]
-        args += ["--input-config-file", config_path]
-        args += ["--input-modelisation-json", pathway_one_path]
-        args += ["--input-file-sbml", ecore_path]
-        args += ["--parameters-dry-run"]
+        args = ["python", "-m", __app_name__, "sbml-to-neo4j"]
+        args += ["--input-config-ini", config_path]
+        args += ["--input-arrows-json", pathway_one_path]
+        args += ["--input-model-sbml", ecore_path]
+        args += ["--parameter-dry-run"]
 
         ret = run(args, show_output=True)
         assert ret.returncode == 0
