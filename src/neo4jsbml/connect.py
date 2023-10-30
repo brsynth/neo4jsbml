@@ -169,6 +169,18 @@ class Connect(metaclass=singleton.Singleton):
                 )
                 res.single()
 
+    def clean(self) -> None:
+        """Remove data into Neo4j
+
+        Return
+        ------
+        None
+        """
+        with self.driver.session(default_access_mode=neo4j.WRITE_ACCESS) as session:
+            res = session.run("MATCH (n) DETACH DELETE n")
+            res.single()
+            return None
+
     def query(
         self, value: str, expect_data: bool = False
     ) -> Optional[List[Dict[str, Any]]]:

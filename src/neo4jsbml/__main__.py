@@ -10,9 +10,9 @@ AP_subparsers = AP.add_subparsers(help="Sub-commnands (use with -h for more info
 
 
 def _cmd_sbml_to_neo4j(args):
-    """Import SBML file into Neo4"""
+    """Import SBML file into Neo4j"""
     # Check arguments.
-    logging.info("Start - %s" % (_version.__app_name__,))
+    logging.info("Start - sbml-to-neo4j")
     if not os.path.isfile(args.input_model_sbml):
         logging.error("Model SBML file does not exist: %s" % (args.input_model_sbml,))
         AP.exit(1)
@@ -85,7 +85,7 @@ def _cmd_sbml_to_neo4j(args):
         else:
             logging.info("None relationship created")
 
-    logging.info("End - %s" % (_version.__app_name__,))
+    logging.info("End - sbml-to-neo4j")
     return 0
 
 
@@ -107,6 +107,53 @@ P_stn_input.add_argument(
     help='Add a "tag" property for each entity, to set a custom ID',
 )
 P_stn.set_defaults(func=_cmd_sbml_to_neo4j)
+
+
+def _cmd_clean(args):
+    """Remove data into the database"""
+    # Check arguments.
+    logging.info("Start - clean")
+    # Connection to database
+    logging.info("Connection to database")
+    con = None
+    if args.input_config_ini:
+        if not os.path.isfile(args.input_config_ini):
+            logging.error("File provided does not exist: %s" % (args.input_config_ini,))
+            AP.exit(1)
+        logging.warning("Configuration file is provided, ignore indiviual arguments")
+        con = connect.Connect.from_config(path=args.input_config_ini)
+    elif args.input_auradb_file:
+        if not os.path.isfile(args.input_auradb_txt):
+            logging.error("File provided does not exist: %s" % (args.input_auradb_txt,))
+            AP.exit(1)
+        logging.warning(
+            "Configuration file AuraDB is provided, ignore indiviual arguments"
+        )
+        con = connect.Connect.from_auradb(path=args.input_auradb_txt)
+    else:
+        con = connect.Connect(
+            protocol=args.input_protocol_str,
+            url=args.input_url_str,
+            port=args.input_port_int,
+            user=args.input_user_str,
+            database=args.input_database_str,
+            password_path=args.input_password_txt,
+        )
+    if con.is_connected() is False:
+        logging.error("Unable to connect to the database")
+        AP.exit(1)
+
+    # Clean
+    logging.info("Clean database")
+    con.clean()
+
+    logging.info("End - clean")
+    return 0
+
+
+P_clean = AP_subparsers.add_parser("clean", help=_cmd_clean.__doc__)
+options.add_dbb_connection(parser=P_clean)
+P_clean.set_defaults(func=_cmd_clean)
 
 
 # Help.
