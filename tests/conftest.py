@@ -1,7 +1,9 @@
+import json
 import os
+import sys
 
 import pytest
-from neo4jsbml import connect, sbml, singleton
+from neo4jsbml import cmd, connect, sbml, singleton
 
 cur_dir = os.path.abspath(os.path.dirname(__file__))
 data_dir = os.path.join(cur_dir, "dataset")
@@ -181,3 +183,36 @@ is_not_connected = pytest.mark.skipif(
     ).is_connected(),
     reason="connected",
 )
+
+
+def neo4jsbml_sbml_to_neo4j(config: str, arrows: str, model: str) -> None:
+    args = ["neo4jsbml", "sbml-to-neo4j"]
+    args += ["--input-config-ini", config]
+    args += ["--input-arrows-json", arrows]
+    args += ["--input-model-sbml", model]
+    ret = cmd.run(args)
+    if ret.returncode > 0:
+        print(ret.stderr)
+        print(ret.stdout)
+        sys.exit(1)
+
+
+def neo4jsbml_statistics(config: str, output: str) -> None:
+    args = ["neo4jsbml", "statistics"]
+    args += ["--input-config-ini", config]
+    args += ["--output-statistics-json", output]
+    ret = cmd.run(args)
+    if ret.returncode > 0:
+        print(ret.stderr)
+        print(ret.stdout)
+        sys.exit(1)
+
+
+def compare_json(result: str, expect: str) -> bool:
+    data_result = {}
+    with open(result) as fd:
+        data_result = json.load(fd)
+    data_expect = {}
+    with open(expect) as fd:
+        data_expect = json.load(fd)
+    return data_result == data_expect

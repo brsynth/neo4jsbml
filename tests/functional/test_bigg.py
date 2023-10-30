@@ -5,6 +5,7 @@ import pytest
 from neo4j import GraphDatabase
 
 from neo4jsbml import cmd, singleton
+from neo4jsbml._version import __app_name__
 from conftest import is_connected
 
 
@@ -14,10 +15,10 @@ def load_iML1515(init_driver, config_path, pathway_two_path, iml_path):
         init_driver.query(value="MATCH (n) DETACH DELETE n")
     except Exception:
         pass
-    args = ["python", "-m", "neo4jsbml"]
-    args += ["--input-config-file", config_path]
-    args += ["--input-modelisation-json", pathway_two_path]
-    args += ["--input-file-sbml", iml_path]
+    args = ["python", "-m", __app_name__, "sbml-to-neo4j"]
+    args += ["--input-config-ini", config_path]
+    args += ["--input-arrows-json", pathway_two_path]
+    args += ["--input-model-sbml", iml_path]
     ret = cmd.run(args)
     if ret.returncode > 0:
         print(ret.stderr)
@@ -31,10 +32,10 @@ def load_iAF1260(init_driver, config_path, pathway_two_path, iaf1260_path):
         init_driver.query(value="MATCH (n) DETACH DELETE n")
     except Exception:
         pass
-    args = ["python", "-m", "neo4jsbml"]
-    args += ["--input-config-file", config_path]
-    args += ["--input-modelisation-json", pathway_two_path]
-    args += ["--input-file-sbml", iaf1260_path]
+    args = ["python", "-m", __app_name__, "sbml-to-neo4j"]
+    args += ["--input-config-ini", config_path]
+    args += ["--input-arrows-json", pathway_two_path]
+    args += ["--input-model-sbml", iaf1260_path]
     ret = cmd.run(args)
     if ret.returncode > 0:
         print(ret.stderr)
