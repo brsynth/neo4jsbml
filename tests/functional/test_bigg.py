@@ -6,46 +6,15 @@ from neo4j import GraphDatabase
 
 from neo4jsbml import cmd, singleton
 from neo4jsbml._version import __app_name__
-from conftest import is_connected
-
-
-@pytest.fixture
-def load_iML1515(init_driver, config_path, pathway_two_path, iml_path):
-    try:
-        init_driver.query(value="MATCH (n) DETACH DELETE n")
-    except Exception:
-        pass
-    args = ["python", "-m", __app_name__, "sbml-to-neo4j"]
-    args += ["--input-config-ini", config_path]
-    args += ["--input-arrows-json", pathway_two_path]
-    args += ["--input-model-sbml", iml_path]
-    ret = cmd.run(args)
-    if ret.returncode > 0:
-        print(ret.stderr)
-        print(ret.stdout)
-        sys.exit(1)
-
-
-@pytest.fixture
-def load_iAF1260(init_driver, config_path, pathway_two_path, iaf1260_path):
-    try:
-        init_driver.query(value="MATCH (n) DETACH DELETE n")
-    except Exception:
-        pass
-    args = ["python", "-m", __app_name__, "sbml-to-neo4j"]
-    args += ["--input-config-ini", config_path]
-    args += ["--input-arrows-json", pathway_two_path]
-    args += ["--input-model-sbml", iaf1260_path]
-    ret = cmd.run(args)
-    if ret.returncode > 0:
-        print(ret.stderr)
-        print(ret.stdout)
-        sys.exit(1)
+from conftest import is_connected, neo4jsbml_sbml_to_neo4j
 
 
 @is_connected
 class TestiML1515:
-    def test_nodes(self, init_driver, load_iML1515):
+    def test_nodes(self, init_driver, config_path, pathway_two_path, iml_path):
+        neo4jsbml_sbml_to_neo4j(
+            config=config_path, arrows=pathway_two_path, model=iml_path
+        )
         query = "CALL db.labels() YIELD label CALL apoc.cypher.run('MATCH (:`'+label+'`) RETURN count(*) as count',{}) YIELD value RETURN label, value.count"
         data = init_driver.query(value=query, expect_data=True)
 
@@ -59,7 +28,10 @@ class TestiML1515:
             {"label": "GeneProduct", "value.count": 1516},
         ]
 
-    def test_relationships(self, init_driver, load_iML1515):
+    def test_relationships(self, init_driver, config_path, pathway_two_path, iml_path):
+        neo4jsbml_sbml_to_neo4j(
+            config=config_path, arrows=pathway_two_path, model=iml_path
+        )
         query = "CALL db.relationshipTypes() YIELD relationshipType as type CALL apoc.cypher.run('MATCH ()-[:`'+type+'`]->() RETURN count(*) as count',{}) YIELD value RETURN type, value.count"
         data = init_driver.query(value=query, expect_data=True)
 
@@ -77,7 +49,10 @@ class TestiML1515:
 
 @is_connected
 class TestiAF1260:
-    def test_nodes(self, init_driver, load_iAF1260):
+    def test_nodes(self, init_driver, config_path, pathway_two_path, iaf1260_path):
+        neo4jsbml_sbml_to_neo4j(
+            config=config_path, arrows=pathway_two_path, model=iaf1260_path
+        )
         query = "CALL db.labels() YIELD label CALL apoc.cypher.run('MATCH (:`'+label+'`) RETURN count(*) as count',{}) YIELD value RETURN label, value.count"
         data = init_driver.query(value=query, expect_data=True)
 
@@ -91,7 +66,12 @@ class TestiAF1260:
             {"label": "GeneProduct", "value.count": 1261},
         ]
 
-    def test_relationships(self, init_driver, load_iAF1260):
+    def test_relationships(
+        self, init_driver, config_path, pathway_two_path, iaf1260_path
+    ):
+        neo4jsbml_sbml_to_neo4j(
+            config=config_path, arrows=pathway_two_path, model=iaf1260_path
+        )
         query = "CALL db.relationshipTypes() YIELD relationshipType as type CALL apoc.cypher.run('MATCH ()-[:`'+type+'`]->() RETURN count(*) as count',{}) YIELD value RETURN type, value.count"
         data = init_driver.query(value=query, expect_data=True)
 

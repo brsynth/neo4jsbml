@@ -185,7 +185,18 @@ is_not_connected = pytest.mark.skipif(
 )
 
 
+def neo4jsbml_clean(config: str) -> None:
+    args = ["neo4jsbml", "clean"]
+    args += ["--input-config-ini", config]
+    ret = cmd.run(args)
+    if ret.returncode > 0:
+        print(ret.stderr)
+        print(ret.stdout)
+        sys.exit(1)
+
+
 def neo4jsbml_sbml_to_neo4j(config: str, arrows: str, model: str) -> None:
+    neo4jsbml_clean(config=config)
     args = ["neo4jsbml", "sbml-to-neo4j"]
     args += ["--input-config-ini", config]
     args += ["--input-arrows-json", arrows]
