@@ -1,0 +1,74 @@
+{
+    "nodes": [
+        {
+            "label": "Compartment",
+            "value.count": 1
+        },
+        {
+            "label": "Species",
+            "value.count": 6
+        },
+        {
+            "label": "Parameter",
+            "value.count": 3
+        },
+        {
+            "label": "Reaction",
+            "value.count": 4
+        },
+        {
+            "label": "model",
+            "value.count": 1
+        },
+        {
+            "label": "UnitDefinition",
+            "value.count": 3
+        },
+        {
+            "label": "objective",
+            "value.count": 1
+        },
+        {
+            "label": "fluxObjective",
+            "value.count": 1
+        }
+    ],
+    "relationships": [
+        {
+            "type": "IN_COMPARTMENT",
+            "value.count": 6
+        },
+        {
+            "type": "HAS_PRODUCT",
+            "value.count": 6
+        },
+        {
+            "type": "HAS_LOWERFLUXBOUND",
+            "value.count": 4
+        },
+        {
+            "type": "HAS_PARAMETER",
+            "value.count": 3
+        },
+        {
+            "type": "HAS_UPPERFLUXBOUND",
+            "value.count": 4
+        },
+        {
+            "type": "IS_REACTANT",
+            "value.count": 4
+        },
+        {
+            "type": "HAS_OBJECTIVE",
+            "value.count": 1
+        },
+        {
+            "type": "HAS_FLUXOBJECTIVE",
+            "value.count": 1
+        },
+        {
+            "type": "HAS_UNITDEFINITION",
+            "value.count": 3
+        }
+    ]
+}

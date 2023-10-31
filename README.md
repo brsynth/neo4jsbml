@@ -33,25 +33,25 @@ Import your data with `neo4jsbml` into Neo4j.
 * If you have multiple model in the database, pass a `tag` to identify the model loaded into the database if you want to avoid collision
 
 ```sh
-neo4jsbml sbml-to-neo4j \
+neo4jsbml \
     # Database parameters
     --input-protocol-str ["neo4j", "neo4j+s", "neo4j+ssc", "bolt", "bolt+s", "bolt+ssc"] \
     --input-url-str "localhost" \
     --input-user-str "neo4j" \
     --input-port-int <port> \
-    --input-password-txt <file> \
+    --input-password-file <file> \
     --input-database-str <str> \
     # Config file
-    --input-config-ini <file> \
+    --input-config-file <file> \
     # AuraDB file
-    --input-auradb-txt <file> \
+    --input-auradb-file <file> \
 
     # Input
-    --input-model-sbml <file> \
-    --input-arrows-json <file> \
+    --input-file-sbml <file> \
+    --input-modelisation-json <file> \
 
     # Parameter
-    --parameter-tag-property-str ""
+    --input-tag-str ""
 ```
 
 ## Config file

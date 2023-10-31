@@ -1,0 +1,86 @@
+{
+    "nodes": [
+        {
+            "label": "UnitDefinition",
+            "value.count": 2
+        },
+        {
+            "label": "compartment",
+            "value.count": 1
+        },
+        {
+            "label": "model",
+            "value.count": 1
+        },
+        {
+            "label": "unit",
+            "value.count": 3
+        },
+        {
+            "label": "Species",
+            "value.count": 2
+        },
+        {
+            "label": "Parameter",
+            "value.count": 5
+        },
+        {
+            "label": "rateRule",
+            "value.count": 2
+        },
+        {
+            "label": "event",
+            "value.count": 2
+        },
+        {
+            "label": "trigger",
+            "value.count": 2
+        },
+        {
+            "label": "eventAssignment",
+            "value.count": 1
+        }
+    ],
+    "relationships": [
+        {
+            "type": "HAS_COMPARTMENT",
+            "value.count": 1
+        },
+        {
+            "type": "IS_COMPOSED",
+            "value.count": 3
+        },
+        {
+            "type": "HAS_UNITDEFINITION",
+            "value.count": 2
+        },
+        {
+            "type": "HAS_SPECIES",
+            "value.count": 2
+        },
+        {
+            "type": "IN_COMPARTMENT",
+            "value.count": 2
+        },
+        {
+            "type": "HAS_RATERULE",
+            "value.count": 2
+        },
+        {
+            "type": "HAS_EVENT",
+            "value.count": 2
+        },
+        {
+            "type": "HAS_TRIGGER",
+            "value.count": 2
+        },
+        {
+            "type": "HAS_EVENTASSIGNMENT",
+            "value.count": 2
+        },
+        {
+            "type": "HAS_UNITS",
+            "value.count": 5
+        }
+    ]
+}
