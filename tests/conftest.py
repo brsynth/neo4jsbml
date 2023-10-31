@@ -1,3 +1,4 @@
+import collections
 import json
 import os
 import sys
@@ -6,27 +7,27 @@ import pytest
 from neo4jsbml import cmd, connect, sbml, singleton
 
 cur_dir = os.path.abspath(os.path.dirname(__file__))
-data_dir = os.path.join(cur_dir, "dataset")
+dir_data = os.path.join(cur_dir, "dataset")
 
 
 @pytest.fixture(scope="session")
-def data_directory():
-    return data_dir
+def data_dir():
+    return dir_data
 
 
 @pytest.fixture(scope="session")
-def config_path(data_directory):
-    return os.path.join(data_directory, "database", "localhost.ini")
+def config_path(data_dir):
+    return os.path.join(data_dir, "database", "localhost.ini")
 
 
 @pytest.fixture(scope="session")
-def auradb_path(data_directory):
-    return os.path.join(data_directory, "database", "auradb.txt")
+def auradb_path(data_dir):
+    return os.path.join(data_dir, "database", "auradb.txt")
 
 
 @pytest.fixture(scope="session")
-def iml_path(data_directory):
-    return os.path.join(data_directory, "model", "iML1515.xml.gz")
+def iml_path(data_dir):
+    return os.path.join(data_dir, "model", "iML1515.xml.gz")
 
 
 @pytest.fixture(scope="function")
@@ -35,18 +36,18 @@ def sbml_iml(iml_path):
 
 
 @pytest.fixture(scope="session")
-def iaf1260_path(data_directory):
-    return os.path.join(data_directory, "model", "iAF1260.xml.gz")
+def iaf1260_path(data_dir):
+    return os.path.join(data_dir, "model", "iAF1260.xml.gz")
 
 
 @pytest.fixture(scope="session")
-def ecore_path(data_directory):
-    return os.path.join(data_directory, "model", "e_coli_core.xml.gz")
+def ecore_path(data_dir):
+    return os.path.join(data_dir, "model", "e_coli_core.xml.gz")
 
 
 @pytest.fixture(scope="session")
-def iml_toy_path(data_directory):
-    return os.path.join(data_directory, "model", "iML1515.toy.xml.gz")
+def iml_toy_path(data_dir):
+    return os.path.join(data_dir, "model", "iML1515.toy.xml.gz")
 
 
 @pytest.fixture(scope="function")
@@ -55,13 +56,13 @@ def sbml_toy(iml_toy_path):
 
 
 @pytest.fixture(scope="session")
-def pathway_one_path(data_directory):
-    return os.path.join(data_directory, "arrows", "PathwayModelisation-1.0.0.json")
+def pathway_one_path(data_dir):
+    return os.path.join(data_dir, "arrows", "PathwayModelisation-1.0.0.json")
 
 
 @pytest.fixture(scope="session")
-def pathway_two_path(data_directory):
-    return os.path.join(data_directory, "arrows", "PathwayModelisation-2.0.2.json")
+def pathway_two_path(data_dir):
+    return os.path.join(data_dir, "arrows", "PathwayModelisation-2.0.2.json")
 
 
 @pytest.fixture(scope="function")
@@ -226,4 +227,4 @@ def compare_json(result: str, expect: str) -> bool:
     data_expect = {}
     with open(expect) as fd:
         data_expect = json.load(fd)
-    return data_result == data_expect
+    return collections.OrderedDict(data_expect) == collections.OrderedDict(data_expect)

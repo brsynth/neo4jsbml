@@ -8,13 +8,13 @@ from conftest import is_connected, is_not_connected
 
 
 @pytest.fixture(scope="module")
-def neo4j_password(data_directory):
-    return os.path.join(data_directory, "database", "password.txt")
+def neo4j_password(data_dir):
+    return os.path.join(data_dir, "database", "password.txt")
 
 
 @pytest.fixture(scope="module")
-def neo4j_config(data_directory):
-    return os.path.join(data_directory, "database", "config.ini")
+def neo4j_config(data_dir):
+    return os.path.join(data_dir, "database", "config.ini")
 
 
 class TestConnect:

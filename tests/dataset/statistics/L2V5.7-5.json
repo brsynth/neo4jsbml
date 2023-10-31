@@ -1,0 +1,94 @@
+{
+    "nodes": [
+        {
+            "label": "UnitDefinition",
+            "value.count": 1
+        },
+        {
+            "label": "compartment",
+            "value.count": 1
+        },
+        {
+            "label": "model",
+            "value.count": 1
+        },
+        {
+            "label": "unit",
+            "value.count": 1
+        },
+        {
+            "label": "Species",
+            "value.count": 5
+        },
+        {
+            "label": "Reaction",
+            "value.count": 2
+        },
+        {
+            "label": "KineticLaw",
+            "value.count": 2
+        },
+        {
+            "label": "Parameter",
+            "value.count": 3
+        },
+        {
+            "label": "assignmentRule",
+            "value.count": 1
+        },
+        {
+            "label": "algebraicRule",
+            "value.count": 1
+        }
+    ],
+    "relationships": [
+        {
+            "type": "HAS_COMPARTMENT",
+            "value.count": 1
+        },
+        {
+            "type": "IS_COMPOSED",
+            "value.count": 1
+        },
+        {
+            "type": "HAS_UNITDEFINITION",
+            "value.count": 1
+        },
+        {
+            "type": "IN_COMPARTMENT",
+            "value.count": 5
+        },
+        {
+            "type": "HAS_KENETICLAW",
+            "value.count": 2
+        },
+        {
+            "type": "IS_REACTANT",
+            "value.count": 2
+        },
+        {
+            "type": "HAS_PRODUCT",
+            "value.count": 2
+        },
+        {
+            "type": "HAS_UNITS",
+            "value.count": 2
+        },
+        {
+            "type": "HAS_PARAMETER",
+            "value.count": 3
+        },
+        {
+            "type": "HAS_ASSIGNMENTRULE",
+            "value.count": 1
+        },
+        {
+            "type": "MODIFIERS",
+            "value.count": 1
+        },
+        {
+            "type": "HAS_ALGEBRAICRULE",
+            "value.count": 1
+        }
+    ]
+}

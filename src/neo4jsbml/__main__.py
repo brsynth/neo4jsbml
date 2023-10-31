@@ -1,4 +1,5 @@
 import argparse
+import json
 import logging
 import os
 import sys
@@ -107,6 +108,71 @@ P_stn_input.add_argument(
     help='Add a "tag" property for each entity, to set a custom ID',
 )
 P_stn.set_defaults(func=_cmd_sbml_to_neo4j)
+
+
+def _cmd_stats(args):
+    """Get statistics: entities and relationships"""
+    # Check arguments.
+    logging.info("Start - statistics")
+    # Connection to database
+    logging.info("Connection to database")
+    con = None
+    if args.input_config_ini:
+        if not os.path.isfile(args.input_config_ini):
+            logging.error("File provided does not exist: %s" % (args.input_config_ini,))
+            AP.exit(1)
+        logging.warning("Configuration file is provided, ignore indiviual arguments")
+        con = connect.Connect.from_config(path=args.input_config_ini)
+    elif args.input_auradb_file:
+        if not os.path.isfile(args.input_auradb_txt):
+            logging.error("File provided does not exist: %s" % (args.input_auradb_txt,))
+            AP.exit(1)
+        logging.warning(
+            "Configuration file AuraDB is provided, ignore indiviual arguments"
+        )
+        con = connect.Connect.from_auradb(path=args.input_auradb_txt)
+    else:
+        con = connect.Connect(
+            protocol=args.input_protocol_str,
+            url=args.input_url_str,
+            port=args.input_port_int,
+            user=args.input_user_str,
+            database=args.input_database_str,
+            password_path=args.input_password_txt,
+        )
+    if con.is_connected() is False:
+        logging.error("Unable to connect to the database")
+        AP.exit(1)
+
+    # Statistics
+    logging.info("Get number of entities")
+    data = {}
+    query = "CALL db.labels() YIELD label CALL apoc.cypher.run('MATCH (:`'+label+'`) RETURN count(*) as count',{}) YIELD value RETURN label, value.count"
+    res = con.query(value=query, expect_data=True)
+    data["nodes"] = res
+
+    logging.info("Get number of relationships")
+    query = "CALL db.relationshipTypes() YIELD relationshipType as type CALL apoc.cypher.run('MATCH ()-[:`'+type+'`]->() RETURN count(*) as count',{}) YIELD value RETURN type, value.count"
+    res = con.query(value=query, expect_data=True)
+    data["relationships"] = res
+
+    # Write output
+    logging.info("Write output")
+    with open(args.output_statistics_json, "w") as fod:
+        json.dump(data, fod, indent=4)
+
+    logging.info("End - statistics")
+    return 0
+
+
+P_stats = AP_subparsers.add_parser("statistics", help=_cmd_stats.__doc__)
+options.add_dbb_connection(parser=P_stats)
+P_out = P_stats.add_argument_group("Output")
+P_out.add_argument(
+    "--output-statistics-json",
+    help="Statistics output as Json file",
+)
+P_stats.set_defaults(func=_cmd_stats)
 
 
 def _cmd_clean(args):

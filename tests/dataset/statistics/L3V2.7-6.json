@@ -1,0 +1,86 @@
+{
+    "nodes": [
+        {
+            "label": "UnitDefinition",
+            "value.count": 3
+        },
+        {
+            "label": "compartment",
+            "value.count": 1
+        },
+        {
+            "label": "model",
+            "value.count": 1
+        },
+        {
+            "label": "unit",
+            "value.count": 5
+        },
+        {
+            "label": "Species",
+            "value.count": 5
+        },
+        {
+            "label": "Reaction",
+            "value.count": 2
+        },
+        {
+            "label": "KineticLaw",
+            "value.count": 2
+        },
+        {
+            "label": "Parameter",
+            "value.count": 3
+        },
+        {
+            "label": "algebraicRule",
+            "value.count": 2
+        }
+    ],
+    "relationships": [
+        {
+            "type": "HAS_COMPARTMENT",
+            "value.count": 1
+        },
+        {
+            "type": "IS_COMPOSED",
+            "value.count": 6
+        },
+        {
+            "type": "HAS_UNITDEFINITION",
+            "value.count": 3
+        },
+        {
+            "type": "HAS_SPECIES",
+            "value.count": 5
+        },
+        {
+            "type": "IN_COMPARTMENT",
+            "value.count": 5
+        },
+        {
+            "type": "HAS_REACTION",
+            "value.count": 2
+        },
+        {
+            "type": "HAS_KENETICLAW",
+            "value.count": 2
+        },
+        {
+            "type": "IS_REACTANT",
+            "value.count": 3
+        },
+        {
+            "type": "HAS_PRODUCT",
+            "value.count": 3
+        },
+        {
+            "type": "HAS_ASSIGNMENTRULE",
+            "value.count": 2
+        },
+        {
+            "type": "HAS_PARAMETER",
+            "value.count": 3
+        }
+    ]
+}
