@@ -1,4 +1,3 @@
-import collections
 import json
 import os
 import sys
@@ -220,6 +219,15 @@ def neo4jsbml_statistics(config: str, output: str) -> None:
         sys.exit(1)
 
 
+def ordered(obj):
+    if isinstance(obj, dict):
+        return sorted((k, ordered(v)) for k, v in obj.items())
+    if isinstance(obj, list):
+        return sorted(ordered(x) for x in obj)
+    else:
+        return obj
+
+
 def compare_json(result: str, expect: str) -> bool:
     data_result = {}
     with open(result) as fd:
@@ -227,4 +235,4 @@ def compare_json(result: str, expect: str) -> bool:
     data_expect = {}
     with open(expect) as fd:
         data_expect = json.load(fd)
-    return collections.OrderedDict(data_expect) == collections.OrderedDict(data_expect)
+    return ordered(data_expect) == ordered(data_result)
