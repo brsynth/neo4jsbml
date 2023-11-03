@@ -60,7 +60,7 @@ def _cmd_sbml_to_neo4j(args):
 
     # Load model
     logging.info("Load SBML file")
-    sbm = sbml.Sbml.from_sbml(
+    sbm = sbml.SbmlToNeo4j.from_sbml(
         path=args.input_model_sbml, tag=args.parameter_tag_property_str
     )
 

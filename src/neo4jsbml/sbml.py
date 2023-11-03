@@ -14,14 +14,86 @@ class Sbml(object):
 
     Attributes
     ----------
-    tag: str
-        identify nodes from an extra arguments for Neo4j
     document: libsml.Document
         a document
-    model: libsml.Model
-        a model extract from the document
     plugins: List[str]
         a list of plugin name
+
+    Methods
+    -------
+    __init__(document: libsbml.SBML_DOCUMENT, *args, **kwargs)
+        Instanciate a new object.
+
+    @classmethod
+    iterate_over_attribute(obj: Any) -> Generator:
+        Generator to select useful attributes
+
+    @classmethod
+    has_method(obj: Any, method: str) -> bool
+        Given an object, check if an object as a method.
+    """
+
+    PLUGINS = ["fbc", "groups", "layout", "qual"]
+
+    def __init__(self, document: libsbml.SBML_DOCUMENT, *args, **kwargs) -> None:
+        self.document = document
+
+    @classmethod
+    def iterate_over_attribute(cls, obj: Any) -> Generator:
+        """Iterate over attributes of an object
+
+        Parameters
+        ----------
+        obj: Any
+            any object
+
+        Return
+        ------
+        Generator
+        """
+        # Exact match
+        for attribute in dir(obj):
+            if (
+                not attribute.startswith("__")
+                and not attribute.startswith("enable")
+                and not attribute.startswith("get")
+                and not attribute.startswith("is")
+                and not attribute.startswith("matches")
+                and not attribute.startswith("remove")
+                and not attribute.startswith("set")
+                and not attribute.startswith("unset")
+                and not attribute.startswith("write")
+            ):
+                attr = getattr(obj, attribute, None)
+
+                if attr and not callable(attr):
+                    yield attribute
+
+    @classmethod
+    def has_method(cls, obj: Any, method: str) -> bool:
+        """Given an object, check if an object as a method.
+
+        Parameters
+        ----------
+        obj: Any
+            any object
+
+        Return
+        ------
+        bool
+        """
+        return method in obj.__dir__()
+
+
+class SbmlToNeo4j(Sbml):
+    """Help to map entities coming from Arrows and SBML.
+
+    Attributes
+    ----------
+    tag: str
+        identify nodes from an extra arguments for Neo4j
+    model: libsml.Model
+        a model extract from the document
 
     Raises
     -----
@@ -56,11 +128,9 @@ class Sbml(object):
 
     PLUGINS = ["fbc", "groups", "layout", "qual"]
 
-    def __init__(
-        self, document: libsbml.SBML_DOCUMENT, tag: Optional[str] = None
-    ) -> None:
+    def __init__(self, tag: Optional[str] = None, *args, **kwargs) -> None:
+        super(SbmlToNeo4j, self).__init__(*args, **kwargs)
         self.tag = tag
-        self.document = document
         self.model = self.document.getModel()
         self.node_map_item: Dict[str, List[str]] = {}
         self.node_map_label: Dict[str, str] = {}
@@ -104,7 +174,7 @@ class Sbml(object):
                 for prop in arrow_node.properties:
                     prop_found = False
                     for ix, element in enumerate(objs):
-                        methods = Sbml.find_method(obj=element, label=prop)
+                        methods = self.find_method(obj=element, label=prop)
                         if len(methods) < 1:
                             continue
                         if len(methods) > 1:
@@ -186,12 +256,12 @@ class Sbml(object):
         methods = []
         for from_id in from_ids:
             from_obj = self.get_element_by_id(value=from_id)
-            methods.extend(Sbml.find_method(obj=from_obj, label=to_label, exact=False))
+            methods.extend(self.find_method(obj=from_obj, label=to_label, exact=False))
         if len(set(methods)) == 0:
             for to_id in to_ids:
                 to_obj = self.get_element_by_id(value=to_id)
                 methods.extend(
-                    Sbml.find_method(obj=to_obj, label=from_label, exact=False)
+                    self.find_method(obj=to_obj, label=from_label, exact=False)
                 )
             if len(set(methods)) == 1:
                 is_forward = False
@@ -272,7 +342,7 @@ class Sbml(object):
             objs = self.candidate_obj_plugin(obj=from_obj)
             to_id = ""
             for from_obj, label in itertools.product(objs, labels):
-                methods = Sbml.find_method(obj=from_obj, label=label, exact=False)
+                methods = self.find_method(obj=from_obj, label=label, exact=False)
                 if len(methods) > 0:
                     try:
                         to_id = eval("from_obj.%s()" % (methods[0],))
@@ -343,7 +413,7 @@ class Sbml(object):
             labels = [arrow_label] + arrow_label.split("_")
             labels = ["listof" + x for x in labels]
             for label in labels:
-                methods = Sbml.find_method(obj=from_obj, label=label)
+                methods = self.find_method(obj=from_obj, label=label)
                 if len(methods) > 0:
                     break
             if len(methods) == 0:
@@ -355,7 +425,7 @@ class Sbml(object):
                 if from_el_name.endswith("Reference") and not to_label.lower().endswith(
                     "reference"
                 ):
-                    for attribute in self.iterate_over_attribute(obj=from_el):
+                    for attribute in Sbml.iterate_over_attribute(obj=from_el):
                         to_id = eval("from_el.%s" % (attribute,))
                         if self.validate_id(value=to_id):
                             dbb_rel = srelationship.SRelationship(
@@ -429,7 +499,7 @@ class Sbml(object):
                 continue
             for element in from_obj.getListOfAllElements():
                 to_id = None
-                methods = Sbml.find_method(obj=element, label=to_label, exact=True)
+                methods = self.find_method(obj=element, label=to_label, exact=True)
 
                 if len(methods) == 1:
                     try:
@@ -647,7 +717,7 @@ class Sbml(object):
         """
         # Use Id or IdAttribute if it set
         ident = value.getId()
-        if self.has_method(obj=value, method="getIdAttribute"):
+        if Sbml.has_method(obj=value, method="getIdAttribute"):
             id_attribute = value.getIdAttribute()
             if id_attribute != "" and id_attribute != ident:
                 ident += "-" + id_attribute
@@ -674,52 +744,6 @@ class Sbml(object):
         for plugin in self.plugins:
             candidates.append(obj.getPlugin(plugin))
         return candidates
-
-    @classmethod
-    def iterate_over_attribute(cls, obj: Any) -> Generator:
-        """Iterate over attributes of an object
-
-        Parameters
-        ----------
-        obj: Any
-            any object
-
-        Return
-        ------
-        Generator
-        """
-        # Exact match
-        for attribute in dir(obj):
-            if (
-                not attribute.startswith("__")
-                and not attribute.startswith("enable")
-                and not attribute.startswith("get")
-                and not attribute.startswith("is")
-                and not attribute.startswith("matches")
-                and not attribute.startswith("remove")
-                and not attribute.startswith("set")
-                and not attribute.startswith("unset")
-                and not attribute.startswith("write")
-            ):
-                attr = getattr(obj, attribute, None)
-
-                if attr and not callable(attr):
-                    yield attribute
-
-    @classmethod
-    def has_method(cls, obj: Any, method: str) -> bool:
-        """Given an object, check if an object as a method.
-
-        Parameters
-        ----------
-        obj: Any
-            any object
-
-        Return
-        ------
-        bool
-        """
-        return method in obj.__dir__()
 
     @classmethod
     def find_method(cls, obj: Any, label: str, exact: bool = False) -> List[str]:
@@ -774,4 +798,4 @@ class Sbml(object):
         if errors > 0:
             logging.error(doc.printErrors())
             raise ValueError("Error when parsing SBML -> abort")
-        return Sbml(document=doc, tag=tag)
+        return SbmlToNeo4j(tag=tag, document=doc)

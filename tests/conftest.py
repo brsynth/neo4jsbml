@@ -31,7 +31,7 @@ def iml_path(data_dir):
 
 @pytest.fixture(scope="function")
 def sbml_iml(iml_path):
-    return sbml.Sbml.from_sbml(path=iml_path)
+    return sbml.SbmlToNeo4j.from_sbml(path=iml_path)
 
 
 @pytest.fixture(scope="session")
@@ -51,7 +51,7 @@ def iml_toy_path(data_dir):
 
 @pytest.fixture(scope="function")
 def sbml_toy(iml_toy_path):
-    return sbml.Sbml.from_sbml(path=iml_toy_path)
+    return sbml.SbmlToNeo4j.from_sbml(path=iml_toy_path)
 
 
 @pytest.fixture(scope="session")

@@ -1,6 +1,6 @@
 import pytest
 
-from neo4jsbml.sbml import Sbml
+from neo4jsbml.sbml import Sbml, SbmlToNeo4j
 from neo4jsbml.snode import SNode
 from neo4jsbml.srelationship import SRelationship
 
@@ -20,15 +20,15 @@ class TestSbml:
         assert sbml_iml.document.__class__.__name__ == "SBMLDocument"
         assert sbml_iml.model.__class__.__name__ == "Model"
         assert sbml_iml.tag is None
-        sbml = Sbml.from_sbml(path=iml_path, tag="test")
+        sbml = SbmlToNeo4j.from_sbml(path=iml_path, tag="test")
         assert sbml.tag == "test"
 
     def test_method(self, sbml_iml):
-        methods = Sbml.find_method(obj=sbml_iml.document, label="notes")
+        methods = SbmlToNeo4j.find_method(obj=sbml_iml.document, label="notes")
         assert methods == ["getNotes"]
-        methods = Sbml.find_method(obj=sbml_iml.model, label="Id")
+        methods = SbmlToNeo4j.find_method(obj=sbml_iml.model, label="Id")
         assert methods == ["getId"]
-        methods = Sbml.find_method(obj=sbml_iml.model, label="Idl")
+        methods = SbmlToNeo4j.find_method(obj=sbml_iml.model, label="Idl")
         assert methods == ["getAllElementIdList", "getAllElementMetaIdList"]
 
     def test_format_nodes(self, sbml_iml, node_two_dict):
