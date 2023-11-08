@@ -2,6 +2,7 @@ import json
 import logging
 from typing import Any, Dict, List, Optional
 
+import networkx as nx
 from neo4jsbml import _version, snode, srelationship
 
 
@@ -32,6 +33,25 @@ class Arrows(object):
     ) -> None:
         self.nodes = nodes
         self.relationships = relationships
+
+    def to_graph(self) -> nx.MultiGraph:
+        """Convert Arrows object to a networkx graph.
+
+        Return
+        ------
+        nx.MultiGraph
+        """
+        graph = nx.MultiGraph()
+        for snode in self.nodes:
+            data = snode.to_dict()
+            node_id = data.pop("id")
+            graph.add_node(snode.id, **data)
+        for srelationship in self.relationships:
+            data = srelationship.to_dict()
+            from_id = data.pop("from_id")
+            to_id = data.pop("to_id")
+            graph.add_edge(from_id, to_id, **data)
+        return graph
 
     @classmethod
     def from_json(cls, path: str) -> "Arrows":
