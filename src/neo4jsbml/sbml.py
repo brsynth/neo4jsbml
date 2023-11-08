@@ -128,6 +128,22 @@ class SbmlFromNeo4j(Sbml):
         doc = libsbml.SBMLDocument(level=level, version=version)
         return SbmlFromNeo4j(document=doc)
 
+    def to_sbml(self, path: str) -> None:
+        """Export the document attribute to a SBML file
+
+        Parameters
+        ----------
+        path: str
+            The path of the file
+
+        Return
+        ------
+        None
+        """
+        data = libsbml.writeSBMLToString(self.document)
+        with open(path, "w") as fd:
+            fd.write(path)
+
 
 class SbmlToNeo4j(Sbml):
     """Help to map entities coming from Arrows and SBML.

@@ -158,12 +158,19 @@ def _cmd_sbml_from_neo4j(args):
         logging.error("Unable to connect to the database")
         AP.exit(1)
 
+    # Init
+    logging.info("Initialize data")
+    sbml_from_neo4j = sbml.SbmlFromNeo4j.from_specifications(
+        level=args.parameter_sbml_level_int, version=args.parameter_sbml_version_int
+    )
+
     # Load modelisation
     logging.info("Load modelisation file")
     arr = arrows.Arrows.from_json(path=args.input_arrows_json)
 
     # Filter modelisation based on libsbml
     logging.info("Filter modelisation based on libsbml")
+    sbml_from_neo4j.graph_methods.annotate(modelisation=arr)
 
     # Extract entities
     logging.info("Extract entities")
@@ -173,6 +180,7 @@ def _cmd_sbml_from_neo4j(args):
 
     # Write model
     logging.info("Write model")
+    sbml_from_neo4j.to_sbml(path=args.output_model_sbml)
 
     logging.info("End - sbml-from-neo4j")
     return 0
@@ -183,9 +191,23 @@ options.add_dbb_connection(parser=P_sfn)
 # Input
 P_sfn_input = P_sfn.add_argument_group("Input")
 options.add_input_modelisation(parser=P_sfn_input)
-# Output
+# Parameters
 P_sfn_params = P_sfn.add_argument_group("Parameters")
 P_sfn_params.add_argument(
+    "--parameter-sbml-level-int",
+    type=int,
+    default=3,
+    help="Level of the SBML model (default: 3)",
+)
+P_sfn_params.add_argument(
+    "--parameter-sbml-version-int",
+    type=int,
+    default=2,
+    help="Version of the SBML model (default: 2)",
+)
+# Output
+P_sfn_output = P_sfn.add_argument_group("Output")
+P_sfn_output.add_argument(
     "--output-model-sbml",
     help="Output the SBML model",
 )
