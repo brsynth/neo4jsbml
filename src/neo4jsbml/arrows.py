@@ -46,11 +46,12 @@ class Arrows(object):
             data = snode.to_dict()
             node_id = data.pop("id")
             graph.add_node(snode.id, **data)
-        for srelationship in self.relationships:
-            data = srelationship.to_dict()
-            from_id = data.pop("from_id")
-            to_id = data.pop("to_id")
-            graph.add_edge(from_id, to_id, **data)
+        if self.relationships:
+            for srelationship in self.relationships:
+                data = srelationship.to_dict()
+                from_id = data.pop("from_id")
+                to_id = data.pop("to_id")
+                graph.add_edge(from_id, to_id, **data)
         return graph
 
     @classmethod

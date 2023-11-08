@@ -1,3 +1,4 @@
+import collections
 import json
 import logging
 from typing import Any, Dict, List, Optional
@@ -115,7 +116,7 @@ class GraphMethod(object):
         nx.DiGraph
         """
 
-        def _add_leaf(graph: nx.DiGraph(), count: int, level: int):
+        def _add_leaf(graph: nx.DiGraph, count: int, level: int):
             # max_level = max(set([G.nodes[label]["level"] for label in G.nodes]))
             node_ids = list(graph.nodes)
             for node_id in node_ids:

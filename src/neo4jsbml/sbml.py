@@ -142,7 +142,7 @@ class SbmlFromNeo4j(Sbml):
         """
         data = libsbml.writeSBMLToString(self.document)
         with open(path, "w") as fd:
-            fd.write(path)
+            fd.write(data)
 
 
 class SbmlToNeo4j(Sbml):
