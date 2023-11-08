@@ -5,8 +5,8 @@ import re
 from typing import Any, Dict, Generator, List, Optional
 
 import libsbml
-
-from neo4jsbml import arrows, snode, srelationship
+import networkx as nx
+from neo4jsbml import arrows, graph_method, snode, srelationship
 
 
 class Sbml(object):
@@ -85,6 +85,50 @@ class Sbml(object):
         return method in obj.__dir__()
 
 
+class SbmlFromNeo4j(Sbml):
+    """Help to map entities coming from Arrows and SBML.
+
+    Attributes
+    ----------
+    model: libsml.Model
+        a model extract from the document
+
+    Methods
+    -------
+    __init__(document: libsbml.SBML_DOCUMENT)
+        Instanciate a new object
+
+    @classmethod
+    from_specifications(level: int, version: int) -> "SbmlFromNeo4j"
+        Create an Sbml object given a SBML file
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        super(SbmlFromNeo4j, self).__init__(*args, **kwargs)
+        self.model = self.document.createModel()
+        self.graph_methods = graph_method.GraphMethod.from_document(
+            document=self.document
+        )
+
+    @classmethod
+    def from_specifications(cls, level: int = 3, version: int = 2) -> "SbmlFromNeo4j":
+        """Create an SbmlFromNeo4j object given the version of the specifications.
+
+        Parameters
+        ----------
+        level: int
+            Number of the level
+        version: int
+            Number of the version
+
+        Return
+        ------
+        SbmlFromNeo4j
+        """
+        doc = libsbml.SBMLDocument(level=level, version=version)
+        return SbmlFromNeo4j(document=doc)
+
+
 class SbmlToNeo4j(Sbml):
     """Help to map entities coming from Arrows and SBML.
 
@@ -122,11 +166,9 @@ class SbmlToNeo4j(Sbml):
         Given an object, search a method name by intropection
 
     @classmethod
-    from_sbml(path: str, tag: Optional[str] = None) -> "Sbml"
+    from_sbml(path: str, tag: Optional[str] = None) -> "SbmlToNeo4j"
         Create an Sbml object given a SBML file
     """
-
-    PLUGINS = ["fbc", "groups", "layout", "qual"]
 
     def __init__(self, tag: Optional[str] = None, *args, **kwargs) -> None:
         super(SbmlToNeo4j, self).__init__(*args, **kwargs)
@@ -775,7 +817,7 @@ class SbmlToNeo4j(Sbml):
         return candidates
 
     @classmethod
-    def from_sbml(cls, path: str, tag: Optional[str] = None) -> "Sbml":
+    def from_sbml(cls, path: str, tag: Optional[str] = None) -> "SbmlToNeo4j":
         """Create an Sbml object given a SBML file.
 
         Parameters
@@ -791,7 +833,7 @@ class SbmlToNeo4j(Sbml):
             if an error is encountered during the loading of the file
         Return
         ------
-        Sbml
+        SbmlToNeo4j
         """
         doc = libsbml.readSBML(path)
         errors = doc.getNumErrors()
