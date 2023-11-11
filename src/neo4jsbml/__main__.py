@@ -159,7 +159,7 @@ def _cmd_sbml_from_neo4j(args):
 
     # Load modelisation
     logging.info("Load modelisation file")
-    arr = arrows.Arrows.from_json(path=args.input_arrows_json)
+    arr = arrows.Arrows.from_json(path=args.input_arrows_json, add_id=False)
 
     # Filter modelisation based on libsbml
     logging.info("Filter modelisation based on libsbml")

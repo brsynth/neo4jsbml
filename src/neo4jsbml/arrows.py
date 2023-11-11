@@ -55,7 +55,7 @@ class Arrows(object):
         return graph
 
     @classmethod
-    def from_json(cls, path: str) -> "Arrows":
+    def from_json(cls, path: str, add_id: bool = True) -> "Arrows":
         """Create an Arrows object from a JSON file.
         Add an "id" attribute to the properties or renamed it if it has not the same case
         to identify the node.
@@ -65,6 +65,8 @@ class Arrows(object):
         ----------
         path: str
             a JSON file
+        add_id: bool
+            Add the "id" property (default: True)
 
         Return
         ------
@@ -85,14 +87,15 @@ class Arrows(object):
                     if key != id_label:
                         id_label = key
             if id_label != snode.SNode.LABEL_ID:
-                arrow_node["properties"][snode.SNode.LABEL_ID] = arrow_node[
-                    "properties"
-                ].pop(id_label)
                 logging.warning(
                     'Entity: %s has an "%s" in properties, but it will be renamed into: %s'
                     % (":".join(arrow_node["labels"]), id_label, snode.SNode.LABEL_ID)
                 )
-            if not is_id_found:
+                arrow_node["properties"][snode.SNode.LABEL_ID] = arrow_node[
+                    "properties"
+                ].pop(id_label)
+
+            if not is_id_found and add_id:
                 logging.warning(
                     'Entity: %s has not "id" in properties, it will be added'
                     % (":".join(arrow_node["labels"]),)
