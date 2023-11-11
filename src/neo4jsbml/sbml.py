@@ -2,11 +2,11 @@ import hashlib
 import itertools
 import logging
 import re
-from typing import Any, Dict, Generator, List, Optional
+from typing import Any, Dict, Generator, List, Optional, Union
 
 import libsbml
 import networkx as nx
-from neo4jsbml import arrows, graph_method, snode, srelationship
+from neo4jsbml import arrows, connect, graph_method, snode, srelationship
 
 
 class Sbml(object):
@@ -31,6 +31,10 @@ class Sbml(object):
     @classmethod
     has_method(obj: Any, method: str) -> bool
         Given an object, check if an object as a method.
+
+    @classmethod
+    find_method(obj: Any, label: str, exact: bool, start: str) -> List[str]
+        Given an object, search a method name by intropection
     """
 
     PLUGINS = ["fbc", "groups", "layout", "qual"]
@@ -84,6 +88,59 @@ class Sbml(object):
         """
         return method in obj.__dir__()
 
+    @classmethod
+    def find_method(
+        cls, obj: Any, label: str, exact: bool = False, start: str = "get"
+    ) -> List[str]:
+        """Given an object, search a method name by intropection.
+
+        Parameters
+        ----------
+        obj: Any
+            any object
+        label: str
+            a method to search
+        exact: bool
+            expect exact match
+        start: str
+            beginning of the expression (default: get)
+
+        Return
+        ------
+        List[str]
+        """
+        # Exact match
+        regex = re.compile(r"^" + start + label + "$", re.IGNORECASE)
+        candidates = list(filter(regex.match, obj.__dir__()))
+        if len(candidates) == 1:
+            return candidates
+        if exact:
+            return []
+        # Partial match
+        regex = re.compile(r"" + start + ".*" + label, re.IGNORECASE)
+        candidates = list(filter(regex.search, obj.__dir__()))
+        return candidates
+
+    @classmethod
+    def cast_properties(cls, value: str) -> Optional[Union[str, float, int, bool]]:
+        # Check isdigit
+        m = re.match("^-?\d+(\.\d)?$", value)
+        if m and m.group(1):
+            return float(value)
+        elif m and m.group(1) is None:
+            return int(value)
+        # Check is bool
+        m = re.match(r"(True)|(False)", value, re.I)
+        if m and m.group(1):
+            return True
+        elif m and m.group(2):
+            return False
+        # Undefined
+        if value == "" or value == "nan":
+            return None
+        # Return str
+        return value
+
 
 class SbmlFromNeo4j(Sbml):
     """Help to map entities coming from Arrows and SBML.
@@ -103,12 +160,151 @@ class SbmlFromNeo4j(Sbml):
         Create an Sbml object given a SBML file
     """
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(
+        self, connection: Optional[connect.Connect] = None, *args, **kwargs
+    ) -> None:
         super(SbmlFromNeo4j, self).__init__(*args, **kwargs)
-        self.model = self.document.createModel()
-        self.graph_methods = graph_method.GraphMethod.from_document(
-            document=self.document
-        )
+        self.gm = graph_method.GraphMethod.from_document(document=self.document)
+        self.connection = connection
+
+    def extract_entities(self, current: Optional[Any], current_id: int) -> None:
+        """Extract entities of Neo4j based on the graph, GraphMethod
+
+        Parameters
+        ----------
+        current: Optional[Any]
+            current object
+        current_id: int
+            current id of the graph_methods property
+
+        Return
+        ------
+        None
+        """
+        if current is None:
+            model = self.document.createModel()
+            cur_id = self.gm.retrieve_id(prop="labels", value="Model")
+            if self.gm.graph.nodes[cur_id]["modelisation"]:
+                datas = self.connection.query_node(
+                    label=self.gm.graph.nodes[cur_id]["labels_neo4j"]
+                )
+                if len(datas) == 1:
+                    self.add_node_properties(
+                        current=model,
+                        data=datas[0],
+                        props=self.gm.graph.nodes[cur_id].get("properties", {}),
+                    )
+            return self.extract_entities(
+                current=model,
+                current_id=cur_id,
+            )
+        for child_id in self.gm.graph.successors(current_id):
+            # print(self.gm.graph.nodes[child_id])
+            label = self.gm.graph.nodes[child_id]["labels"]
+            if self.gm.graph.nodes[child_id]["modelisation"]:
+                print("Label", "modelisation", label, self.gm.graph.nodes[child_id])
+                # Query Neo4j
+                datas = self.connection.query_node(
+                    label=self.gm.graph.nodes[child_id]["labels_neo4j"]
+                )
+                print(datas)
+                # Loop over multiple nodes in Neo4j
+                for data in datas:
+                    cur_obj = eval("current.create%s()" % (label,))
+                    # Add properties attached to the node
+                    self.add_node_properties(
+                        current=cur_obj,
+                        data=data,
+                        props=self.gm.graph.nodes[child_id].get("properties"),
+                    )
+                    # TODO Add properties attached as a neighbor
+                    """
+                    self.add_neighbor_properties(
+                        current=cur_obj,
+                        data=data,
+                        props=self.gm.graph.nodes[child_id].get("properties"),
+                    )
+                    """
+                    self.extract_entities(
+                        current=cur_obj,
+                        current_id=child_id,
+                    )
+            """
+            else:
+                # Loop over successors to know if we need to create a new object and pursuing or to skip
+                pathways = nx.dfs_tree(self.graph, child_id)
+                print("Label", pathways)
+                counts = [self.graph[x]["modelisation"] for x in pathways]
+                if sum(counts) > 0:
+                    cur_obj = eval("current.create%s()" % (label,))
+                    self.extract_entities(
+                        current=cur_obj,
+                        current_id=child_id,
+                    )
+            """
+
+    def add_node_properties(
+        self, current: Any, data: Dict[str, Any], props: Dict[str, Any]
+    ) -> None:
+        for prop in props.keys():
+            # Check if Modelisation's property is in database
+            if prop in data["node"].keys():
+                # Check if libsbml has the method
+                methods = Sbml.find_method(obj=current, label=prop, start="set")
+                if len(methods) != 1:
+                    continue
+                # Check if Neo4j's data has the method
+                for key, value in data["node"].items():
+                    if prop == key:
+                        # Add property
+                        nvalue = Sbml.cast_properties(value=value)
+                        # Check if property is empty
+                        if nvalue:
+                            if key.lower() == "math":
+                                ast_value = libsbml.parseL3Formula(nvalue)
+                                eval("current.%s(ast_value)" % (methods[0],))
+                            elif value == nvalue:
+                                eval('current.%s("%s")' % (methods[0], value))
+                            else:
+                                eval("current.%s(%s)" % (methods[0], nvalue))
+                        break
+
+    def add_neighbor_properties(
+        self, current: Any, data: Optional[List], props: Dict[str, Any]
+    ) -> None:
+        # TODO Extract neighbors from data
+        neighbors = ""
+        for prop in pros.keys():
+            if prop in neighbors:
+                # TODO Extract id from neighbor
+                neighbor_id = ""
+                # Check if method exists
+                methods = Sbml.find_method(obj=current, label=prop, start="set")
+                if len(methods) != 1:
+                    continue
+                # Add property
+                eval("current.%s(%s)" % (methods[0], value))
+
+    def annotate(self, modelisation: arrows.Arrows) -> None:
+        self.gm.annotate(modelisation=modelisation)
+
+    def conciliate_labels(self) -> None:
+        # Query
+        labels = self.connection.query_labels()
+        # Format query
+        labels = [x["label"] for x in labels]
+        labels = list(set(itertools.chain(*labels)))
+        # Associate label
+        for node_id in self.gm.graph.nodes:
+            if (
+                self.gm.graph.nodes[node_id]["modelisation"]
+                and "labels_neo4j" not in self.gm.graph.nodes[node_id].keys()
+            ):
+                label = self.gm.graph.nodes[node_id]["labels"]
+                regex = re.compile(r"^" + label + "$", re.IGNORECASE)
+                candidates = list(filter(regex.search, labels))
+                if len(candidates) == 1:
+                    self.gm.graph.nodes[node_id]["labels_neo4j"] = candidates[0]
 
     @classmethod
     def from_specifications(cls, level: int = 3, version: int = 2) -> "SbmlFromNeo4j":
@@ -125,7 +321,7 @@ class SbmlFromNeo4j(Sbml):
         ------
         SbmlFromNeo4j
         """
-        doc = libsbml.SBMLDocument(level=level, version=version)
+        doc = libsbml.SBMLDocument(level, version)
         return SbmlFromNeo4j(document=doc)
 
     def to_sbml(self, path: str) -> None:
@@ -178,10 +374,6 @@ class SbmlToNeo4j(Sbml):
         Check if an object can activate one or several plugins
 
     @classmethod
-    find_method(obj: Any, label: str) -> List[str]
-        Given an object, search a method name by intropection
-
-    @classmethod
     from_sbml(path: str, tag: Optional[str] = None) -> "SbmlToNeo4j"
         Create an Sbml object given a SBML file
     """
@@ -232,7 +424,7 @@ class SbmlToNeo4j(Sbml):
                 for prop in arrow_node.properties:
                     prop_found = False
                     for ix, element in enumerate(objs):
-                        methods = self.find_method(obj=element, label=prop)
+                        methods = Sbml.find_method(obj=element, label=prop)
                         if len(methods) < 1:
                             continue
                         if len(methods) > 1:
@@ -314,12 +506,12 @@ class SbmlToNeo4j(Sbml):
         methods = []
         for from_id in from_ids:
             from_obj = self.get_element_by_id(value=from_id)
-            methods.extend(self.find_method(obj=from_obj, label=to_label, exact=False))
+            methods.extend(Sbml.find_method(obj=from_obj, label=to_label, exact=False))
         if len(set(methods)) == 0:
             for to_id in to_ids:
                 to_obj = self.get_element_by_id(value=to_id)
                 methods.extend(
-                    self.find_method(obj=to_obj, label=from_label, exact=False)
+                    Sbml.find_method(obj=to_obj, label=from_label, exact=False)
                 )
             if len(set(methods)) == 1:
                 is_forward = False
@@ -400,7 +592,7 @@ class SbmlToNeo4j(Sbml):
             objs = self.candidate_obj_plugin(obj=from_obj)
             to_id = ""
             for from_obj, label in itertools.product(objs, labels):
-                methods = self.find_method(obj=from_obj, label=label, exact=False)
+                methods = Sbml.find_method(obj=from_obj, label=label, exact=False)
                 if len(methods) > 0:
                     try:
                         to_id = eval("from_obj.%s()" % (methods[0],))
@@ -471,7 +663,7 @@ class SbmlToNeo4j(Sbml):
             labels = [arrow_label] + arrow_label.split("_")
             labels = ["listof" + x for x in labels]
             for label in labels:
-                methods = self.find_method(obj=from_obj, label=label)
+                methods = Sbml.find_method(obj=from_obj, label=label)
                 if len(methods) > 0:
                     break
             if len(methods) == 0:
@@ -557,7 +749,7 @@ class SbmlToNeo4j(Sbml):
                 continue
             for element in from_obj.getListOfAllElements():
                 to_id = None
-                methods = self.find_method(obj=element, label=to_label, exact=True)
+                methods = Sbml.find_method(obj=element, label=to_label, exact=True)
 
                 if len(methods) == 1:
                     try:
@@ -801,35 +993,6 @@ class SbmlToNeo4j(Sbml):
         candidates = [obj]
         for plugin in self.plugins:
             candidates.append(obj.getPlugin(plugin))
-        return candidates
-
-    @classmethod
-    def find_method(cls, obj: Any, label: str, exact: bool = False) -> List[str]:
-        """Given an object, search a method name by intropection.
-
-        Parameters
-        ----------
-        obj: Any
-            any object
-        label: str
-            a method to search
-        exact: bool
-            expect exact match
-
-        Return
-        ------
-        List[str]
-        """
-        # Exact match
-        regex = re.compile(r"^get" + label + "$", re.IGNORECASE)
-        candidates = list(filter(regex.match, obj.__dir__()))
-        if len(candidates) == 1:
-            return candidates
-        if exact:
-            return []
-        # Partial match
-        regex = re.compile(r"get.*" + label, re.IGNORECASE)
-        candidates = list(filter(regex.search, obj.__dir__()))
         return candidates
 
     @classmethod
