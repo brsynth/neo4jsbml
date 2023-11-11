@@ -114,19 +114,11 @@ def _cmd_sbml_from_neo4j(args):
     """Create SBML file from Neo4j"""
     # Check arguments.
     logging.info("Start - sbml-from-neo4j")
-    if not os.path.isfile(args.input_model_sbml):
-        logging.error("Model SBML file does not exist: %s" % (args.input_model_sbml,))
-        AP.exit(1)
     if not os.path.isfile(args.input_arrows_json):
         logging.error(
             "Modelisation JSON file does not exist: %s" % (args.input_arrows_json,)
         )
         AP.exit(1)
-
-    is_dry_run = False
-    if args.parameter_dry_run:
-        logging.info("Dry run mode, no data will be loaded into the database")
-        is_dry_run = True
 
     # Connection to database
     logging.info("Connection to database")
@@ -154,7 +146,7 @@ def _cmd_sbml_from_neo4j(args):
             database=args.input_database_str,
             password_path=args.input_password_txt,
         )
-    if con.is_connected() is False and is_dry_run is False:
+    if con.is_connected() is False:
         logging.error("Unable to connect to the database")
         AP.exit(1)
 
@@ -163,6 +155,7 @@ def _cmd_sbml_from_neo4j(args):
     sbml_from_neo4j = sbml.SbmlFromNeo4j.from_specifications(
         level=args.parameter_sbml_level_int, version=args.parameter_sbml_version_int
     )
+    sbml_from_neo4j.connection = con
 
     # Load modelisation
     logging.info("Load modelisation file")
@@ -170,13 +163,12 @@ def _cmd_sbml_from_neo4j(args):
 
     # Filter modelisation based on libsbml
     logging.info("Filter modelisation based on libsbml")
-    sbml_from_neo4j.graph_methods.annotate(modelisation=arr)
+    sbml_from_neo4j.annotate(modelisation=arr)
 
     # Extract entities
     logging.info("Extract entities")
-
-    # Extract relationships
-    logging.info("Extract relationships")
+    sbml_from_neo4j.conciliate_labels()
+    sbml_from_neo4j.extract_entities(current=None, current_id=0)
 
     # Write model
     logging.info("Write model")
