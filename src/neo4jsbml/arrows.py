@@ -42,13 +42,13 @@ class Arrows(object):
         nx.MultiGraph
         """
         graph = nx.MultiGraph()
-        for snode in self.nodes:
-            data = snode.to_dict()
+        for node in self.nodes:
+            data = node.to_dict()
             node_id = data.pop("id")
-            graph.add_node(snode.id, **data)
+            graph.add_node(node_id, **data)
         if self.relationships:
-            for srelationship in self.relationships:
-                data = srelationship.to_dict()
+            for relationship in self.relationships:
+                data = relationship.to_dict()
                 from_id = data.pop("from_id")
                 to_id = data.pop("to_id")
                 graph.add_edge(from_id, to_id, **data)
