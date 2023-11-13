@@ -259,7 +259,7 @@ class SbmlFromNeo4j(Sbml):
                         # Add property
                         nvalue = Sbml.cast_properties(value=value)
                         # Check if property is empty
-                        if nvalue:
+                        if nvalue is not None:
                             if key.lower() == "math":
                                 ast_value = libsbml.parseL3Formula(nvalue)
                                 eval("current.%s(ast_value)" % (methods[0],))
