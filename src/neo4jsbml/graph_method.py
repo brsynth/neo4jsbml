@@ -70,17 +70,16 @@ class GraphMethod(object):
                             second=arrows_graph.nodes[arrows_neighbor]["labels"],
                         ):
                             self.graph.nodes[predecessor]["modelisation"] = True
+                            self.graph.nodes[node_id]["modelisation"] = True
+                            self.graph.nodes[node_id][
+                                "properties"
+                            ] = arrows_graph.nodes[arrows_node]["properties"]
                             is_found = True
                             break
                     # If first level has no neighbor, it's valid
-                    if is_found or (
-                        self.graph.nodes[node_id]["level"] == 1 and is_found is False
-                    ):
-                        self.graph.nodes[node_id]["modelisation"] = True
-                        self.graph.nodes[node_id]["properties"] = arrows_graph.nodes[
-                            arrows_node
-                        ]["properties"]
-
+                    # if is_found or (
+                    #     self.graph.nodes[node_id]["level"] == 1 and is_found is False
+                    # ):
         for node_id in self.graph.nodes:
             if "modelisation" not in self.graph.nodes[node_id].keys():
                 self.graph.nodes[node_id]["modelisation"] = False
