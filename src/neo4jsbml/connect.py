@@ -209,7 +209,7 @@ class Connect(metaclass=singleton.Singleton):
         que = (
             'MATCH (n)-[*1..1]-(m) WHERE elementId(n) = "'
             + elementId
-            + '"RETURN m AS nodeNeighbor'
+            + '"RETURN m AS nodeNeighbor, labels(m) as nodeLabels'
         )
         return self.query(value=que, expect_data=True, access=neo4j.READ_ACCESS)
 

@@ -217,14 +217,18 @@ class SbmlFromNeo4j(Sbml):
                         data=data,
                         props=self.gm.graph.nodes[child_id].get("properties"),
                     )
-                    # TODO Add properties attached as a neighbor
-                    """
+                    # Add properties attached as a neighbor
+                    successor_labels = [
+                        self.gm.graph.nodes[x]["labels"]
+                        for x in self.gm.graph.successors(child_id)
+                    ]
                     self.add_neighbor_properties(
                         current=cur_obj,
                         data=data,
                         props=self.gm.graph.nodes[child_id].get("properties"),
+                        successors=successor_labels,
                     )
-                    """
+                    # Iterate
                     self.extract_entities(
                         current=cur_obj,
                         current_id=child_id,
@@ -270,20 +274,34 @@ class SbmlFromNeo4j(Sbml):
                         break
 
     def add_neighbor_properties(
-        self, current: Any, data: Optional[List], props: Dict[str, Any]
+        self,
+        current: Any,
+        data: Dict[str, Any],
+        props: Dict[str, Any],
+        successors: List[str],
     ) -> None:
-        # TODO Extract neighbors from data
-        neighbors = ""
-        for prop in pros.keys():
-            if prop in neighbors:
-                # TODO Extract id from neighbor
-                neighbor_id = ""
-                # Check if method exists
-                methods = Sbml.find_method(obj=current, label=prop, start="set")
+        # Extract neighbors from data
+        neighbors = self.connection.query_neighbor(elementId=data["nodeId"])
+        for neighbor in neighbors:
+            for prop in props.keys():
+                labels = neighbor["nodeLabels"]
+                # Skip if an object will be added instead a property
+                if labels[0] in successors:
+                    continue
+                # Check if libsbml has the method
+                methods = Sbml.find_method(obj=current, label=labels[0], start="set")
                 if len(methods) != 1:
                     continue
+                # Extract id from neighbor
+                neighbor_format = dict()
+                for key, value in neighbor["nodeNeighbor"].items():
+                    neighbor_format[key.lower()] = value
+                neighbor_id = neighbor_format.get("id", "")
+                neighbor_id = Sbml.cast_properties(value=neighbor_id)
                 # Add property
-                eval("current.%s(%s)" % (methods[0], value))
+                if neighbor_id is not None:
+                    eval('current.%s("%s")' % (methods[0], neighbor_id))
+                    break
 
     def annotate(self, modelisation: arrows.Arrows) -> None:
         self.gm.annotate(modelisation=modelisation)
