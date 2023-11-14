@@ -49,9 +49,7 @@ class Arrows(object):
         if self.relationships:
             for relationship in self.relationships:
                 data = relationship.to_dict()
-                from_id = data.pop("from_id")
-                to_id = data.pop("to_id")
-                graph.add_edge(from_id, to_id, **data)
+                graph.add_edge(data["from_id"], data["to_id"], **data)
         return graph
 
     @classmethod

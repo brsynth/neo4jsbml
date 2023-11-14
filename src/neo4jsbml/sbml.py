@@ -124,7 +124,7 @@ class Sbml(object):
     @classmethod
     def cast_properties(cls, value: str) -> Optional[Union[str, float, int, bool]]:
         # Check isdigit
-        m = re.match("^-?\d+(\.\d)?$", value)
+        m = re.match(r"^-?\d+(\.\d)?$", value)
         if m and m.group(1):
             return float(value)
         elif m and m.group(1) is None:
@@ -155,6 +155,24 @@ class SbmlFromNeo4j(Sbml):
     __init__(document: libsbml.SBML_DOCUMENT)
         Instanciate a new object
 
+     extract_entities(self, current_id: Optional[str]) -> None
+        Extract entities of Neo4j based on the graph, GraphMethod
+
+    add_node_properties(self, current: Any, data: Dict[str, Any], props: Dict[str, Any]) -> None
+        Set properties found in Arrows, mapping to Neo4j, to a libsbml object
+
+    add_neighbor_properties(self, current: Any, data: Dict[str, Any], props: Dict[str, Any], successors: List[str]) -> None
+        Sometimes a node associated to another in Neo4j takes place as property
+
+    annotate(self, modelisation: arrows.Arrows) -> None
+        Annotate the graph_method attribute with a modelisation
+
+    conciliate_labels(self) -> None
+        Associate a label found in Neo4j to a label from the gaph_method attribute
+
+    to_sbml(self, path: str) -> None
+        Export the document attribute to a SBML file
+
     @classmethod
     from_specifications(level: int, version: int) -> "SbmlFromNeo4j"
         Create an Sbml object given a SBML file
@@ -167,49 +185,81 @@ class SbmlFromNeo4j(Sbml):
         self.gm = graph_method.GraphMethod.from_document(document=self.document)
         self.connection = connection
 
-    def extract_entities(self, current: Optional[Any], current_id: int) -> None:
+    def extract_entities(self, current_id: Optional[str]) -> None:
         """Extract entities of Neo4j based on the graph, GraphMethod
 
         Parameters
         ----------
-        current: Optional[Any]
-            current object
-        current_id: int
+        current_id: Optional[str]
             current id of the graph_methods property
 
         Return
         ------
         None
         """
-        if current is None:
+        if current_id is None:
             model = self.document.createModel()
             cur_id = self.gm.retrieve_id(prop="labels", value="Model")
+            model_id = "modelId"
             if self.gm.graph.nodes[cur_id]["modelisation"]:
                 datas = self.connection.query_node(
                     label=self.gm.graph.nodes[cur_id]["labels_neo4j"]
                 )
-                if len(datas) == 1:
+                if datas and len(datas) == 1:
                     self.add_node_properties(
                         current=model,
                         data=datas[0],
                         props=self.gm.graph.nodes[cur_id].get("properties", {}),
                     )
+                    model_id = datas[0]["nodeId"]
+            self.gm.graph.nodes[cur_id]["objects"] = {cur_id: model}
             return self.extract_entities(
-                current=model,
                 current_id=cur_id,
             )
         for child_id in self.gm.graph.successors(current_id):
-            # print(self.gm.graph.nodes[child_id])
             label = self.gm.graph.nodes[child_id]["labels"]
             if self.gm.graph.nodes[child_id]["modelisation"]:
-                print("Label", "modelisation", label, self.gm.graph.nodes[child_id])
                 # Query Neo4j
                 datas = self.connection.query_node(
-                    label=self.gm.graph.nodes[child_id]["labels_neo4j"]
+                    label=self.gm.graph.nodes[child_id]["labels_neo4j"],
                 )
-                print(datas)
                 # Loop over multiple nodes in Neo4j
                 for data in datas:
+                    # Get predecessor
+                    current = None
+                    predecessor = list(self.gm.graph.predecessors(child_id))[0]
+                    if self.gm.graph.nodes[child_id]["level"] == 1:
+                        # We want the "model" object included or not in Neo4j
+                        current = list(
+                            self.gm.graph.nodes[current_id]["objects"].values()
+                        )[0]
+                    else:
+                        neighbors = self.connection.query_neighbor(
+                            elementId=data["nodeId"]
+                        )
+                        child_relationship = self.gm.graph.nodes[child_id].get(
+                            "relationship"
+                        )
+                        for neighbor in neighbors:
+                            if graph_method.GraphMethod.compare_labels(
+                                first=neighbor["nodeLabels"][0],
+                                second=self.gm.graph.nodes[predecessor]["labels_neo4j"],
+                            ):
+                                if child_relationship:
+                                    if graph_method.GraphMethod.compare_labels(
+                                        first=neighbor["relationship"][0][1],
+                                        second=child_relationship["label"],
+                                    ):
+                                        current = self.gm.graph.nodes[predecessor][
+                                            "objects"
+                                        ][neighbor["nodeId"]]
+                                else:
+                                    current = self.gm.graph.nodes[predecessor][
+                                        "objects"
+                                    ][neighbor["nodeId"]]
+                                break
+                    if current is None:
+                        continue
                     cur_obj = eval("current.create%s()" % (label,))
                     # Add properties attached to the node
                     self.add_node_properties(
@@ -228,16 +278,18 @@ class SbmlFromNeo4j(Sbml):
                         props=self.gm.graph.nodes[child_id].get("properties"),
                         successors=successor_labels,
                     )
+                    # Save
+                    if "objects" not in self.gm.graph.nodes[child_id].keys():
+                        self.gm.graph.nodes[child_id]["objects"] = {}
+                    self.gm.graph.nodes[child_id]["objects"][data["nodeId"]] = cur_obj
                     # Iterate
                     self.extract_entities(
-                        current=cur_obj,
                         current_id=child_id,
                     )
             """
             else:
                 # Loop over successors to know if we need to create a new object and pursuing or to skip
                 pathways = nx.dfs_tree(self.graph, child_id)
-                print("Label", pathways)
                 counts = [self.graph[x]["modelisation"] for x in pathways]
                 if sum(counts) > 0:
                     cur_obj = eval("current.create%s()" % (label,))
@@ -250,6 +302,21 @@ class SbmlFromNeo4j(Sbml):
     def add_node_properties(
         self, current: Any, data: Dict[str, Any], props: Dict[str, Any]
     ) -> None:
+        """Set properties found in Arrows, mapping to Neo4j, to a libsbml object
+
+        Parameters
+        ----------
+        current: Any
+            A libsbml object
+        data: Dict[str, Any]
+            Query from Neo4j regarding a node
+        props: Dict[str, Any]
+            Properties of a graph_method node
+
+        Return
+        ------
+        None
+        """
         for prop in props.keys():
             # Check if Modelisation's property is in database
             if prop in data["node"].keys():
@@ -267,6 +334,7 @@ class SbmlFromNeo4j(Sbml):
                             if key.lower() == "math":
                                 ast_value = libsbml.parseL3Formula(nvalue)
                                 eval("current.%s(ast_value)" % (methods[0],))
+                                del ast_value  # avoid F841
                             elif value == nvalue:
                                 eval('current.%s("%s")' % (methods[0], value))
                             else:
@@ -280,6 +348,24 @@ class SbmlFromNeo4j(Sbml):
         props: Dict[str, Any],
         successors: List[str],
     ) -> None:
+        """Sometimes a node associated to another in Neo4j takes place as property
+
+        Parameters
+        ----------
+        current: Any
+            A libsbml object
+        data: Dict[str, Any]
+            Query from Neo4j regarding a node
+        props: Dict[str, Any]
+            Properties of a graph_method node
+        successors: List[str]
+            Listing of node connected
+
+        Return
+        ------
+        None
+        """
+
         # Extract neighbors from data
         neighbors = self.connection.query_neighbor(elementId=data["nodeId"])
         for neighbor in neighbors:
@@ -304,9 +390,26 @@ class SbmlFromNeo4j(Sbml):
                     break
 
     def annotate(self, modelisation: arrows.Arrows) -> None:
+        """Annotate the graph_method attribute with a modelisation
+
+        Paramters
+        ---------
+        modelisation: arrows:Arrows
+            A modelisation
+
+        Return
+        ------
+        None
+        """
         self.gm.annotate(modelisation=modelisation)
 
     def conciliate_labels(self) -> None:
+        """Associate a label found in Neo4j to a label from the gaph_method attribute
+
+        Return
+        ------
+        None
+        """
         # Query
         labels = self.connection.query_labels()
         # Format query
@@ -319,6 +422,8 @@ class SbmlFromNeo4j(Sbml):
                 and "labels_neo4j" not in self.gm.graph.nodes[node_id].keys()
             ):
                 label = self.gm.graph.nodes[node_id]["labels"]
+                if "labels_arrows" in self.gm.graph.nodes[node_id].keys():
+                    label = self.gm.graph.nodes[node_id]["labels_arrows"]
                 regex = re.compile(r"^" + label + "$", re.IGNORECASE)
                 candidates = list(filter(regex.search, labels))
                 if len(candidates) == 1:

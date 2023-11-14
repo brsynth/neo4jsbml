@@ -207,9 +207,9 @@ class Connect(metaclass=singleton.Singleton):
         Optional[List[str, Any]]
         """
         que = (
-            'MATCH (n)-[*1..1]-(m) WHERE elementId(n) = "'
+            'MATCH (n)-[r*1..1]-(m) WHERE elementId(n) = "'
             + elementId
-            + '"RETURN m AS nodeNeighbor, labels(m) as nodeLabels'
+            + '"RETURN m AS nodeNeighbor, labels(m) as nodeLabels, elementId(m) as nodeId, r AS relationship'
         )
         return self.query(value=que, expect_data=True, access=neo4j.READ_ACCESS)
 

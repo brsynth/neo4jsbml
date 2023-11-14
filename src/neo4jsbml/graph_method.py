@@ -3,7 +3,7 @@ import itertools
 import json
 import logging
 from collections.abc import Iterable
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, Generator, List, Optional, Union
 
 import libsbml
 import networkx as nx
@@ -23,6 +23,26 @@ class GraphMethod(object):
     __init__(nodes: List[snode.SNode], relationships: Optional[List["srelationship.SRelationship"]])
         Instanciate a new object. nodes parameters is required.
 
+    annotate(self, modelisation: arrows.Arrows) -> None
+        Map a schema coming from a modelisation to the graph attribute
+
+    annotate(self, modelisation: arrows.Arrows) -> None
+        Map a schema coming from a modelisation to the graph attribute
+
+    retrieve_id(self, prop: str, value: str) -> Optional[str]
+        Given a key and its value retrieve the id
+
+    select_labels(self, uniq: bool = False) -> List[str]
+        Retrive all labels property in the properties node
+
+    @classmethod
+    compare_labels(cls, first: Union[str, Iterable], second: Union[str, Iterable]) -> bool
+        Compare two sequences
+
+    @classmethod
+    def generate_pairs(cls, graph: nx.Graph) -> Generator:
+        For each node of a graph, a tuple outputs the id of the node and a neighbor
+
     @classmethod
     from_json(path: str) -> Arrows
         Create an Arrows object from a JSON file
@@ -32,6 +52,17 @@ class GraphMethod(object):
         self.graph = graph
 
     def annotate(self, modelisation: arrows.Arrows) -> None:
+        """Map a schema coming from a modelisation to the graph attribute
+
+        Parameters
+        ----------
+        modelisation: arrows.Arrows
+            A schema coming from arrows
+
+        Return
+        ------
+        None
+        """
         arrows_graph = modelisation.to_graph()
         # Label uniques
         for label in self.select_labels(uniq=True):
@@ -76,15 +107,83 @@ class GraphMethod(object):
                             ] = arrows_graph.nodes[arrows_node]["properties"]
                             is_found = True
                             break
-                    # If first level has no neighbor, it's valid
-                    # if is_found or (
-                    #     self.graph.nodes[node_id]["level"] == 1 and is_found is False
-                    # ):
+        # Flag nodes based on relationship's name
+        count = 0
+        for pair_gm, pair_arrow in itertools.product(
+            GraphMethod.generate_pairs(graph=self.graph),
+            GraphMethod.generate_pairs(graph=arrows_graph),
+        ):
+            label_gm_n = self.graph.nodes[pair_gm[0]]["labels"]
+            label_gm_n1 = self.graph.nodes[pair_gm[1]]["labels"]
+            label_arrows_n = arrows_graph.nodes[pair_arrow[0]]["labels"]
+            label_arrows_n1 = arrows_graph.nodes[pair_arrow[1]]["labels"]
+
+            if GraphMethod.compare_labels(
+                first=label_gm_n, second=label_arrows_n
+            ) and GraphMethod.compare_labels(first=label_gm_n1, second=label_arrows_n1):
+                continue
+
+            relationships = arrows_graph.get_edge_data(*pair_arrow)
+
+            if GraphMethod.compare_labels(first=label_gm_n, second=label_arrows_n):
+                for relationship in relationships.values():
+                    for chunk in relationship["label"].split("_"):
+                        if GraphMethod.compare_labels(first=chunk, second=label_gm_n1):
+                            if (
+                                "modelisation"
+                                not in self.graph.nodes[pair_gm[1]].keys()
+                            ):
+                                self.graph.nodes[pair_gm[0]]["modelisation"] = True
+                                self.graph.nodes[pair_gm[1]]["modelisation"] = True
+                                self.graph.nodes[pair_gm[1]][
+                                    "properties"
+                                ] = arrows_graph.nodes[pair_arrow[1]]["properties"]
+                                self.graph.nodes[pair_gm[1]][
+                                    "labels_arrows"
+                                ] = label_arrows_n1[0]
+                                self.graph.nodes[pair_gm[1]][
+                                    "relationship"
+                                ] = relationship
+                                break
+            elif GraphMethod.compare_labels(first=label_gm_n1, second=label_arrows_n1):
+                for relationship in relationships.values():
+                    for chunk in relationship["label"].split("_"):
+                        if GraphMethod.compare_labels(first=chunk, second=label_gm_n):
+                            if (
+                                "modelisation"
+                                not in self.graph.nodes[pair_gm[0]].keys()
+                            ):
+                                self.graph.nodes[pair_gm[1]]["modelisation"] = True
+                                self.graph.nodes[pair_gm[0]]["modelisation"] = True
+                                self.graph.nodes[pair_gm[0]][
+                                    "properties"
+                                ] = arrows_graph.nodes[pair_arrow[0]]["properties"]
+                                self.graph.nodes[pair_gm[0]][
+                                    "labels_arrows"
+                                ] = label_arrows_n[0]
+                                self.graph.nodes[pair_gm[0]][
+                                    "relationship"
+                                ] = relationship
+                                break
+
         for node_id in self.graph.nodes:
             if "modelisation" not in self.graph.nodes[node_id].keys():
                 self.graph.nodes[node_id]["modelisation"] = False
 
     def retrieve_id(self, prop: str, value: str) -> Optional[str]:
+        """Given a key and its value retrieve the id
+
+        Parameters
+        ----------
+        prop: str
+            A property, a key
+        value: str
+            A value associated to a property
+
+        Return
+        ------
+        Optional[str]
+        """
         candidates = []
         for node in self.graph.nodes:
             cur_prop = self.graph.nodes[node].get(prop)
@@ -95,6 +194,17 @@ class GraphMethod(object):
         return None
 
     def select_labels(self, uniq: bool = False) -> List[str]:
+        """Retrive all labels property in the properties node
+
+        Parameters
+        ----------
+        uniq: bool
+            Select unique nodes or nodes
+
+        Return
+        ------
+        List[str]
+        """
         labels = [self.graph.nodes[x]["labels"] for x in self.graph.nodes()]
         counter: collections.Counter = collections.Counter()
         counter.update(labels)
@@ -106,6 +216,20 @@ class GraphMethod(object):
     def compare_labels(
         cls, first: Union[str, Iterable], second: Union[str, Iterable]
     ) -> bool:
+        """Compare two sequences
+
+        Parameters
+        ----------
+        first: str, List[str]
+            a first sequence
+        second:
+            str, List[str]
+            a second sequence
+
+        Return
+        ------
+        bool
+        """
         # Format
         if isinstance(first, str):
             first = first.lower()
@@ -123,6 +247,25 @@ class GraphMethod(object):
         elif isinstance(second, str):
             return first[0] == second
         return first == second
+
+    @classmethod
+    def generate_pairs(cls, graph: nx.Graph) -> Generator:
+        """For each node of a graph, a tuple outputs the id of the node and a neighbor
+
+        Parameters
+        ----------
+        graph: nx.Graph
+            A networkx graph
+
+        Return
+        ------
+        Generator[Tuple[str, str]]
+        """
+        for node_id in graph.nodes:
+            for neigh_id in nx.all_neighbors(graph, node_id):
+                if node_id == neigh_id:
+                    continue
+                yield node_id, neigh_id
 
     @classmethod
     def from_document(cls, document: libsbml.SBMLDocument) -> "GraphMethod":
