@@ -169,7 +169,7 @@ class Connect(metaclass=singleton.Singleton):
                 )
                 res.single()
 
-    def query_labels(self) -> Optional[List]:
+    def query_labels(self) -> List:
         """Return all labels found in the database.
 
         Return
@@ -177,9 +177,12 @@ class Connect(metaclass=singleton.Singleton):
         Optional[List[str, Any]]
         """
         que = "MATCH (n) RETURN labels(n) AS label"
-        return self.query(value=que, expect_data=True, access=neo4j.READ_ACCESS)
+        res = self.query(value=que, expect_data=True, access=neo4j.READ_ACCESS)
+        if res:
+            return res
+        return []
 
-    def query_node(self, label: str) -> Optional[List]:
+    def query_node(self, label: str) -> List:
         """Return all nodes based on a label with their ids.
 
         Parameters
@@ -192,9 +195,12 @@ class Connect(metaclass=singleton.Singleton):
         Optional[List[str, Any]]
         """
         que = "MATCH (n:" + label + ") RETURN n AS node, elementId(n) AS nodeId"
-        return self.query(value=que, expect_data=True, access=neo4j.READ_ACCESS)
+        res = self.query(value=que, expect_data=True, access=neo4j.READ_ACCESS)
+        if res:
+            return res
+        return []
 
-    def query_neighbor(self, elementId: str) -> Optional[List]:
+    def query_neighbor(self, elementId: str) -> List:
         """Return neighbors of a node based on a label.
 
         Parameters
@@ -211,7 +217,10 @@ class Connect(metaclass=singleton.Singleton):
             + elementId
             + '"RETURN m AS nodeNeighbor, labels(m) as nodeLabels, elementId(m) as nodeId, r AS relationship'
         )
-        return self.query(value=que, expect_data=True, access=neo4j.READ_ACCESS)
+        res = self.query(value=que, expect_data=True, access=neo4j.READ_ACCESS)
+        if res:
+            return res
+        return []
 
     def clean(self) -> None:
         """Remove data into Neo4j
@@ -227,7 +236,7 @@ class Connect(metaclass=singleton.Singleton):
 
     def query(
         self, value: str, expect_data: bool = False, access: str = neo4j.WRITE_ACCESS
-    ) -> Optional[List[Dict[str, Any]]]:
+    ) -> Optional[List]:
         """Execute query into Neo4j.
 
         Parameters

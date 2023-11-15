@@ -94,7 +94,6 @@ class GraphMethod(object):
                         continue
                     predecessor = predecessors[0]
                     # General case
-                    is_found = False
                     for arrows_neighbor in nx.all_neighbors(arrows_graph, arrows_node):
                         if GraphMethod.compare_labels(
                             first=self.graph.nodes[predecessor]["labels"],
@@ -105,10 +104,8 @@ class GraphMethod(object):
                             self.graph.nodes[node_id][
                                 "properties"
                             ] = arrows_graph.nodes[arrows_node]["properties"]
-                            is_found = True
                             break
         # Flag nodes based on relationship's name
-        count = 0
         for pair_gm, pair_arrow in itertools.product(
             GraphMethod.generate_pairs(graph=self.graph),
             GraphMethod.generate_pairs(graph=arrows_graph),

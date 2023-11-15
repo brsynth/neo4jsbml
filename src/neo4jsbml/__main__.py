@@ -153,9 +153,10 @@ def _cmd_sbml_from_neo4j(args):
     # Init
     logging.info("Initialize data")
     sbml_from_neo4j = sbml.SbmlFromNeo4j.from_specifications(
-        level=args.parameter_sbml_level_int, version=args.parameter_sbml_version_int
+        level=args.parameter_sbml_level_int,
+        version=args.parameter_sbml_version_int,
+        connection=con,
     )
-    sbml_from_neo4j.connection = con
 
     # Load modelisation
     logging.info("Load modelisation file")

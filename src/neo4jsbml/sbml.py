@@ -174,13 +174,11 @@ class SbmlFromNeo4j(Sbml):
         Export the document attribute to a SBML file
 
     @classmethod
-    from_specifications(level: int, version: int) -> "SbmlFromNeo4j"
+    from_specifications(level: int, version: int, connection: connect.Connect) -> "SbmlFromNeo4j"
         Create an Sbml object given a SBML file
     """
 
-    def __init__(
-        self, connection: Optional[connect.Connect] = None, *args, **kwargs
-    ) -> None:
+    def __init__(self, connection: connect.Connect, *args, **kwargs) -> None:
         super(SbmlFromNeo4j, self).__init__(*args, **kwargs)
         self.gm = graph_method.GraphMethod.from_document(document=self.document)
         self.connection = connection
@@ -200,7 +198,6 @@ class SbmlFromNeo4j(Sbml):
         if current_id is None:
             model = self.document.createModel()
             cur_id = self.gm.retrieve_id(prop="labels", value="Model")
-            model_id = "modelId"
             if self.gm.graph.nodes[cur_id]["modelisation"]:
                 datas = self.connection.query_node(
                     label=self.gm.graph.nodes[cur_id]["labels_neo4j"]
@@ -211,7 +208,6 @@ class SbmlFromNeo4j(Sbml):
                         data=datas[0],
                         props=self.gm.graph.nodes[cur_id].get("properties", {}),
                     )
-                    model_id = datas[0]["nodeId"]
             self.gm.graph.nodes[cur_id]["objects"] = {cur_id: model}
             return self.extract_entities(
                 current_id=cur_id,
@@ -332,9 +328,10 @@ class SbmlFromNeo4j(Sbml):
                         # Check if property is empty
                         if nvalue is not None:
                             if key.lower() == "math":
-                                ast_value = libsbml.parseL3Formula(nvalue)
+                                ast_value = libsbml.parseL3Formula(
+                                    nvalue
+                                )  # Throw F841 error, local variable is assigned to but never used
                                 eval("current.%s(ast_value)" % (methods[0],))
-                                del ast_value  # avoid F841
                             elif value == nvalue:
                                 eval('current.%s("%s")' % (methods[0], value))
                             else:
@@ -430,7 +427,12 @@ class SbmlFromNeo4j(Sbml):
                     self.gm.graph.nodes[node_id]["labels_neo4j"] = candidates[0]
 
     @classmethod
-    def from_specifications(cls, level: int = 3, version: int = 2) -> "SbmlFromNeo4j":
+    def from_specifications(
+        cls,
+        connection: connect.Connect,
+        level: int = 3,
+        version: int = 2,
+    ) -> "SbmlFromNeo4j":
         """Create an SbmlFromNeo4j object given the version of the specifications.
 
         Parameters
@@ -439,13 +441,15 @@ class SbmlFromNeo4j(Sbml):
             Number of the level
         version: int
             Number of the version
+        connection: connect.Connect
+            Connection object
 
         Return
         ------
         SbmlFromNeo4j
         """
         doc = libsbml.SBMLDocument(level, version)
-        return SbmlFromNeo4j(document=doc)
+        return SbmlFromNeo4j(connection=connection, document=doc)
 
     def to_sbml(self, path: str) -> None:
         """Export the document attribute to a SBML file
