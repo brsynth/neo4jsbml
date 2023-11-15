@@ -1,4 +1,4 @@
 [flake8]
 max-line-length = 320
-extend-ignore = E203,E262,F401
+extend-ignore = E203,E262,F401,F841
 exclude = docs/conf.py
