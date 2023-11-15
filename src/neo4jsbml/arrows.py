@@ -34,14 +34,14 @@ class Arrows(object):
         self.nodes = nodes
         self.relationships = relationships
 
-    def to_graph(self) -> nx.MultiGraph:
+    def to_graph(self) -> nx.MultiDiGraph:
         """Convert Arrows object to a networkx graph.
 
         Return
         ------
-        nx.MultiGraph
+        nx.MultiDiGraph
         """
-        graph = nx.MultiGraph()
+        graph = nx.MultiDiGraph()
         for node in self.nodes:
             data = node.to_dict()
             node_id = data.pop("id")

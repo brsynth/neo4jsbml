@@ -15,7 +15,7 @@ class TestArrows:
         arrow = arrows.Arrows.from_json(path=pathway_one_path)
 
         # Build Graph
-        graph = nx.MultiGraph()
+        graph = nx.MultiDiGraph()
         graph.add_node(
             "n0",
             labels=["Species"],
@@ -52,29 +52,36 @@ class TestArrows:
         graph.add_edge(
             "n0",
             "n1",
-            id="n0",
+            id="n1",
             from_label="",
             to_label="",
+            from_id="n0",
+            to_id="n1",
+            label="IS_REACTANT",
             properties=dict(),
-            label="HAS_PRODUCT",
         )
         graph.add_edge(
             "n1",
             "n0",
-            id="n1",
+            id="n0",
             from_label="",
             to_label="",
+            from_id="n1",
+            to_id="n0",
+            label="HAS_PRODUCT",
             properties=dict(),
-            label="IS_REACTANT",
         )
+
         graph.add_edge(
             "n0",
             "n2",
             id="n2",
             from_label="",
             to_label="",
-            properties=dict(),
+            from_id="n0",
+            to_id="n2",
             label="HAS_COMPARTMENT",
+            properties=dict(),
         )
 
         # Compare Graph
