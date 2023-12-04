@@ -28,7 +28,7 @@ jobs:
       - name: 'Setup Neo4j with APOC'
         uses: mdanics/Setup-Neo4j@1.0.0
       - name: 'Deploying miniconda'
-        uses: conda-incubator/setup-miniconda@v2
+        uses: conda-incubator/setup-miniconda@v3
         with:
           miniconda-version: "latest"
           environment-file: recipes/workflow.yaml
