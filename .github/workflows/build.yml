@@ -60,13 +60,13 @@ jobs:
         with:
           args: -o CHANGELOG.data.rst CHANGELOG.md
       - name: 'Upload Artifact Changelog - md'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: changelog-md-artifact
           path: CHANGELOG.md
           retention-days: 1
       - name: 'Upload Artifact Changelog - rst'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: changelog-rst-artifact
           path: CHANGELOG.data.rst
@@ -94,7 +94,7 @@ jobs:
           RECIPE_PATH=$(find . -name meta.yaml | head -n 1)
           sed -i "2s/.*/{% set version = \"$TAG\" %}/" "$RECIPE_PATH"
       - name: 'Upload Artifact Version'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: version-artifact
           path: ${{ steps.update_version.outputs.version_path }}
@@ -194,7 +194,7 @@ jobs:
           filename=$(find ${{ env.dirbuild }} | head -n 1)
           echo "asset=$filename" >> "$GITHUB_OUTPUT"
       - name: 'Upload Artifact Package'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: package-conda-artifact
           path: ${{ steps.identify_asset.outputs.asset }}
