@@ -110,16 +110,16 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
       - name: 'Download Artifact Version'
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: version-artifact
           path: ${{ needs.Version.outputs.version_dir }}
       - name: 'Download Artifact Changelog - md'
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: changelog-md-artifact
       - name: 'Download Artifact Changelog - rst'
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: changelog-rst-artifact
           path: docs/
@@ -206,7 +206,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 'Download Artifact Package - Pip'
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: package-conda-artifact
       - name: 'Create Release'
