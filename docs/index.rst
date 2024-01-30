@@ -12,4 +12,5 @@ Contents
    example
    conduct
    contributing
+   citation
    changelog
