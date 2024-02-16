@@ -194,11 +194,13 @@ class Connect(metaclass=singleton.Singleton):
         ------
         Optional[List[str, Any]]
         """
-        que = "MATCH (n:" + label + ") RETURN n AS node, elementId(n) AS nodeId"
-        res = self.query(value=que, expect_data=True, access=neo4j.READ_ACCESS)
-        if res:
-            return res
-        return []
+        with self.driver.session(
+            database=self.database, default_access_mode=neo4j.READ_ACCESS
+        ) as session:
+            res = session.run(
+                "MATCH (n: " + label + ") RETURN n AS node, elementId(n) AS nodeId",
+            )
+            return res.data()
 
     def query_neighbor(self, elementId: str) -> List:
         """Return neighbors of a node based on a label.
@@ -212,15 +214,14 @@ class Connect(metaclass=singleton.Singleton):
         ------
         Optional[List[str, Any]]
         """
-        que = (
-            'MATCH (n)-[r*1..1]-(m) WHERE elementId(n) = "'
-            + elementId
-            + '"RETURN m AS nodeNeighbor, labels(m) as nodeLabels, elementId(m) as nodeId, r AS relationship'
-        )
-        res = self.query(value=que, expect_data=True, access=neo4j.READ_ACCESS)
-        if res:
-            return res
-        return []
+        with self.driver.session(
+            database=self.database, default_access_mode=neo4j.READ_ACCESS
+        ) as session:
+            res = session.run(
+                "MATCH (n)-[r*1..1]-(m) WHERE elementId(n) = $elementId RETURN m AS nodeNeighbor, labels(m) as nodeLabels, elementId(m) as nodeId, r AS relationship",
+                elementId=elementId,
+            )
+            return res.data()
 
     def clean(self) -> None:
         """Remove data into Neo4j
