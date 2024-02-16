@@ -121,6 +121,8 @@ class GraphMethod(object):
                 continue
 
             relationships = arrows_graph.get_edge_data(*pair_arrow)
+            if relationships is None:
+                continue
 
             if GraphMethod.compare_labels(first=label_gm_n, second=label_arrows_n):
                 for relationship in relationships.values():

@@ -124,7 +124,7 @@ class Sbml(object):
     @classmethod
     def cast_properties(cls, value: str) -> Optional[Union[str, float, int, bool]]:
         # Check isdigit
-        m = re.match(r"^-?\d+(\.\d)?$", value)
+        m = re.match(r"^-?\d+(\.\d+)?$", value)
         if m and m.group(1):
             return float(value)
         elif m and m.group(1) is None:
@@ -242,9 +242,15 @@ class SbmlFromNeo4j(Sbml):
                                 second=self.gm.graph.nodes[predecessor]["labels_neo4j"],
                             ):
                                 if child_relationship:
-                                    if graph_method.GraphMethod.compare_labels(
-                                        first=neighbor["relationship"][0][1],
-                                        second=child_relationship["label"],
+                                    if (
+                                        graph_method.GraphMethod.compare_labels(
+                                            first=neighbor["relationship"][0][1],
+                                            second=child_relationship["label"],
+                                        )
+                                        and neighbor["nodeId"]
+                                        in self.gm.graph.nodes[predecessor][
+                                            "objects"
+                                        ].keys()
                                     ):
                                         current = self.gm.graph.nodes[predecessor][
                                             "objects"
@@ -419,6 +425,7 @@ class SbmlFromNeo4j(Sbml):
                 and "labels_neo4j" not in self.gm.graph.nodes[node_id].keys()
             ):
                 label = self.gm.graph.nodes[node_id]["labels"]
+                # Give priority on Arrows
                 if "labels_arrows" in self.gm.graph.nodes[node_id].keys():
                     label = self.gm.graph.nodes[node_id]["labels_arrows"]
                 regex = re.compile(r"^" + label + "$", re.IGNORECASE)
