@@ -9,19 +9,19 @@
             "value.count": 2
         },
         {
-            "label": "model",
+            "label": "Model",
             "value.count": 1
         },
         {
-            "label": "group",
+            "label": "Group",
             "value.count": 1
         },
         {
-            "label": "member",
+            "label": "Member",
             "value.count": 2
         },
         {
-            "label": "assignmentRule",
+            "label": "AssignmentRule",
             "value.count": 2
         }
     ],

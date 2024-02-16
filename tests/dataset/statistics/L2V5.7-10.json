@@ -5,15 +5,15 @@
             "value.count": 2
         },
         {
-            "label": "compartment",
+            "label": "Compartment",
             "value.count": 1
         },
         {
-            "label": "model",
+            "label": "Model",
             "value.count": 1
         },
         {
-            "label": "unit",
+            "label": "Unit",
             "value.count": 3
         },
         {
@@ -25,19 +25,19 @@
             "value.count": 5
         },
         {
-            "label": "rateRule",
+            "label": "RateRule",
             "value.count": 2
         },
         {
-            "label": "event",
+            "label": "Event",
             "value.count": 2
         },
         {
-            "label": "trigger",
+            "label": "Trigger",
             "value.count": 2
         },
         {
-            "label": "eventAssignment",
+            "label": "EventAssignment",
             "value.count": 1
         }
     ],

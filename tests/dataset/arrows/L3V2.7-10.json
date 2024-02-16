@@ -56,7 +56,7 @@
     {
       "id": "n1",
       "position": {
-        "x": 459.1128128881335,
+        "x": 129,
         "y": 447.63930359699907
       },
       "caption": "",
@@ -74,12 +74,12 @@
     {
       "id": "n2",
       "position": {
-        "x": 1076.0666492487835,
+        "x": 745.95383636065,
         "y": -4
       },
       "caption": "",
       "labels": [
-        "compartment"
+        "Compartment"
       ],
       "properties": {
         "id": "",
@@ -95,30 +95,30 @@
     {
       "id": "n3",
       "position": {
-        "x": 808.9158526185961,
+        "x": 478.8030397304626,
         "y": 221.81545222709653
       },
       "caption": "",
       "labels": [
-        "model"
+        "Model"
       ],
       "properties": {
-        "id": "str",
-        "name": "str",
-        "metaid": "str",
-        "sboTerm": "str"
+        "id": "",
+        "name": "",
+        "metaid": "",
+        "sboTerm": ""
       },
       "style": {}
     },
     {
       "id": "n4",
       "position": {
-        "x": 808.9158526185961,
+        "x": 478.8030397304626,
         "y": 447.63930359699907
       },
       "caption": "",
       "labels": [
-        "unit"
+        "Unit"
       ],
       "properties": {
         "id": "",
@@ -135,7 +135,7 @@
     {
       "id": "n5",
       "position": {
-        "x": 654.6820049549101,
+        "x": 324.5691920667766,
         "y": -4
       },
       "caption": "",
@@ -149,14 +149,14 @@
       "style": {}
     },
     {
-      "id": "n8",
+      "id": "n6",
       "position": {
-        "x": 1169.6024721546605,
+        "x": 839.489659266527,
         "y": 221.81545222709653
       },
       "caption": "",
       "labels": [
-        "rateRule"
+        "RateRule"
       ],
       "properties": {
         "id": "",
@@ -166,9 +166,9 @@
       "style": {}
     },
     {
-      "id": "n9",
+      "id": "n7",
       "position": {
-        "x": 1121.2796279419613,
+        "x": 791.1668150538278,
         "y": 402.1587619951292
       },
       "caption": "",
@@ -226,17 +226,17 @@
       "style": {}
     },
     {
-      "id": "n9",
+      "id": "n5",
       "fromId": "n3",
-      "toId": "n8",
+      "toId": "n6",
       "type": "HAS_RATERULE",
       "properties": {},
       "style": {}
     },
     {
-      "id": "n10",
+      "id": "n6",
       "fromId": "n3",
-      "toId": "n9",
+      "toId": "n7",
       "type": "HAS_PARAMETER",
       "properties": {},
       "style": {}

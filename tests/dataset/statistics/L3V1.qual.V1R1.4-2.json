@@ -5,27 +5,27 @@
             "value.count": 1
         },
         {
-            "label": "model",
+            "label": "Model",
             "value.count": 1
         },
         {
-            "label": "qualitativeSpecies",
+            "label": "QualitativeSpecies",
             "value.count": 4
         },
         {
-            "label": "transition",
+            "label": "Transition",
             "value.count": 1
         },
         {
-            "label": "input",
+            "label": "Input",
             "value.count": 2
         },
         {
-            "label": "output",
+            "label": "Output",
             "value.count": 2
         },
         {
-            "label": "functionTerm",
+            "label": "FunctionTerm",
             "value.count": 1
         }
     ],

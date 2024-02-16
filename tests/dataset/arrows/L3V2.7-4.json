@@ -79,7 +79,7 @@
       },
       "caption": "",
       "labels": [
-        "compartment"
+        "Compartment"
       ],
       "properties": {
         "id": "",
@@ -100,13 +100,13 @@
       },
       "caption": "",
       "labels": [
-        "model"
+        "Model"
       ],
       "properties": {
-        "id": "str",
-        "name": "str",
-        "metaid": "str",
-        "sboTerm": "str"
+        "id": "",
+        "name": "",
+        "metaid": "",
+        "sboTerm": ""
       },
       "style": {}
     },
@@ -118,7 +118,7 @@
       },
       "caption": "",
       "labels": [
-        "unit"
+        "Unit"
       ],
       "properties": {
         "id": "",
@@ -187,7 +187,7 @@
       },
       "caption": "",
       "labels": [
-        "localParameter"
+        "LocalParameter"
       ],
       "properties": {
         "id": "",

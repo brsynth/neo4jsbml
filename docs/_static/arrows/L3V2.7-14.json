@@ -57,7 +57,7 @@
       "id": "n1",
       "position": {
         "x": 189.0265622806584,
-        "y": 526.1988699360794
+        "y": 383.5627177379358
       },
       "caption": "",
       "labels": [
@@ -75,11 +75,11 @@
       "id": "n2",
       "position": {
         "x": 831.7594637903728,
-        "y": 138.63615219814355
+        "y": -4
       },
       "caption": "",
       "labels": [
-        "compartment"
+        "Compartment"
       ],
       "properties": {
         "id": "",
@@ -94,17 +94,17 @@
       "id": "n3",
       "position": {
         "x": 520.1383841335534,
-        "y": 317.9821631811607
+        "y": 175.34601098301712
       },
       "caption": "",
       "labels": [
-        "model"
+        "Model"
       ],
       "properties": {
-        "id": "str",
-        "name": "str",
-        "metaid": "str",
-        "sboTerm": "str"
+        "id": "",
+        "name": "",
+        "metaid": "",
+        "sboTerm": ""
       },
       "style": {}
     },
@@ -112,11 +112,11 @@
       "id": "n4",
       "position": {
         "x": 520.1383841335534,
-        "y": 650.8389510012296
+        "y": 508.202798803086
       },
       "caption": "",
       "labels": [
-        "unit"
+        "Unit"
       ],
       "properties": {
         "id": "",
@@ -131,7 +131,7 @@
       "id": "n5",
       "position": {
         "x": 129,
-        "y": 138.63615219814355
+        "y": -4
       },
       "caption": "",
       "labels": [
@@ -144,14 +144,14 @@
       "style": {}
     },
     {
-      "id": "n7",
+      "id": "n6",
       "position": {
         "x": 129,
-        "y": 317.9821631811607
+        "y": 175.34601098301712
       },
       "caption": "",
       "labels": [
-        "assignmentRule"
+        "AssignmentRule"
       ],
       "properties": {
         "variable": "",
@@ -160,14 +160,14 @@
       "style": {}
     },
     {
-      "id": "n8",
+      "id": "n7",
       "position": {
         "x": 831.7594637903728,
-        "y": 317.9821631811606
+        "y": 175.34601098301707
       },
       "caption": "",
       "labels": [
-        "event"
+        "Event"
       ],
       "properties": {
         "useValuesFromTriggerTime": ""
@@ -175,14 +175,14 @@
       "style": {}
     },
     {
-      "id": "n9",
+      "id": "n8",
       "position": {
         "x": 1159.3498437003802,
-        "y": 317.9821631811607
+        "y": 175.34601098301712
       },
       "caption": "",
       "labels": [
-        "trigger"
+        "Trigger"
       ],
       "properties": {
         "persistent": "",
@@ -192,14 +192,14 @@
       "style": {}
     },
     {
-      "id": "n10",
+      "id": "n9",
       "position": {
         "x": 1159.3498437003802,
-        "y": 507.1165572061351
+        "y": 364.4804050079915
       },
       "caption": "",
       "labels": [
-        "eventAssignment"
+        "EventAssignment"
       ],
       "properties": {
         "id": "",
@@ -209,37 +209,37 @@
       "style": {}
     },
     {
-      "id": "n11",
+      "id": "n10",
       "position": {
         "x": 935.9145102191391,
-        "y": 588.4503242222444
+        "y": 445.8141720241008
       },
       "caption": "",
-      "style": {},
       "labels": [
-        "delay"
+        "Delay"
       ],
       "properties": {
         "id": "",
         "math": ""
-      }
+      },
+      "style": {}
     },
     {
-      "id": "n12",
+      "id": "n11",
       "position": {
         "x": 728.3550908884721,
-        "y": 526.1988699360794
+        "y": 383.5627177379358
       },
       "caption": "",
-      "style": {},
       "labels": [
-        "parameter"
+        "Parameter"
       ],
       "properties": {
         "id": "",
         "value": "",
         "constant": ""
-      }
+      },
+      "style": {}
     }
   ],
   "relationships": [
@@ -284,60 +284,60 @@
       "style": {}
     },
     {
-      "id": "n6",
-      "type": "HAS_ASSIGNMENTRULE",
-      "style": {},
-      "properties": {},
+      "id": "n5",
       "fromId": "n3",
-      "toId": "n7"
+      "toId": "n6",
+      "type": "HAS_ASSIGNMENTRULE",
+      "properties": {},
+      "style": {}
     },
     {
-      "id": "n7",
+      "id": "n6",
       "fromId": "n3",
-      "toId": "n8",
+      "toId": "n7",
       "type": "HAS_EVENT",
       "properties": {},
       "style": {}
     },
     {
-      "id": "n8",
-      "fromId": "n8",
-      "toId": "n9",
+      "id": "n7",
+      "fromId": "n7",
+      "toId": "n8",
       "type": "HAS_TRIGGER",
       "properties": {},
       "style": {}
     },
     {
-      "id": "n9",
-      "fromId": "n8",
-      "toId": "n10",
+      "id": "n8",
+      "fromId": "n7",
+      "toId": "n9",
       "type": "HAS_EVENTASSIGNMENT",
       "properties": {},
       "style": {}
     },
     {
-      "id": "n10",
+      "id": "n9",
+      "fromId": "n7",
+      "toId": "n10",
       "type": "HAS_DELAY",
-      "style": {},
       "properties": {},
-      "fromId": "n8",
-      "toId": "n11"
+      "style": {}
+    },
+    {
+      "id": "n10",
+      "fromId": "n3",
+      "toId": "n11",
+      "type": "HAS_PARAMETER",
+      "properties": {},
+      "style": {}
     },
     {
       "id": "n11",
-      "type": "HAS_PARAMETER",
-      "style": {},
-      "properties": {},
-      "fromId": "n3",
-      "toId": "n12"
-    },
-    {
-      "id": "n12",
+      "fromId": "n11",
+      "toId": "n1",
       "type": "HAS_UNITS",
-      "style": {},
       "properties": {},
-      "fromId": "n12",
-      "toId": "n1"
+      "style": {}
     }
   ]
 }

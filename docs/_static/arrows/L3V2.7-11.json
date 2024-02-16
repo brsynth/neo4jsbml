@@ -57,7 +57,7 @@
       "id": "n1",
       "position": {
         "x": 520.1383841335534,
-        "y": 677.5272770987361
+        "y": 534.8911249005926
       },
       "caption": "",
       "labels": [
@@ -75,11 +75,11 @@
       "id": "n2",
       "position": {
         "x": 831.7594637903728,
-        "y": 138.63615219814355
+        "y": -4
       },
       "caption": "",
       "labels": [
-        "compartment"
+        "Compartment"
       ],
       "properties": {
         "id": "",
@@ -94,17 +94,17 @@
       "id": "n3",
       "position": {
         "x": 520.1383841335534,
-        "y": 317.9821631811607
+        "y": 175.34601098301712
       },
       "caption": "",
       "labels": [
-        "model"
+        "Model"
       ],
       "properties": {
-        "id": "str",
-        "name": "str",
-        "metaid": "str",
-        "sboTerm": "str"
+        "id": "",
+        "name": "",
+        "metaid": "",
+        "sboTerm": ""
       },
       "style": {}
     },
@@ -112,11 +112,11 @@
       "id": "n4",
       "position": {
         "x": 831.7594637903728,
-        "y": 677.5272770987361
+        "y": 534.8911249005926
       },
       "caption": "",
       "labels": [
-        "unit"
+        "Unit"
       ],
       "properties": {
         "id": "",
@@ -131,7 +131,7 @@
       "id": "n5",
       "position": {
         "x": 129,
-        "y": 138.63615219814355
+        "y": -4
       },
       "caption": "",
       "labels": [
@@ -147,7 +147,7 @@
       "id": "n6",
       "position": {
         "x": 129,
-        "y": 677.5272770987361
+        "y": 534.8911249005926
       },
       "caption": "",
       "labels": [
@@ -164,11 +164,11 @@
       "id": "n7",
       "position": {
         "x": 129,
-        "y": 317.9821631811607
+        "y": 175.34601098301712
       },
       "caption": "",
       "labels": [
-        "rateRule"
+        "RateRule"
       ],
       "properties": {
         "variable": "",
@@ -180,11 +180,11 @@
       "id": "n8",
       "position": {
         "x": 831.7594637903728,
-        "y": 317.9821631811606
+        "y": 175.34601098301707
       },
       "caption": "",
       "labels": [
-        "event"
+        "Event"
       ],
       "properties": {
         "useValuesFromTriggerTime": ""
@@ -195,11 +195,11 @@
       "id": "n9",
       "position": {
         "x": 1159.3498437003802,
-        "y": 317.9821631811607
+        "y": 175.34601098301712
       },
       "caption": "",
       "labels": [
-        "trigger"
+        "Trigger"
       ],
       "properties": {
         "persistent": "",
@@ -212,11 +212,11 @@
       "id": "n10",
       "position": {
         "x": 1159.3498437003802,
-        "y": 507.1165572061351
+        "y": 364.4804050079915
       },
       "caption": "",
       "labels": [
-        "eventAssignment"
+        "EventAssignment"
       ],
       "properties": {
         "id": "",
@@ -268,7 +268,7 @@
       "style": {}
     },
     {
-      "id": "n6",
+      "id": "n5",
       "fromId": "n3",
       "toId": "n7",
       "type": "HAS_RATERULE",
@@ -276,7 +276,7 @@
       "style": {}
     },
     {
-      "id": "n7",
+      "id": "n6",
       "fromId": "n3",
       "toId": "n8",
       "type": "HAS_EVENT",
@@ -284,7 +284,7 @@
       "style": {}
     },
     {
-      "id": "n8",
+      "id": "n7",
       "fromId": "n8",
       "toId": "n9",
       "type": "HAS_TRIGGER",
@@ -292,7 +292,7 @@
       "style": {}
     },
     {
-      "id": "n9",
+      "id": "n8",
       "fromId": "n8",
       "toId": "n10",
       "type": "HAS_EVENTASSIGNMENT",
@@ -300,12 +300,12 @@
       "style": {}
     },
     {
-      "id": "n10",
-      "type": "HAS_UNITS",
-      "style": {},
-      "properties": {},
+      "id": "n9",
       "fromId": "n6",
-      "toId": "n1"
+      "toId": "n1",
+      "type": "HAS_UNITS",
+      "properties": {},
+      "style": {}
     }
   ]
 }

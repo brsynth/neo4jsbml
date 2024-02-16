@@ -64,10 +64,10 @@
         "UnitDefinition"
       ],
       "properties": {
-        "id": "str (required)",
-        "name": "str (optional)",
-        "metaid": "str (optional)",
-        "sboTerm": "str (optional)"
+        "id": "",
+        "name": "",
+        "metaid": "",
+        "sboTerm": ""
       },
       "style": {}
     },
@@ -79,7 +79,7 @@
       },
       "caption": "",
       "labels": [
-        "compartment"
+        "Compartment"
       ],
       "properties": {
         "id": "",
@@ -97,7 +97,7 @@
       },
       "caption": "",
       "labels": [
-        "model"
+        "Model"
       ],
       "properties": {
         "id": ""
@@ -112,7 +112,7 @@
       },
       "caption": "",
       "labels": [
-        "unit"
+        "Unit"
       ],
       "properties": {
         "id": "",

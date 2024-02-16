@@ -5,15 +5,15 @@
             "value.count": 2
         },
         {
-            "label": "compartment",
+            "label": "Compartment",
             "value.count": 1
         },
         {
-            "label": "model",
+            "label": "Model",
             "value.count": 1
         },
         {
-            "label": "unit",
+            "label": "Unit",
             "value.count": 4
         },
         {
@@ -21,27 +21,27 @@
             "value.count": 5
         },
         {
-            "label": "assignmentRule",
+            "label": "AssignmentRule",
             "value.count": 1
         },
         {
-            "label": "event",
+            "label": "Event",
             "value.count": 1
         },
         {
-            "label": "trigger",
+            "label": "Trigger",
             "value.count": 1
         },
         {
-            "label": "eventAssignment",
+            "label": "EventAssignment",
             "value.count": 1
         },
         {
-            "label": "delay",
+            "label": "Delay",
             "value.count": 1
         },
         {
-            "label": "parameter",
+            "label": "Parameter",
             "value.count": 1
         }
     ],
