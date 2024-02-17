@@ -211,6 +211,34 @@ class GraphMethod(object):
             return [key for key, value in counter.items() if value < 2]
         return [key for key, value in counter.items() if value > 1]
 
+    def get_level_max(self) -> int:
+        """Get the maximum level.
+
+        Return
+        ------
+        int
+        """
+        levels = []
+        for node in self.graph.nodes:
+            levels.append(self.graph.nodes[node].get("level", -1))
+        return max(levels)
+
+    def generate_node(self, level: int) -> Generator:
+        """Generate nodeId for a specific level
+
+        Parameters
+        ----------
+        level: int
+            Specific level
+
+        Return
+        ------
+        Generator
+        """
+        for node in self.graph.nodes:
+            if self.graph.nodes[node]["level"] == level:
+                yield node
+
     @classmethod
     def compare_labels(
         cls, first: Union[str, Iterable], second: Union[str, Iterable]
