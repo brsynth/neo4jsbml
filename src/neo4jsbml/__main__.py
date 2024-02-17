@@ -169,7 +169,7 @@ def _cmd_sbml_from_neo4j(args):
     # Extract entities
     logging.info("Extract entities")
     sbml_from_neo4j.conciliate_labels()
-    sbml_from_neo4j.extract_entities(current_id=None)
+    sbml_from_neo4j.extract_entities()
 
     # Write model
     logging.info("Write model")

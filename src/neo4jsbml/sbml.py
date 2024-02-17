@@ -183,123 +183,147 @@ class SbmlFromNeo4j(Sbml):
         self.gm = graph_method.GraphMethod.from_document(document=self.document)
         self.connection = connection
 
-    def extract_entities(self, current_id: Optional[str]) -> None:
+    def extract_entities(self) -> None:
         """Extract entities of Neo4j based on the graph, GraphMethod
-
-        Parameters
-        ----------
-        current_id: Optional[str]
-            current id of the graph_methods property
 
         Return
         ------
         None
         """
-        if current_id is None:
-            model = self.document.createModel()
-            cur_id = self.gm.retrieve_id(prop="labels", value="Model")
-            if self.gm.graph.nodes[cur_id]["modelisation"]:
-                datas = self.connection.query_node(
-                    label=self.gm.graph.nodes[cur_id]["labels_neo4j"]
-                )
-                if datas and len(datas) == 1:
-                    self.add_node_properties(
-                        current=model,
-                        data=datas[0],
-                        props=self.gm.graph.nodes[cur_id].get("properties", {}),
+        model_id = -1
+        for level in range(self.gm.get_level_max() + 1):
+            if level == 0:
+                model = self.document.createModel()
+                model_id = self.gm.retrieve_id(prop="labels", value="Model")
+                if self.gm.graph.nodes[model_id]["modelisation"]:
+                    datas = self.connection.query_node(
+                        label=self.gm.graph.nodes[model_id]["labels_neo4j"]
                     )
-            self.gm.graph.nodes[cur_id]["objects"] = {cur_id: model}
-            return self.extract_entities(
-                current_id=cur_id,
-            )
-        for child_id in self.gm.graph.successors(current_id):
-            label = self.gm.graph.nodes[child_id]["labels"]
-            if self.gm.graph.nodes[child_id]["modelisation"]:
+                    if datas and len(datas) == 1:
+                        self.add_node_properties(
+                            current=model,
+                            data=datas[0],
+                            props=self.gm.graph.nodes[model_id].get("properties", {}),
+                        )
+                self.gm.graph.nodes[model_id]["objects"] = {model_id: model}
+                continue
+            for child_id in self.gm.generate_node(level=level):
+                label = self.gm.graph.nodes[child_id]["labels"]
+                if self.gm.graph.nodes[child_id]["modelisation"] is False:
+                    continue
                 # Query Neo4j
                 datas = self.connection.query_node(
                     label=self.gm.graph.nodes[child_id]["labels_neo4j"],
                 )
                 # Loop over multiple nodes in Neo4j
                 for data in datas:
-                    # Get predecessor
-                    current = None
-                    predecessor = list(self.gm.graph.predecessors(child_id))[0]
-                    if self.gm.graph.nodes[child_id]["level"] == 1:
-                        # We want the "model" object included or not in Neo4j
-                        current = list(
-                            self.gm.graph.nodes[current_id]["objects"].values()
+                    # if data["node"].get("name", "") != "R_PFL":
+                    #    continue
+                    # Get parent object in graph
+                    parent_obj = None
+                    if level == 1:
+                        parent_obj = list(
+                            self.gm.graph.nodes[model_id]["objects"].values()
                         )[0]
+                        self.create_obj(
+                            parent_obj=parent_obj,
+                            label=label,
+                            data=data,
+                            child_id=child_id,
+                        )
                     else:
+                        node_predecessor_id = list(
+                            self.gm.graph.predecessors(child_id)
+                        )[0]
                         neighbors = self.connection.query_neighbor(
                             elementId=data["nodeId"]
                         )
                         child_relationship = self.gm.graph.nodes[child_id].get(
                             "relationship"
                         )
+                        # Check if two entities are linked by id
+                        if child_relationship is None:
+                            for neighbor in neighbors:
+                                parent_obj = self.gm.graph.nodes[node_predecessor_id][
+                                    "objects"
+                                ].get(neighbor["nodeId"])
+                                if parent_obj:
+                                    self.create_obj(
+                                        parent_obj=parent_obj,
+                                        label=label,
+                                        data=data,
+                                        child_id=child_id,
+                                    )
+                            continue
+                        # Check if two entities are linked by relationship
                         for neighbor in neighbors:
+                            is_relationship_matched = False
+                            for nei_relationship in neighbor["relationship"]:
+                                if graph_method.GraphMethod.compare_labels(
+                                    first=child_relationship["label"],
+                                    second=nei_relationship[1],
+                                ):
+                                    is_relationship_matched = True
+                                    break
+                            if is_relationship_matched is False:
+                                continue
                             if graph_method.GraphMethod.compare_labels(
                                 first=neighbor["nodeLabels"][0],
-                                second=self.gm.graph.nodes[predecessor]["labels_neo4j"],
+                                second=self.gm.graph.nodes[node_predecessor_id][
+                                    "labels_neo4j"
+                                ],
                             ):
-                                if child_relationship:
-                                    if (
-                                        graph_method.GraphMethod.compare_labels(
-                                            first=neighbor["relationship"][0][1],
-                                            second=child_relationship["label"],
-                                        )
-                                        and neighbor["nodeId"]
-                                        in self.gm.graph.nodes[predecessor][
-                                            "objects"
-                                        ].keys()
-                                    ):
-                                        current = self.gm.graph.nodes[predecessor][
-                                            "objects"
-                                        ][neighbor["nodeId"]]
-                                else:
-                                    current = self.gm.graph.nodes[predecessor][
-                                        "objects"
-                                    ][neighbor["nodeId"]]
-                                break
-                    if current is None:
-                        continue
-                    cur_obj = eval("current.create%s()" % (label,))
-                    # Add properties attached to the node
-                    self.add_node_properties(
-                        current=cur_obj,
-                        data=data,
-                        props=self.gm.graph.nodes[child_id].get("properties"),
-                    )
-                    # Add properties attached as a neighbor
-                    successor_labels = [
-                        self.gm.graph.nodes[x]["labels"]
-                        for x in self.gm.graph.successors(child_id)
-                    ]
-                    self.add_neighbor_properties(
-                        current=cur_obj,
-                        data=data,
-                        props=self.gm.graph.nodes[child_id].get("properties"),
-                        successors=successor_labels,
-                    )
-                    # Save
-                    if "objects" not in self.gm.graph.nodes[child_id].keys():
-                        self.gm.graph.nodes[child_id]["objects"] = {}
-                    self.gm.graph.nodes[child_id]["objects"][data["nodeId"]] = cur_obj
-                    # Iterate
-                    self.extract_entities(
-                        current_id=child_id,
-                    )
-            """
-            else:
-                # Loop over successors to know if we need to create a new object and pursuing or to skip
-                pathways = nx.dfs_tree(self.graph, child_id)
-                counts = [self.graph[x]["modelisation"] for x in pathways]
-                if sum(counts) > 0:
-                    cur_obj = eval("current.create%s()" % (label,))
-                    self.extract_entities(
-                        current=cur_obj,
-                        current_id=child_id,
-                    )
-            """
+                                parent_obj = self.gm.graph.nodes[node_predecessor_id][
+                                    "objects"
+                                ][neighbor["nodeId"]]
+                                self.create_obj(
+                                    parent_obj=parent_obj,
+                                    label=label,
+                                    data=data,
+                                    child_id=child_id,
+                                )
+
+    def create_obj(
+        self, parent_obj: Any, label: str, data: Dict[str, Any], child_id: int
+    ) -> None:
+        """From a parent SBML object it creates a child SBML object and associates to the gm attribute.
+
+        Parameters
+        ----------
+        parent_obj: Any
+            SBML object
+        label: str
+            Name of the SBML entity to create
+        data: Dict[str, Any]
+            record from Neo4j
+        child_id: int
+            graph method node id
+
+        Return
+        ------
+        None
+        """
+        cur_obj = eval("parent_obj.create%s()" % (label,))
+        # Add properties attached to the node
+        self.add_node_properties(
+            current=cur_obj,
+            data=data,
+            props=self.gm.graph.nodes[child_id].get("properties"),
+        )
+        # Add properties attached as a neighbor
+        successor_labels = [
+            self.gm.graph.nodes[x]["labels"] for x in self.gm.graph.successors(child_id)
+        ]
+        self.add_neighbor_properties(
+            current=cur_obj,
+            data=data,
+            props=self.gm.graph.nodes[child_id].get("properties"),
+            successors=successor_labels,
+        )
+        # Save
+        if "objects" not in self.gm.graph.nodes[child_id].keys():
+            self.gm.graph.nodes[child_id]["objects"] = {}
+        self.gm.graph.nodes[child_id]["objects"][data["nodeId"]] = cur_obj
 
     def add_node_properties(
         self, current: Any, data: Dict[str, Any], props: Dict[str, Any]
