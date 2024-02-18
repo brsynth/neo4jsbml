@@ -1,6 +1,7 @@
 import json
 import os
 import sys
+import xml.etree.ElementTree as ElementTree
 
 import pytest
 from neo4jsbml import cmd, connect, sbml, singleton
@@ -208,6 +209,18 @@ def neo4jsbml_sbml_to_neo4j(config: str, arrows: str, model: str) -> None:
         sys.exit(1)
 
 
+def neo4jsbml_sbml_from_neo4j(config: str, arrows: str, model: str) -> None:
+    args = ["neo4jsbml", "sbml-from-neo4j"]
+    args += ["--input-config-ini", config]
+    args += ["--input-arrows-json", arrows]
+    args += ["--output-model-sbml", model]
+    ret = cmd.run(args)
+    if ret.returncode > 0:
+        print(ret.stderr)
+        print(ret.stdout)
+        sys.exit(1)
+
+
 def neo4jsbml_statistics(config: str, output: str) -> None:
     args = ["neo4jsbml", "statistics"]
     args += ["--input-config-ini", config]
@@ -236,3 +249,20 @@ def compare_json(result: str, expect: str) -> bool:
     with open(expect) as fd:
         data_expect = json.load(fd)
     return ordered(data_expect) == ordered(data_result)
+
+
+def _canonicalize_XML(xml: str):
+    # From https://stackoverflow.com/questions/24492895/comparing-two-xml-files-in-python
+    root = ElementTree.fromstring(xml)
+    rootstr = ElementTree.tostring(root)
+    return ElementTree.canonicalize(rootstr, strip_text=True)
+
+
+def compare_xml(result: str, expect: str) -> bool:
+    xml_result = ElementTree.parse(result)
+    data_result = _canonicalize_XML(ElementTree.tostring(xml_result.getroot()))
+    print(data_result)
+    xml_expect = ElementTree.parse(expect)
+    data_expect = _canonicalize_XML(ElementTree.tostring(xml_expect.getroot()))
+    print(data_expect)
+    return data_result == data_expect

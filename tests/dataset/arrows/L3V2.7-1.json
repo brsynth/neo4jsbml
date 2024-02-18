@@ -64,10 +64,7 @@
         "UnitDefinition"
       ],
       "properties": {
-        "id": "",
-        "name": "",
-        "metaid": "",
-        "sboTerm": ""
+        "id": ""
       },
       "style": {}
     },
@@ -83,12 +80,10 @@
       ],
       "properties": {
         "id": "",
-        "name": "",
-        "metaid": "",
-        "sboTerm": "",
         "spatialDimensions": "",
         "size": "",
-        "constant": ""
+        "constant": "",
+        "units": ""
       },
       "style": {}
     },
@@ -103,10 +98,8 @@
         "Model"
       ],
       "properties": {
-        "id": "",
-        "name": "",
-        "metaid": "",
-        "sboTerm": ""
+        "extentUnits": "",
+        "timeUnits": ""
       },
       "style": {}
     },
@@ -121,10 +114,6 @@
         "Unit"
       ],
       "properties": {
-        "id": "",
-        "name": "",
-        "metaid": "",
-        "sboTerm": "",
         "kind": "",
         "exponent": "",
         "scale": "",
@@ -142,7 +131,14 @@
       "labels": [
         "Species"
       ],
-      "properties": {},
+      "properties": {
+        "id": "",
+        "initialAmount": "",
+        "boundaryCondition": "",
+        "hasOnlySubstanceUnits": "",
+        "substanceUnits": "",
+        "constant": ""
+      },
       "style": {}
     },
     {
@@ -164,8 +160,8 @@
     {
       "id": "n7",
       "position": {
-        "x": 395.35883181268633,
-        "y": 418.1211943408167
+        "x": 422.06186045423505,
+        "y": 373.75832016801974
       },
       "caption": "",
       "labels": [
@@ -188,7 +184,8 @@
       ],
       "properties": {
         "id": "",
-        "value": ""
+        "value": "",
+        "units": ""
       },
       "style": {}
     }
@@ -251,14 +248,6 @@
       "style": {}
     },
     {
-      "id": "n7",
-      "fromId": "n6",
-      "toId": "n8",
-      "type": "HAS_LOCALPARAMETER",
-      "properties": {},
-      "style": {}
-    },
-    {
       "id": "n8",
       "fromId": "n5",
       "toId": "n6",
@@ -281,6 +270,14 @@
       "type": "HAS_UNITS",
       "properties": {},
       "style": {}
+    },
+    {
+      "id": "n11",
+      "type": "HAS_LOCALPARAMETER",
+      "style": {},
+      "properties": {},
+      "fromId": "n7",
+      "toId": "n8"
     }
   ]
 }
