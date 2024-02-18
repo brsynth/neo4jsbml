@@ -251,7 +251,7 @@ def compare_json(result: str, expect: str) -> bool:
     return ordered(data_expect) == ordered(data_result)
 
 
-def _canonicalize_XML(xml: str):
+def _canonicalize_XML(xml: bytes):
     # From https://stackoverflow.com/questions/24492895/comparing-two-xml-files-in-python
     root = ElementTree.fromstring(xml)
     rootstr = ElementTree.tostring(root)
@@ -261,8 +261,6 @@ def _canonicalize_XML(xml: str):
 def compare_xml(result: str, expect: str) -> bool:
     xml_result = ElementTree.parse(result)
     data_result = _canonicalize_XML(ElementTree.tostring(xml_result.getroot()))
-    print(data_result)
     xml_expect = ElementTree.parse(expect)
     data_expect = _canonicalize_XML(ElementTree.tostring(xml_expect.getroot()))
-    print(data_expect)
     return data_result == data_expect

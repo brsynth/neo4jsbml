@@ -202,7 +202,7 @@ class GraphMethod(object):
             if "modelisation" not in self.graph.nodes[node_id].keys():
                 self.graph.nodes[node_id]["modelisation"] = False
 
-    def retrieve_id(self, prop: str, value: str) -> Optional[str]:
+    def retrieve_id(self, prop: str, value: str) -> str:
         """Given a key and its value retrieve the id
 
         Parameters
@@ -214,7 +214,7 @@ class GraphMethod(object):
 
         Return
         ------
-        Optional[str]
+        str
         """
         candidates = []
         for node in self.graph.nodes:
@@ -223,7 +223,7 @@ class GraphMethod(object):
                 candidates.append(node)
         if len(candidates) == 1:
             return candidates[0]
-        return None
+        return ""
 
     def select_labels(self, uniq: bool = False) -> List[str]:
         """Retrive all labels property in the properties node
