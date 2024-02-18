@@ -129,6 +129,9 @@ class Sbml(object):
             return float(value)
         elif m and m.group(1) is None:
             return int(value)
+        m = re.match(r"\d+e-?\d+$", value)
+        if m:
+            return float(value)
         # Check is bool
         m = re.match(r"(True)|(False)", value, re.I)
         if m and m.group(1):
@@ -190,7 +193,7 @@ class SbmlFromNeo4j(Sbml):
         ------
         None
         """
-        model_id = -1
+        model_id = ""
         for level in range(self.gm.get_level_max() + 1):
             if level == 0:
                 model = self.document.createModel()
@@ -217,8 +220,6 @@ class SbmlFromNeo4j(Sbml):
                 )
                 # Loop over multiple nodes in Neo4j
                 for data in datas:
-                    # if data["node"].get("name", "") != "R_PFL":
-                    #    continue
                     # Get parent object in graph
                     parent_obj = None
                     if level == 1:
