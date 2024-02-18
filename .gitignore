@@ -14,5 +14,6 @@ build
 debug
 papier
 cmd.sh
+work
 # Docs
 docs/_build

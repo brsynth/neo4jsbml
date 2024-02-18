@@ -54,10 +54,10 @@
   },
   "nodes": [
     {
-      "id": "n3",
+      "id": "n1",
       "position": {
-        "x": 552.161343345072,
-        "y": 204.94864525928796
+        "x": 377.76675537441395,
+        "y": -3.999999999999943
       },
       "caption": "",
       "labels": [
@@ -71,10 +71,10 @@
       "style": {}
     },
     {
-      "id": "n5",
+      "id": "n2",
       "position": {
-        "x": 911.4042829893231,
-        "y": 204.9486452592879
+        "x": 737.009695018665,
+        "y": -4
       },
       "caption": "",
       "labels": [
@@ -88,45 +88,45 @@
       "style": {}
     },
     {
-      "id": "n6",
+      "id": "n3",
       "position": {
-        "x": 303.3945879706581,
-        "y": 204.94864525928796
+        "x": 92.91569416047241,
+        "y": -3.9999999999998983
       },
       "caption": "",
-      "style": {},
       "labels": [
         "Species"
       ],
       "properties": {
         "id": ""
-      }
+      },
+      "style": {}
     }
   ],
   "relationships": [
     {
-      "id": "n1",
-      "fromId": "n5",
-      "toId": "n3",
+      "id": "n0",
+      "fromId": "n2",
+      "toId": "n1",
       "type": "HAS_PRODUCT",
       "properties": {},
       "style": {}
     },
     {
-      "id": "n7",
-      "fromId": "n3",
-      "toId": "n5",
+      "id": "n1",
+      "fromId": "n1",
+      "toId": "n2",
       "type": "HAS_REACTANT",
       "properties": {},
       "style": {}
     },
     {
-      "id": "n8",
+      "id": "n2",
+      "fromId": "n1",
+      "toId": "n3",
       "type": "HAS_SPECIES",
-      "style": {},
       "properties": {},
-      "fromId": "n3",
-      "toId": "n6"
+      "style": {}
     }
   ]
 }

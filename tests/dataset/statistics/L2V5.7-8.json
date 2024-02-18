@@ -1,11 +1,11 @@
 {
     "nodes": [
         {
-            "label": "compartment",
+            "label": "Compartment",
             "value.count": 1
         },
         {
-            "label": "model",
+            "label": "Model",
             "value.count": 1
         },
         {
@@ -25,7 +25,7 @@
             "value.count": 1
         },
         {
-            "label": "functionDefinition",
+            "label": "FunctionDefinition",
             "value.count": 1
         }
     ],

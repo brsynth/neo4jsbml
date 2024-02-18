@@ -2,11 +2,11 @@ import hashlib
 import itertools
 import logging
 import re
-from typing import Any, Dict, Generator, List, Optional
+from typing import Any, Dict, Generator, List, Optional, Union
 
 import libsbml
-
-from neo4jsbml import arrows, snode, srelationship
+import networkx as nx
+from neo4jsbml import arrows, connect, graph_method, snode, srelationship
 
 
 class Sbml(object):
@@ -14,14 +14,501 @@ class Sbml(object):
 
     Attributes
     ----------
-    tag: str
-        identify nodes from an extra arguments for Neo4j
     document: libsml.Document
         a document
-    model: libsml.Model
-        a model extract from the document
     plugins: List[str]
         a list of plugin name
+
+    Methods
+    -------
+    __init__(document: libsbml.SBML_DOCUMENT, *args, **kwargs)
+        Instanciate a new object.
+
+    @classmethod
+    iterate_over_attribute(obj: Any) -> Generator:
+        Generator to select useful attributes
+
+    @classmethod
+    has_method(obj: Any, method: str) -> bool
+        Given an object, check if an object as a method.
+
+    @classmethod
+    find_method(obj: Any, label: str, exact: bool, start: str) -> List[str]
+        Given an object, search a method name by intropection
+    """
+
+    PLUGINS = ["fbc", "groups", "layout", "qual"]
+
+    def __init__(self, document: libsbml.SBML_DOCUMENT, *args, **kwargs) -> None:
+        self.document = document
+
+    @classmethod
+    def iterate_over_attribute(cls, obj: Any) -> Generator:
+        """Iterate over attributes of an object
+
+        Parameters
+        ----------
+        obj: Any
+            any object
+
+        Return
+        ------
+        Generator
+        """
+        # Exact match
+        for attribute in dir(obj):
+            if (
+                not attribute.startswith("__")
+                and not attribute.startswith("enable")
+                and not attribute.startswith("get")
+                and not attribute.startswith("is")
+                and not attribute.startswith("matches")
+                and not attribute.startswith("remove")
+                and not attribute.startswith("set")
+                and not attribute.startswith("unset")
+                and not attribute.startswith("write")
+            ):
+                attr = getattr(obj, attribute, None)
+
+                if attr and not callable(attr):
+                    yield attribute
+
+    @classmethod
+    def has_method(cls, obj: Any, method: str) -> bool:
+        """Given an object, check if an object as a method.
+
+        Parameters
+        ----------
+        obj: Any
+            any object
+
+        Return
+        ------
+        bool
+        """
+        return method in obj.__dir__()
+
+    @classmethod
+    def find_method(
+        cls, obj: Any, label: str, exact: bool = False, start: str = "get"
+    ) -> List[str]:
+        """Given an object, search a method name by intropection.
+
+        Parameters
+        ----------
+        obj: Any
+            any object
+        label: str
+            a method to search
+        exact: bool
+            expect exact match
+        start: str
+            beginning of the expression (default: get)
+
+        Return
+        ------
+        List[str]
+        """
+        # Exact match
+        regex = re.compile(r"^" + start + label + "$", re.IGNORECASE)
+        candidates = list(filter(regex.match, obj.__dir__()))
+        if len(candidates) == 1:
+            return candidates
+        if exact:
+            return []
+        # Partial match
+        regex = re.compile(r"" + start + ".*" + label, re.IGNORECASE)
+        candidates = list(filter(regex.search, obj.__dir__()))
+        return candidates
+
+    @classmethod
+    def cast_properties(cls, value: str) -> Optional[Union[str, float, int, bool]]:
+        # Check isdigit
+        m = re.match(r"^-?\d+(\.\d+)?$", value)
+        if m and m.group(1):
+            return float(value)
+        elif m and m.group(1) is None:
+            return int(value)
+        m = re.match(r"\d+e-?\d+$", value)
+        if m:
+            return float(value)
+        # Check is bool
+        m = re.match(r"(True)|(False)", value, re.I)
+        if m and m.group(1):
+            return True
+        elif m and m.group(2):
+            return False
+        # Undefined
+        if value == "" or value == "nan":
+            return None
+        # Return str
+        return value
+
+
+class SbmlFromNeo4j(Sbml):
+    """Help to map entities coming from Arrows and SBML.
+
+    Attributes
+    ----------
+    model: libsml.Model
+        a model extract from the document
+
+    Methods
+    -------
+    __init__(document: libsbml.SBML_DOCUMENT)
+        Instanciate a new object
+
+     extract_entities(self, current_id: Optional[str]) -> None
+        Extract entities of Neo4j based on the graph, GraphMethod
+
+    add_node_properties(self, current: Any, data: Dict[str, Any], props: Dict[str, Any]) -> None
+        Set properties found in Arrows, mapping to Neo4j, to a libsbml object
+
+    add_neighbor_properties(self, current: Any, data: Dict[str, Any], props: Dict[str, Any], successors: List[str]) -> None
+        Sometimes a node associated to another in Neo4j takes place as property
+
+    annotate(self, modelisation: arrows.Arrows) -> None
+        Annotate the graph_method attribute with a modelisation
+
+    conciliate_labels(self) -> None
+        Associate a label found in Neo4j to a label from the gaph_method attribute
+
+    to_sbml(self, path: str) -> None
+        Export the document attribute to a SBML file
+
+    @classmethod
+    from_specifications(level: int, version: int, connection: connect.Connect) -> "SbmlFromNeo4j"
+        Create an Sbml object given a SBML file
+    """
+
+    def __init__(self, connection: connect.Connect, *args, **kwargs) -> None:
+        super(SbmlFromNeo4j, self).__init__(*args, **kwargs)
+        self.gm = graph_method.GraphMethod.from_document(document=self.document)
+        self.connection = connection
+
+    def extract_entities(self) -> None:
+        """Extract entities of Neo4j based on the graph, GraphMethod
+
+        Return
+        ------
+        None
+        """
+        model_id = ""
+        for level in range(self.gm.get_level_max() + 1):
+            if level == 0:
+                model = self.document.createModel()
+                model_id = self.gm.retrieve_id(prop="labels", value="Model")
+                if self.gm.graph.nodes[model_id]["modelisation"]:
+                    datas = self.connection.query_node(
+                        label=self.gm.graph.nodes[model_id]["labels_neo4j"]
+                    )
+                    if datas and len(datas) == 1:
+                        self.add_node_properties(
+                            current=model,
+                            data=datas[0],
+                            props=self.gm.graph.nodes[model_id].get("properties", {}),
+                        )
+                self.gm.graph.nodes[model_id]["objects"] = {model_id: model}
+                continue
+            for child_id in self.gm.generate_node(level=level):
+                label = self.gm.graph.nodes[child_id]["labels"]
+                if self.gm.graph.nodes[child_id]["modelisation"] is False:
+                    continue
+                # Query Neo4j
+                datas = self.connection.query_node(
+                    label=self.gm.graph.nodes[child_id]["labels_neo4j"],
+                )
+                # Loop over multiple nodes in Neo4j
+                for data in datas:
+                    # Get parent object in graph
+                    parent_obj = None
+                    if level == 1:
+                        parent_obj = list(
+                            self.gm.graph.nodes[model_id]["objects"].values()
+                        )[0]
+                        self.create_obj(
+                            parent_obj=parent_obj,
+                            label=label,
+                            data=data,
+                            child_id=child_id,
+                        )
+                    else:
+                        node_predecessor_id = list(
+                            self.gm.graph.predecessors(child_id)
+                        )[0]
+                        neighbors = self.connection.query_neighbor(
+                            elementId=data["nodeId"]
+                        )
+                        child_relationship = self.gm.graph.nodes[child_id].get(
+                            "relationship"
+                        )
+                        # Check if two entities are linked by id
+                        if child_relationship is None:
+                            for neighbor in neighbors:
+                                parent_obj = self.gm.graph.nodes[node_predecessor_id][
+                                    "objects"
+                                ].get(neighbor["nodeId"])
+                                if parent_obj:
+                                    self.create_obj(
+                                        parent_obj=parent_obj,
+                                        label=label,
+                                        data=data,
+                                        child_id=child_id,
+                                    )
+                            continue
+                        # Check if two entities are linked by relationship
+                        for neighbor in neighbors:
+                            is_relationship_matched = False
+                            for nei_relationship in neighbor["relationship"]:
+                                if graph_method.GraphMethod.compare_labels(
+                                    first=child_relationship["label"],
+                                    second=nei_relationship[1],
+                                ):
+                                    is_relationship_matched = True
+                                    break
+                            if is_relationship_matched is False:
+                                continue
+                            if graph_method.GraphMethod.compare_labels(
+                                first=neighbor["nodeLabels"][0],
+                                second=self.gm.graph.nodes[node_predecessor_id][
+                                    "labels_neo4j"
+                                ],
+                            ):
+                                parent_obj = self.gm.graph.nodes[node_predecessor_id][
+                                    "objects"
+                                ][neighbor["nodeId"]]
+                                self.create_obj(
+                                    parent_obj=parent_obj,
+                                    label=label,
+                                    data=data,
+                                    child_id=child_id,
+                                )
+
+    def create_obj(
+        self, parent_obj: Any, label: str, data: Dict[str, Any], child_id: int
+    ) -> None:
+        """From a parent SBML object it creates a child SBML object and associates to the gm attribute.
+
+        Parameters
+        ----------
+        parent_obj: Any
+            SBML object
+        label: str
+            Name of the SBML entity to create
+        data: Dict[str, Any]
+            record from Neo4j
+        child_id: int
+            graph method node id
+
+        Return
+        ------
+        None
+        """
+        cur_obj = eval("parent_obj.create%s()" % (label,))
+        # Add properties attached to the node
+        self.add_node_properties(
+            current=cur_obj,
+            data=data,
+            props=self.gm.graph.nodes[child_id].get("properties"),
+        )
+        # Add properties attached as a neighbor
+        successor_labels = [
+            self.gm.graph.nodes[x]["labels"] for x in self.gm.graph.successors(child_id)
+        ]
+        self.add_neighbor_properties(
+            current=cur_obj,
+            data=data,
+            props=self.gm.graph.nodes[child_id].get("properties"),
+            successors=successor_labels,
+        )
+        # Save
+        if "objects" not in self.gm.graph.nodes[child_id].keys():
+            self.gm.graph.nodes[child_id]["objects"] = {}
+        self.gm.graph.nodes[child_id]["objects"][data["nodeId"]] = cur_obj
+
+    def add_node_properties(
+        self, current: Any, data: Dict[str, Any], props: Dict[str, Any]
+    ) -> None:
+        """Set properties found in Arrows, mapping to Neo4j, to a libsbml object
+
+        Parameters
+        ----------
+        current: Any
+            A libsbml object
+        data: Dict[str, Any]
+            Query from Neo4j regarding a node
+        props: Dict[str, Any]
+            Properties of a graph_method node
+
+        Return
+        ------
+        None
+        """
+        for prop in props.keys():
+            # Check if Modelisation's property is in database
+            if prop in data["node"].keys():
+                # Check if libsbml has the method
+                methods = Sbml.find_method(obj=current, label=prop, start="set")
+                if len(methods) != 1:
+                    continue
+                # Check if Neo4j's data has the method
+                for key, value in data["node"].items():
+                    if prop == key:
+                        # Add property
+                        nvalue = Sbml.cast_properties(value=value)
+                        # Check if property is empty
+                        if nvalue is not None:
+                            if key.lower() == "math":
+                                ast_value = libsbml.parseL3Formula(
+                                    nvalue
+                                )  # Throw F841 error, local variable is assigned to but never used
+                                eval("current.%s(ast_value)" % (methods[0],))
+                            elif value == nvalue:
+                                eval('current.%s("%s")' % (methods[0], value))
+                            else:
+                                eval("current.%s(%s)" % (methods[0], nvalue))
+                        break
+
+    def add_neighbor_properties(
+        self,
+        current: Any,
+        data: Dict[str, Any],
+        props: Dict[str, Any],
+        successors: List[str],
+    ) -> None:
+        """Sometimes a node associated to another in Neo4j takes place as property
+
+        Parameters
+        ----------
+        current: Any
+            A libsbml object
+        data: Dict[str, Any]
+            Query from Neo4j regarding a node
+        props: Dict[str, Any]
+            Properties of a graph_method node
+        successors: List[str]
+            Listing of node connected
+
+        Return
+        ------
+        None
+        """
+
+        # Extract neighbors from data
+        neighbors = self.connection.query_neighbor(elementId=data["nodeId"])
+        for neighbor in neighbors:
+            for prop in props.keys():
+                labels = neighbor["nodeLabels"]
+                # Skip if an object will be added instead a property
+                if labels[0] in successors:
+                    continue
+                # Check if libsbml has the method
+                methods = Sbml.find_method(obj=current, label=labels[0], start="set")
+                if len(methods) != 1:
+                    continue
+                # Extract id from neighbor
+                neighbor_format = dict()
+                for key, value in neighbor["nodeNeighbor"].items():
+                    neighbor_format[key.lower()] = value
+                neighbor_id = neighbor_format.get("id", "")
+                neighbor_id = Sbml.cast_properties(value=neighbor_id)
+                # Add property
+                if neighbor_id is not None:
+                    eval('current.%s("%s")' % (methods[0], neighbor_id))
+                    break
+
+    def annotate(self, modelisation: arrows.Arrows) -> None:
+        """Annotate the graph_method attribute with a modelisation
+
+        Paramters
+        ---------
+        modelisation: arrows:Arrows
+            A modelisation
+
+        Return
+        ------
+        None
+        """
+        self.gm.annotate(modelisation=modelisation)
+
+    def conciliate_labels(self) -> None:
+        """Associate a label found in Neo4j to a label from the gaph_method attribute
+
+        Return
+        ------
+        None
+        """
+        # Query
+        labels = self.connection.query_labels()
+        # Format query
+        labels = [x["label"] for x in labels]
+        labels = list(set(itertools.chain(*labels)))
+        # Associate label
+        for node_id in self.gm.graph.nodes:
+            if (
+                self.gm.graph.nodes[node_id]["modelisation"]
+                and "labels_neo4j" not in self.gm.graph.nodes[node_id].keys()
+            ):
+                label = self.gm.graph.nodes[node_id]["labels"]
+                # Give priority on Arrows
+                if "labels_arrows" in self.gm.graph.nodes[node_id].keys():
+                    label = self.gm.graph.nodes[node_id]["labels_arrows"]
+                regex = re.compile(r"^" + label + "$", re.IGNORECASE)
+                candidates = list(filter(regex.search, labels))
+                if len(candidates) == 1:
+                    self.gm.graph.nodes[node_id]["labels_neo4j"] = candidates[0]
+
+    @classmethod
+    def from_specifications(
+        cls,
+        connection: connect.Connect,
+        level: int = 3,
+        version: int = 2,
+    ) -> "SbmlFromNeo4j":
+        """Create an SbmlFromNeo4j object given the version of the specifications.
+
+        Parameters
+        ----------
+        level: int
+            Number of the level
+        version: int
+            Number of the version
+        connection: connect.Connect
+            Connection object
+
+        Return
+        ------
+        SbmlFromNeo4j
+        """
+        doc = libsbml.SBMLDocument(level, version)
+        return SbmlFromNeo4j(connection=connection, document=doc)
+
+    def to_sbml(self, path: str) -> None:
+        """Export the document attribute to a SBML file
+
+        Parameters
+        ----------
+        path: str
+            The path of the file
+
+        Return
+        ------
+        None
+        """
+        data = libsbml.writeSBMLToString(self.document)
+        with open(path, "w") as fd:
+            fd.write(data)
+
+
+class SbmlToNeo4j(Sbml):
+    """Help to map entities coming from Arrows and SBML.
+
+    Attributes
+    ----------
+    tag: str
+        identify nodes from an extra arguments for Neo4j
+    model: libsml.Model
+        a model extract from the document
 
     Raises
     -----
@@ -46,21 +533,13 @@ class Sbml(object):
         Check if an object can activate one or several plugins
 
     @classmethod
-    find_method(obj: Any, label: str) -> List[str]
-        Given an object, search a method name by intropection
-
-    @classmethod
-    from_sbml(path: str, tag: Optional[str] = None) -> "Sbml"
+    from_sbml(path: str, tag: Optional[str] = None) -> "SbmlToNeo4j"
         Create an Sbml object given a SBML file
     """
 
-    PLUGINS = ["fbc", "groups", "layout", "qual"]
-
-    def __init__(
-        self, document: libsbml.SBML_DOCUMENT, tag: Optional[str] = None
-    ) -> None:
+    def __init__(self, tag: Optional[str] = None, *args, **kwargs) -> None:
+        super(SbmlToNeo4j, self).__init__(*args, **kwargs)
         self.tag = tag
-        self.document = document
         self.model = self.document.getModel()
         self.node_map_item: Dict[str, List[str]] = {}
         self.node_map_label: Dict[str, str] = {}
@@ -355,7 +834,7 @@ class Sbml(object):
                 if from_el_name.endswith("Reference") and not to_label.lower().endswith(
                     "reference"
                 ):
-                    for attribute in self.iterate_over_attribute(obj=from_el):
+                    for attribute in Sbml.iterate_over_attribute(obj=from_el):
                         to_id = eval("from_el.%s" % (attribute,))
                         if self.validate_id(value=to_id):
                             dbb_rel = srelationship.SRelationship(
@@ -647,7 +1126,7 @@ class Sbml(object):
         """
         # Use Id or IdAttribute if it set
         ident = value.getId()
-        if self.has_method(obj=value, method="getIdAttribute"):
+        if Sbml.has_method(obj=value, method="getIdAttribute"):
             id_attribute = value.getIdAttribute()
             if id_attribute != "" and id_attribute != ident:
                 ident += "-" + id_attribute
@@ -676,82 +1155,7 @@ class Sbml(object):
         return candidates
 
     @classmethod
-    def iterate_over_attribute(cls, obj: Any) -> Generator:
-        """Iterate over attributes of an object
-
-        Parameters
-        ----------
-        obj: Any
-            any object
-
-        Return
-        ------
-        Generator
-        """
-        # Exact match
-        for attribute in dir(obj):
-            if (
-                not attribute.startswith("__")
-                and not attribute.startswith("enable")
-                and not attribute.startswith("get")
-                and not attribute.startswith("is")
-                and not attribute.startswith("matches")
-                and not attribute.startswith("remove")
-                and not attribute.startswith("set")
-                and not attribute.startswith("unset")
-                and not attribute.startswith("write")
-            ):
-                attr = getattr(obj, attribute, None)
-
-                if attr and not callable(attr):
-                    yield attribute
-
-    @classmethod
-    def has_method(cls, obj: Any, method: str) -> bool:
-        """Given an object, check if an object as a method.
-
-        Parameters
-        ----------
-        obj: Any
-            any object
-
-        Return
-        ------
-        bool
-        """
-        return method in obj.__dir__()
-
-    @classmethod
-    def find_method(cls, obj: Any, label: str, exact: bool = False) -> List[str]:
-        """Given an object, search a method name by intropection.
-
-        Parameters
-        ----------
-        obj: Any
-            any object
-        label: str
-            a method to search
-        exact: bool
-            expect exact match
-
-        Return
-        ------
-        List[str]
-        """
-        # Exact match
-        regex = re.compile(r"^get" + label + "$", re.IGNORECASE)
-        candidates = list(filter(regex.match, obj.__dir__()))
-        if len(candidates) == 1:
-            return candidates
-        if exact:
-            return []
-        # Partial match
-        regex = re.compile(r"get.*" + label, re.IGNORECASE)
-        candidates = list(filter(regex.search, obj.__dir__()))
-        return candidates
-
-    @classmethod
-    def from_sbml(cls, path: str, tag: Optional[str] = None) -> "Sbml":
+    def from_sbml(cls, path: str, tag: Optional[str] = None) -> "SbmlToNeo4j":
         """Create an Sbml object given a SBML file.
 
         Parameters
@@ -767,11 +1171,11 @@ class Sbml(object):
             if an error is encountered during the loading of the file
         Return
         ------
-        Sbml
+        SbmlToNeo4j
         """
         doc = libsbml.readSBML(path)
         errors = doc.getNumErrors()
         if errors > 0:
             logging.error(doc.printErrors())
             raise ValueError("Error when parsing SBML -> abort")
-        return Sbml(document=doc, tag=tag)
+        return SbmlToNeo4j(tag=tag, document=doc)

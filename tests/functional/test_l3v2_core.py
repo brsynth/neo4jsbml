@@ -3,8 +3,10 @@ import tempfile
 
 from conftest import (
     compare_json,
+    compare_xml,
     is_connected,
     neo4jsbml_clean,
+    neo4jsbml_sbml_from_neo4j,
     neo4jsbml_sbml_to_neo4j,
     neo4jsbml_statistics,
 )
@@ -26,6 +28,18 @@ class TestL3V2Core:
             assert compare_json(
                 result=fod.name,
                 expect=os.path.join(data_dir, "statistics", "L3V2.7-1.json"),
+            )
+        with tempfile.NamedTemporaryFile(suffix=".xml") as fod:
+            neo4jsbml_sbml_from_neo4j(
+                config=config_path,
+                arrows=os.path.join(data_dir, "arrows", "L3V2.7-1.json"),
+                model=fod.name,
+            )
+            assert compare_xml(
+                result=fod.name,
+                expect=os.path.join(
+                    data_dir, "model", "sbml_from_neo4j", "L3V2.7-1.xml"
+                ),
             )
 
     def test_ex_2(self, data_dir, config_path):

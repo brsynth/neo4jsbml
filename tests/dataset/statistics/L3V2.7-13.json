@@ -5,15 +5,15 @@
             "value.count": 5
         },
         {
-            "label": "compartment",
+            "label": "Compartment",
             "value.count": 2
         },
         {
-            "label": "model",
+            "label": "Model",
             "value.count": 1
         },
         {
-            "label": "unit",
+            "label": "Unit",
             "value.count": 5
         },
         {
@@ -29,11 +29,11 @@
             "value.count": 1
         },
         {
-            "label": "functionDefinition",
+            "label": "FunctionDefinition",
             "value.count": 1
         },
         {
-            "label": "localParameter",
+            "label": "LocalParameter",
             "value.count": 2
         }
     ],
@@ -75,7 +75,7 @@
             "value.count": 1
         },
         {
-            "type": "HAS_FONCTIONDEFINITION",
+            "type": "HAS_FUNCTIONDEFINITION",
             "value.count": 1
         },
         {

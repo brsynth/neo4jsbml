@@ -79,7 +79,7 @@
       },
       "caption": "",
       "labels": [
-        "compartment"
+        "Compartment"
       ],
       "properties": {
         "id": "",
@@ -100,13 +100,13 @@
       },
       "caption": "",
       "labels": [
-        "model"
+        "Model"
       ],
       "properties": {
-        "id": "str",
-        "name": "str",
-        "metaid": "str",
-        "sboTerm": "str"
+        "id": "",
+        "name": "",
+        "metaid": "",
+        "sboTerm": ""
       },
       "style": {}
     },
@@ -118,7 +118,7 @@
       },
       "caption": "",
       "labels": [
-        "unit"
+        "Unit"
       ],
       "properties": {
         "id": "",
@@ -181,14 +181,14 @@
       "style": {}
     },
     {
-      "id": "n10",
+      "id": "n8",
       "position": {
         "x": 197.16839471876096,
         "y": 456.2149552373287
       },
       "caption": "",
       "labels": [
-        "localParameter"
+        "LocalParameter"
       ],
       "properties": {
         "id": "",
@@ -271,7 +271,7 @@
       "style": {}
     },
     {
-      "id": "n11",
+      "id": "n9",
       "fromId": "n6",
       "toId": "n5",
       "type": "MODIFIERS",
@@ -279,9 +279,9 @@
       "style": {}
     },
     {
-      "id": "n12",
+      "id": "n10",
       "fromId": "n6",
-      "toId": "n10",
+      "toId": "n8",
       "type": "HAS_LOCALPARAMETER",
       "properties": {},
       "style": {}

@@ -79,7 +79,7 @@
       },
       "caption": "",
       "labels": [
-        "compartment"
+        "Compartment"
       ],
       "properties": {
         "id": "",
@@ -100,13 +100,13 @@
       },
       "caption": "",
       "labels": [
-        "model"
+        "Model"
       ],
       "properties": {
-        "id": "str",
-        "name": "str",
-        "metaid": "str",
-        "sboTerm": "str"
+        "id": "",
+        "name": "",
+        "metaid": "",
+        "sboTerm": ""
       },
       "style": {}
     },
@@ -118,7 +118,7 @@
       },
       "caption": "",
       "labels": [
-        "unit"
+        "Unit"
       ],
       "properties": {
         "id": "",
@@ -271,7 +271,7 @@
       "style": {}
     },
     {
-      "id": "n10",
+      "id": "n9",
       "fromId": "n3",
       "toId": "n8",
       "type": "HAS_PARAMETER",
@@ -279,12 +279,12 @@
       "style": {}
     },
     {
-      "id": "n11",
-      "type": "HAS_UNIT",
-      "style": {},
-      "properties": {},
+      "id": "n10",
       "fromId": "n8",
-      "toId": "n1"
+      "toId": "n1",
+      "type": "HAS_UNIT",
+      "properties": {},
+      "style": {}
     }
   ]
 }
