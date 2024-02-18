@@ -5,19 +5,19 @@
             "value.count": 2
         },
         {
-            "label": "compartment",
+            "label": "Compartment",
             "value.count": 2
         },
         {
-            "label": "model",
+            "label": "Model",
             "value.count": 1
         },
         {
-            "label": "unit",
+            "label": "Unit",
             "value.count": 3
         },
         {
-            "label": "speciesReference",
+            "label": "SpeciesReference",
             "value.count": 5
         },
         {

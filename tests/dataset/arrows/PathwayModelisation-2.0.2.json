@@ -54,201 +54,201 @@
   },
   "nodes": [
     {
-      "id": "n8",
+      "id": "n1",
       "position": {
-        "x": 1611.1404812167739,
-        "y": 615.6628042616126
+        "x": 194.8530908317087,
+        "y": 3.8787603451744417
       },
       "caption": "",
       "labels": [
         "Compartment"
       ],
       "properties": {
-        "id": "str (required)",
-        "name": "str (optional)",
-        "metaid": "str (optional)",
-        "sboTerm": "str (optional)",
-        "spatialDimensions": "int (optional)",
-        "size": "int (optional)",
-        "constant": "bool (optional)"
+        "id": "",
+        "name": "",
+        "metaid": "",
+        "sboTerm": "",
+        "spatialDimensions": "",
+        "size": "",
+        "constant": ""
       },
       "style": {}
     },
     {
-      "id": "n9",
+      "id": "n2",
       "position": {
-        "x": 1286.7264130245258,
-        "y": 615.6628042616126
+        "x": 545.6721092888903,
+        "y": 3.8787603451744417
       },
       "caption": "",
       "labels": [
         "Species"
       ],
       "properties": {
-        "id": "str (required)",
-        "initialAmount": "float (optional)",
-        "hasOnlySubstanceUnits": "bool (optional)",
-        "boundaryCondition": "bool (optional)",
-        "constant": "bool (optional)"
+        "id": "",
+        "initialAmount": "",
+        "hasOnlySubstanceUnits": "",
+        "boundaryCondition": "",
+        "constant": ""
       },
       "style": {}
     },
     {
-      "id": "n10",
+      "id": "n3",
       "position": {
-        "x": 1158.7264130245258,
-        "y": 440.2532950330214
+        "x": 432.24944559503035,
+        "y": 204.94864525928773
       },
       "caption": "",
       "labels": [
         "Parameter"
       ],
       "properties": {
-        "id": "str (required)",
-        "name": "str (optional)",
-        "metaid": "str (optional)",
-        "sboTerm": "str (optional)",
-        "value": "float (optional)",
-        "constant": "bool"
+        "id": "",
+        "name": "",
+        "metaid": "",
+        "sboTerm": "",
+        "value": "",
+        "constant": ""
       },
       "style": {}
     },
     {
-      "id": "n12",
+      "id": "n4",
       "position": {
-        "x": 1559.6293109813441,
-        "y": 440.25329503302163
+        "x": 833.1523435518487,
+        "y": 204.94864525928796
       },
       "caption": "",
       "labels": [
         "Reaction"
       ],
       "properties": {
-        "id": "str (required)",
-        "name": "str (optional)",
-        "metaid": "str (optional)",
-        "sboTerm": "str (optional)",
-        "reversible": "bool"
+        "id": "",
+        "name": "",
+        "metaid": "",
+        "sboTerm": "",
+        "reversible": ""
       },
       "style": {}
     },
     {
-      "id": "n17",
+      "id": "n5",
       "position": {
-        "x": 855.4769674294954,
-        "y": 440.2532950330214
+        "x": 101.9500996340099,
+        "y": 204.94864525928796
       },
       "caption": "",
       "labels": [
-        "model"
+        "Model"
       ],
       "properties": {
-        "id": "str",
-        "name": "str",
-        "metaid": "str",
-        "sboTerm": "str"
+        "id": "",
+        "name": "",
+        "metaid": "",
+        "sboTerm": ""
       },
       "style": {}
     },
     {
-      "id": "n18",
+      "id": "n6",
       "position": {
-        "x": 855.4769674294954,
-        "y": 615.6628042616126
+        "x": 152.37597058451303,
+        "y": 380.3581544878789
       },
       "caption": "",
       "labels": [
         "UnitDefinition"
       ],
       "properties": {
-        "id": "str (optional)",
-        "name": "str (optional)",
-        "metaid": "str (optional)",
-        "sboTerm": "str (optional)"
+        "id": "",
+        "name": "",
+        "metaid": "",
+        "sboTerm": ""
       },
       "style": {}
     },
     {
-      "id": "n19",
+      "id": "n7",
       "position": {
-        "x": 1286.7264130245258,
-        "y": 231.30464977373367
+        "x": 529.3341614372075,
+        "y": 380.35815448787895
       },
       "caption": "",
       "labels": [
         "GeneProduct"
       ],
       "properties": {
-        "id": "str",
-        "name": "str"
+        "id": "",
+        "name": ""
       },
       "style": {}
     }
   ],
   "relationships": [
     {
-      "id": "n14",
-      "fromId": "n9",
-      "toId": "n8",
+      "id": "n0",
+      "fromId": "n2",
+      "toId": "n1",
       "type": "IN_COMPARTMENT",
       "properties": {},
       "style": {}
     },
     {
-      "id": "n29",
-      "fromId": "n12",
-      "toId": "n9",
+      "id": "n1",
+      "fromId": "n4",
+      "toId": "n2",
       "type": "HAS_PRODUCT",
       "properties": {},
       "style": {}
     },
     {
-      "id": "n30",
-      "fromId": "n12",
-      "toId": "n10",
+      "id": "n2",
+      "fromId": "n4",
+      "toId": "n3",
       "type": "HAS_LOWERFLUXBOUND",
       "properties": {},
       "style": {}
     },
     {
-      "id": "n32",
-      "fromId": "n17",
-      "toId": "n10",
+      "id": "n3",
+      "fromId": "n5",
+      "toId": "n3",
       "type": "HAS_PARAMETER",
       "properties": {},
       "style": {}
     },
     {
-      "id": "n33",
-      "fromId": "n10",
-      "toId": "n18",
+      "id": "n4",
+      "fromId": "n3",
+      "toId": "n6",
       "type": "HAS_UNIT",
       "properties": {},
       "style": {}
     },
     {
-      "id": "n34",
-      "fromId": "n12",
-      "toId": "n10",
+      "id": "n5",
+      "fromId": "n4",
+      "toId": "n3",
       "type": "HAS_UPPERFLUXBOUND",
       "properties": {},
       "style": {}
     },
     {
-      "id": "n35",
-      "fromId": "n12",
-      "toId": "n19",
+      "id": "n6",
+      "fromId": "n4",
+      "toId": "n7",
       "type": "IS_IMPLIED",
       "properties": {},
       "style": {}
     },
     {
-      "id": "n36",
+      "id": "n7",
+      "fromId": "n2",
+      "toId": "n4",
       "type": "IS_REACTANT",
-      "style": {},
       "properties": {},
-      "fromId": "n9",
-      "toId": "n12"
+      "style": {}
     }
   ]
 }

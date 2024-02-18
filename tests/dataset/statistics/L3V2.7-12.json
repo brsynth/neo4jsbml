@@ -5,15 +5,15 @@
             "value.count": 5
         },
         {
-            "label": "compartment",
+            "label": "Compartment",
             "value.count": 3
         },
         {
-            "label": "model",
+            "label": "Model",
             "value.count": 1
         },
         {
-            "label": "unit",
+            "label": "Unit",
             "value.count": 6
         },
         {
@@ -29,7 +29,7 @@
             "value.count": 4
         },
         {
-            "label": "localParameter",
+            "label": "LocalParameter",
             "value.count": 9
         }
     ],

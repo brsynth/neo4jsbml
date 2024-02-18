@@ -79,7 +79,7 @@
       },
       "caption": "",
       "labels": [
-        "compartment"
+        "Compartment"
       ],
       "properties": {
         "id": "",
@@ -98,13 +98,13 @@
       },
       "caption": "",
       "labels": [
-        "model"
+        "Model"
       ],
       "properties": {
-        "id": "str",
-        "name": "str",
-        "metaid": "str",
-        "sboTerm": "str"
+        "id": "",
+        "name": "",
+        "metaid": "",
+        "sboTerm": ""
       },
       "style": {}
     },
@@ -116,7 +116,7 @@
       },
       "caption": "",
       "labels": [
-        "unit"
+        "Unit"
       ],
       "properties": {
         "id": "",
@@ -168,7 +168,7 @@
       },
       "caption": "",
       "labels": [
-        "rateRule"
+        "RateRule"
       ],
       "properties": {
         "variable": "",
@@ -184,7 +184,7 @@
       },
       "caption": "",
       "labels": [
-        "event"
+        "Event"
       ],
       "properties": {},
       "style": {}
@@ -197,7 +197,7 @@
       },
       "caption": "",
       "labels": [
-        "trigger"
+        "Trigger"
       ],
       "properties": {
         "math": ""
@@ -212,7 +212,7 @@
       },
       "caption": "",
       "labels": [
-        "eventAssignment"
+        "EventAssignment"
       ],
       "properties": {
         "variable": "",

@@ -17,7 +17,7 @@
             "value.count": 4
         },
         {
-            "label": "model",
+            "label": "Model",
             "value.count": 1
         },
         {
@@ -25,11 +25,11 @@
             "value.count": 3
         },
         {
-            "label": "objective",
+            "label": "Objective",
             "value.count": 1
         },
         {
-            "label": "fluxObjective",
+            "label": "FluxObjective",
             "value.count": 1
         }
     ],

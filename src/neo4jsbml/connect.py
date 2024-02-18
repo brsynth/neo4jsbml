@@ -169,6 +169,60 @@ class Connect(metaclass=singleton.Singleton):
                 )
                 res.single()
 
+    def query_labels(self) -> List:
+        """Return all labels found in the database.
+
+        Return
+        ------
+        Optional[List[str, Any]]
+        """
+        que = "MATCH (n) RETURN labels(n) AS label"
+        res = self.query(value=que, expect_data=True, access=neo4j.READ_ACCESS)
+        if res:
+            return res
+        return []
+
+    def query_node(self, label: str) -> List:
+        """Return all nodes based on a label with their ids.
+
+        Parameters
+        ----------
+        label: str
+            A label to query nodes
+
+        Return
+        ------
+        Optional[List[str, Any]]
+        """
+        with self.driver.session(
+            database=self.database, default_access_mode=neo4j.READ_ACCESS
+        ) as session:
+            res = session.run(
+                "MATCH (n: " + label + ") RETURN n AS node, elementId(n) AS nodeId",
+            )
+            return res.data()
+
+    def query_neighbor(self, elementId: str) -> List:
+        """Return neighbors of a node based on a label.
+
+        Parameters
+        ----------
+        elementId: str
+            An id to select
+
+        Return
+        ------
+        Optional[List[str, Any]]
+        """
+        with self.driver.session(
+            database=self.database, default_access_mode=neo4j.READ_ACCESS
+        ) as session:
+            res = session.run(
+                "MATCH (n)-[r*1..1]-(m) WHERE elementId(n) = $elementId RETURN m AS nodeNeighbor, labels(m) as nodeLabels, elementId(m) as nodeId, r AS relationship",
+                elementId=elementId,
+            )
+            return res.data()
+
     def clean(self) -> None:
         """Remove data into Neo4j
 
@@ -182,22 +236,24 @@ class Connect(metaclass=singleton.Singleton):
             return None
 
     def query(
-        self, value: str, expect_data: bool = False
-    ) -> Optional[List[Dict[str, Any]]]:
+        self, value: str, expect_data: bool = False, access: str = neo4j.WRITE_ACCESS
+    ) -> Optional[List]:
         """Execute query into Neo4j.
 
         Parameters
         ----------
         value: str
             the query
-        expect_data: bool
+        expect_data: bool (default: False)
             return or not a value
+        access: str (default: neo4j.WRITE_ACCESS)
+            Choices between [neo4j.READ_ACCESS, WRITE_ACCESS]
 
         Return
         ------
         A list of results if expect_data is set
         """
-        with self.driver.session(default_access_mode=neo4j.WRITE_ACCESS) as session:
+        with self.driver.session(default_access_mode=access) as session:
             res = session.run(value)
             if expect_data:
                 return res.data()

@@ -79,7 +79,7 @@
       },
       "caption": "",
       "labels": [
-        "compartment"
+        "Compartment"
       ],
       "properties": {
         "id": "",
@@ -100,7 +100,7 @@
       },
       "caption": "",
       "labels": [
-        "model"
+        "Model"
       ],
       "properties": {
         "id": "",
@@ -118,7 +118,7 @@
       },
       "caption": "",
       "labels": [
-        "unit"
+        "Unit"
       ],
       "properties": {
         "id": "",
@@ -251,7 +251,7 @@
       "style": {}
     },
     {
-      "id": "n8",
+      "id": "n7",
       "fromId": "n5",
       "toId": "n6",
       "type": "IS_REACTANT",
@@ -259,7 +259,7 @@
       "style": {}
     },
     {
-      "id": "n9",
+      "id": "n8",
       "fromId": "n6",
       "toId": "n5",
       "type": "HAS_PRODUCT",
@@ -267,7 +267,7 @@
       "style": {}
     },
     {
-      "id": "n10",
+      "id": "n9",
       "fromId": "n8",
       "toId": "n1",
       "type": "HAS_UNITS",
@@ -275,12 +275,12 @@
       "style": {}
     },
     {
-      "id": "n11",
-      "type": "HAS_PARAMETER",
-      "style": {},
-      "properties": {},
+      "id": "n10",
       "fromId": "n3",
-      "toId": "n8"
+      "toId": "n8",
+      "type": "HAS_PARAMETER",
+      "properties": {},
+      "style": {}
     }
   ]
 }

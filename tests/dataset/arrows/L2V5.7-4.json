@@ -74,12 +74,12 @@
     {
       "id": "n2",
       "position": {
-        "x": 823.7271069693428,
+        "x": 870.0365866256014,
         "y": -4
       },
       "caption": "",
       "labels": [
-        "compartment"
+        "Compartment"
       ],
       "properties": {
         "id": "",
@@ -96,7 +96,7 @@
       },
       "caption": "",
       "labels": [
-        "model"
+        "Model"
       ],
       "properties": {
         "id": "",
@@ -113,7 +113,7 @@
       },
       "caption": "",
       "labels": [
-        "unit"
+        "Unit"
       ],
       "properties": {
         "id": "",
@@ -191,14 +191,14 @@
         "y": 227.57570232311423
       },
       "caption": "",
-      "style": {},
       "labels": [
-        "assignmentRule"
+        "AssignmentRule"
       ],
       "properties": {
         "id": "",
         "math": ""
-      }
+      },
+      "style": {}
     }
   ],
   "relationships": [
@@ -227,7 +227,7 @@
       "style": {}
     },
     {
-      "id": "n4",
+      "id": "n3",
       "fromId": "n5",
       "toId": "n2",
       "type": "IN_COMPARTMENT",
@@ -235,7 +235,7 @@
       "style": {}
     },
     {
-      "id": "n6",
+      "id": "n4",
       "fromId": "n6",
       "toId": "n7",
       "type": "HAS_KENETICLAW",
@@ -243,7 +243,7 @@
       "style": {}
     },
     {
-      "id": "n7",
+      "id": "n5",
       "fromId": "n5",
       "toId": "n6",
       "type": "IS_REACTANT",
@@ -251,7 +251,7 @@
       "style": {}
     },
     {
-      "id": "n8",
+      "id": "n6",
       "fromId": "n6",
       "toId": "n5",
       "type": "HAS_PRODUCT",
@@ -259,7 +259,7 @@
       "style": {}
     },
     {
-      "id": "n9",
+      "id": "n7",
       "fromId": "n8",
       "toId": "n1",
       "type": "HAS_UNITS",
@@ -267,7 +267,7 @@
       "style": {}
     },
     {
-      "id": "n10",
+      "id": "n8",
       "fromId": "n7",
       "toId": "n8",
       "type": "HAS_PARAMETER",
@@ -275,12 +275,12 @@
       "style": {}
     },
     {
-      "id": "n11",
-      "type": "HAS_ASSIGNMENTRULE",
-      "style": {},
-      "properties": {},
+      "id": "n9",
       "fromId": "n3",
-      "toId": "n9"
+      "toId": "n9",
+      "type": "HAS_ASSIGNMENTRULE",
+      "properties": {},
+      "style": {}
     }
   ]
 }

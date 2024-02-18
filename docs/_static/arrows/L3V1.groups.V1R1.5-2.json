@@ -1,151 +1,4 @@
 {
-  "nodes": [
-    {
-      "id": "n1",
-      "position": {
-        "x": 827.111693482963,
-        "y": 512.4882057789567
-      },
-      "caption": "",
-      "labels": [
-        "Compartment"
-      ],
-      "properties": {
-        "id": "",
-        "spatialDimensions": "",
-        "size": "",
-        "constant": "",
-        "units": ""
-      },
-      "style": {}
-    },
-    {
-      "id": "n2",
-      "position": {
-        "x": 410.13715680605134,
-        "y": 512.4882057789567
-      },
-      "caption": "",
-      "labels": [
-        "Species"
-      ],
-      "properties": {
-        "id": "",
-        "initialConcentration": "",
-        "substanceUnits": "",
-        "hasOnlySubstanceUnits": "",
-        "constant": "",
-        "boundaryCondition": ""
-      },
-      "style": {}
-    },
-    {
-      "id": "n5",
-      "position": {
-        "x": 129,
-        "y": 337.0786965503655
-      },
-      "caption": "",
-      "labels": [
-        "model"
-      ],
-      "properties": {
-        "id": "str",
-        "timeUnits": "str"
-      },
-      "style": {}
-    },
-    {
-      "id": "n7",
-      "position": {
-        "x": 426.15277562376315,
-        "y": 190.42664302263958
-      },
-      "caption": "",
-      "labels": [
-        "group"
-      ],
-      "properties": {
-        "id": "",
-        "kind": ""
-      },
-      "style": {}
-    },
-    {
-      "id": "n8",
-      "position": {
-        "x": 827.111693482963,
-        "y": 190.42664302263958
-      },
-      "caption": "",
-      "labels": [
-        "member"
-      ],
-      "properties": {
-        "metaIdRef": ""
-      },
-      "style": {}
-    },
-    {
-      "id": "n9",
-      "position": {
-        "x": 129,
-        "y": 611.3574244007981
-      },
-      "caption": "",
-      "labels": [
-        "assignmentRule"
-      ],
-      "properties": {
-        "id": "",
-        "variable": "",
-        "math": ""
-      },
-      "style": {}
-    }
-  ],
-  "relationships": [
-    {
-      "id": "n0",
-      "fromId": "n2",
-      "toId": "n1",
-      "type": "IN_COMPARTMENT",
-      "properties": {},
-      "style": {}
-    },
-    {
-      "id": "n6",
-      "fromId": "n5",
-      "toId": "n7",
-      "type": "HAS_GROUP",
-      "properties": {},
-      "style": {}
-    },
-    {
-      "id": "n7",
-      "fromId": "n7",
-      "toId": "n8",
-      "type": "HAS_MEMBER",
-      "properties": {},
-      "style": {}
-    },
-    {
-      "id": "n8",
-      "fromId": "n5",
-      "toId": "n2",
-      "type": "HAS_SPECIES",
-      "properties": {},
-      "style": {}
-    },
-    {
-      "id": "n9",
-      "fromId": "n5",
-      "toId": "n9",
-      "type": "HAS_RULE",
-      "properties": {},
-      "style": {}
-    }
-  ],
   "style": {
     "font-family": "sans-serif",
     "background-color": "#ffffff",
@@ -198,5 +51,152 @@
     "property-color": "#000000",
     "property-font-size": 16,
     "property-font-weight": "normal"
-  }
+  },
+  "nodes": [
+    {
+      "id": "n1",
+      "position": {
+        "x": 827.111693482963,
+        "y": 318.06156275631713
+      },
+      "caption": "",
+      "labels": [
+        "Compartment"
+      ],
+      "properties": {
+        "id": "",
+        "spatialDimensions": "",
+        "size": "",
+        "constant": "",
+        "units": ""
+      },
+      "style": {}
+    },
+    {
+      "id": "n2",
+      "position": {
+        "x": 410.13715680605134,
+        "y": 318.06156275631713
+      },
+      "caption": "",
+      "labels": [
+        "Species"
+      ],
+      "properties": {
+        "id": "",
+        "initialConcentration": "",
+        "substanceUnits": "",
+        "hasOnlySubstanceUnits": "",
+        "constant": "",
+        "boundaryCondition": ""
+      },
+      "style": {}
+    },
+    {
+      "id": "n3",
+      "position": {
+        "x": 129,
+        "y": 142.65205352772594
+      },
+      "caption": "",
+      "labels": [
+        "Model"
+      ],
+      "properties": {
+        "id": "",
+        "timeUnits": ""
+      },
+      "style": {}
+    },
+    {
+      "id": "n4",
+      "position": {
+        "x": 426.15277562376315,
+        "y": -4
+      },
+      "caption": "",
+      "labels": [
+        "Group"
+      ],
+      "properties": {
+        "id": "",
+        "kind": ""
+      },
+      "style": {}
+    },
+    {
+      "id": "n5",
+      "position": {
+        "x": 827.111693482963,
+        "y": -4
+      },
+      "caption": "",
+      "labels": [
+        "Member"
+      ],
+      "properties": {
+        "metaIdRef": ""
+      },
+      "style": {}
+    },
+    {
+      "id": "n6",
+      "position": {
+        "x": 129,
+        "y": 416.9307813781585
+      },
+      "caption": "",
+      "labels": [
+        "AssignmentRule"
+      ],
+      "properties": {
+        "id": "",
+        "variable": "",
+        "math": ""
+      },
+      "style": {}
+    }
+  ],
+  "relationships": [
+    {
+      "id": "n0",
+      "fromId": "n2",
+      "toId": "n1",
+      "type": "IN_COMPARTMENT",
+      "properties": {},
+      "style": {}
+    },
+    {
+      "id": "n1",
+      "fromId": "n3",
+      "toId": "n4",
+      "type": "HAS_GROUP",
+      "properties": {},
+      "style": {}
+    },
+    {
+      "id": "n2",
+      "fromId": "n4",
+      "toId": "n5",
+      "type": "HAS_MEMBER",
+      "properties": {},
+      "style": {}
+    },
+    {
+      "id": "n3",
+      "fromId": "n3",
+      "toId": "n2",
+      "type": "HAS_SPECIES",
+      "properties": {},
+      "style": {}
+    },
+    {
+      "id": "n4",
+      "fromId": "n3",
+      "toId": "n6",
+      "type": "HAS_RULE",
+      "properties": {},
+      "style": {}
+    }
+  ]
 }

@@ -38,7 +38,9 @@ class TestL3V2Package:
             neo4jsbml_statistics(config=config_path, output=fod.name)
             assert compare_json(
                 result=fod.name,
-                expect=os.path.join(data_dir, "statistics", "L3V1.groups.V1R1.5-2.json"),
+                expect=os.path.join(
+                    data_dir, "statistics", "L3V1.groups.V1R1.5-2.json"
+                ),
             )
 
     def test_ex_layout(self, data_dir, config_path):
@@ -51,7 +53,9 @@ class TestL3V2Package:
             neo4jsbml_statistics(config=config_path, output=fod.name)
             assert compare_json(
                 result=fod.name,
-                expect=os.path.join(data_dir, "statistics", "L3V1.layout.V1R1.4-5.json"),
+                expect=os.path.join(
+                    data_dir, "statistics", "L3V1.layout.V1R1.4-5.json"
+                ),
             )
 
     def test_ex_qual(self, data_dir, config_path):

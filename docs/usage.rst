@@ -128,6 +128,61 @@ To import your data with ``neo4jsbml`` into Neo4j, you will need:
 .. note::
     If you have multiple model in the database, pass a ``tag`` to identify the model loaded into the database if you want to avoid collision with the argument ``--parameter-tag-property-str``
 
+Plugins compatibility
+~~~~~~~~~~~~~~~~~~~~~
+| Package                                                 | Compatibility |
+| ------------------------------------------------------- | ------------- |
+| Arrays                                                  | No            |
+| Hierarchical Model Composition                          | No            |
+| Distributions                                           | No            |
+| Dynamic Structures                                      | No            |
+| Flux Balance Constraints                                | Yes           |
+| Groups                                                  | Yes           |
+| Layout                                                  | Yes           |
+| Extended MathML                                         | No            |
+| Multistate, Multicomponent and Multicompartment Species | No            |
+| Qualitative models                                      | Yes           |
+| Rendering                                               | No            |
+| Spatial Processes                                       | No            |
+
+Export your data into Neo4j
+---------------------------
+
+Command line
+~~~~~~~~~~~~
+To export your data with ``neo4jsbml`` into Neo4j, you will need:
+1. the database parameters
+1. the ``JSON`` file downloaded from `arrows <https://arrows.app>`_
+
+.. code-block:: console
+
+    $ neo4jsbml sbml-from-neo4j
+        <database parameters>
+
+        --input-arrows-json <file> \
+        --output-model-sbml <file>
+
+.. note::
+    neo4jsbml tries to map your arrows schema to the structure of the SBML document. It's better to keep the SBML structure in Neo4j and in the Arrows schema, notably to keep a Model entity.
+
+Plugins compatibility
+~~~~~~~~~~~~~~~~~~~~~
+| Package                                                 | Compatibility |
+| ------------------------------------------------------- | ------------- |
+| Arrays                                                  | No            |
+| Hierarchical Model Composition                          | No            |
+| Distributions                                           | No            |
+| Dynamic Structures                                      | No            |
+| Flux Balance Constraints                                | No            |
+| Groups                                                  | No            |
+| Layout                                                  | No            |
+| Extended MathML                                         | No            |
+| Multistate, Multicomponent and Multicompartment Species | No            |
+| Qualitative models                                      | No            |
+| Rendering                                               | No            |
+| Spatial Processes                                       | No            |
+
+
 API
 ~~~
 .. code-block:: python

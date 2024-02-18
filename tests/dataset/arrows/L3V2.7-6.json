@@ -79,7 +79,7 @@
       },
       "caption": "",
       "labels": [
-        "compartment"
+        "Compartment"
       ],
       "properties": {
         "id": "",
@@ -100,13 +100,13 @@
       },
       "caption": "",
       "labels": [
-        "model"
+        "Model"
       ],
       "properties": {
-        "id": "str",
-        "name": "str",
-        "metaid": "str",
-        "sboTerm": "str"
+        "id": "",
+        "name": "",
+        "metaid": "",
+        "sboTerm": ""
       },
       "style": {}
     },
@@ -118,7 +118,7 @@
       },
       "caption": "",
       "labels": [
-        "unit"
+        "Unit"
       ],
       "properties": {
         "id": "",
@@ -167,7 +167,7 @@
     {
       "id": "n7",
       "position": {
-        "x": 129,
+        "x": 108.90916999786276,
         "y": 210.40545459635314
       },
       "caption": "",
@@ -199,12 +199,12 @@
     {
       "id": "n9",
       "position": {
-        "x": 1159.749447165992,
+        "x": 1191.8315672528865,
         "y": 210.40545459635297
       },
       "caption": "",
       "labels": [
-        "algebraicRule"
+        "AlgebraicRule"
       ],
       "properties": {
         "formula": ""
@@ -286,7 +286,7 @@
       "style": {}
     },
     {
-      "id": "n10",
+      "id": "n9",
       "fromId": "n3",
       "toId": "n9",
       "type": "HAS_ASSIGNMENTRULE",
@@ -294,12 +294,12 @@
       "style": {}
     },
     {
-      "id": "n11",
-      "type": "HAS_PARAMETER",
-      "style": {},
-      "properties": {},
+      "id": "n10",
       "fromId": "n3",
-      "toId": "n8"
+      "toId": "n8",
+      "type": "HAS_PARAMETER",
+      "properties": {},
+      "style": {}
     }
   ]
 }
