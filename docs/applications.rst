@@ -17,16 +17,16 @@ Neo4jSbml
 ^^^^^^^^^
 .. code-block:: console
 
-    $ neo4jsbml \
-        --input-config-file tests/dataset/database/localhost.ini \
-        --input-modelisation-json tests/dataset/modelisation/PathwayModelisation-2.0.2.json \
-        --input-file-sbml tests/dataset/model/iML1515.xml.gz \
-        --input-tag-str iML1515
-    $ neo4jsbml \
-        --input-config-file tests/datasets/database/localhost.ini \
-        --input-modelisation-json tests/dataset/modelisation/PathwayModelisation-2.0.2.json \
-        --input-file-sbml tests/dataset/model/iAF1260.xml.gz \
-        --input-tag-str iAF1260
+    $ neo4jsbml sbml-to-neo4j \
+        --input-config-ini tests/dataset/database/localhost.ini \
+        --input-arrows-json tests/dataset/modelisation/PathwayModelisation-2.0.2.json \
+        --input-model-sbml tests/dataset/model/iML1515.xml.gz \
+        --parameter-tag-property-str iML1515
+    $ neo4jsbml sbml-to-neo4j \
+        --input-config-ini tests/datasets/database/localhost.ini \
+        --input-arrows-json tests/dataset/modelisation/PathwayModelisation-2.0.2.json \
+        --input-model-sbml tests/dataset/model/iAF1260.xml.gz \
+        --paramter-tag-property-str iAF1260
 
 Query Cypher
 ^^^^^^^^^^^^
@@ -57,10 +57,10 @@ Neo4jSbml
 ^^^^^^^^^
 .. code-block:: console
 
-    $ neo4jsbml \
-        --input-config-file tests/dataset/database/localhost.ini \
-        --input-modelisation-json tests/dataset/modelisation/PathwayModelisation-2.0.2.json \
-        --input-file-sbml tests/dataset/model/e_coli_core.xml.gz
+    $ neo4jsbml sbml-to-neo4j \
+        --input-config-ini tests/dataset/database/localhost.ini \
+        --input-arrows-json tests/dataset/modelisation/PathwayModelisation-2.0.2.json \
+        --input-model-sbml tests/dataset/model/e_coli_core.xml.gz
 
 Query Cypher
 ^^^^^^^^^^^^
@@ -107,10 +107,10 @@ Neo4jSbml
 ^^^^^^^^^
 .. code-block:: console
 
-    $ neo4jsbml \
-        --input-config-file tests/dataset/database/localhost.ini \
-        --input-modelisation-json tests/dataset/modelisation/EnumeratePathway.json \
-        --input-file-sbml tests/dataset/model/e_coli_core.xml.gz
+    $ neo4jsbml sbml-to-neo4j \
+        --input-config-ini tests/dataset/database/localhost.ini \
+        --input-arrows-json tests/dataset/modelisation/EnumeratePathway.json \
+        --input-model-sbml tests/dataset/model/e_coli_core.xml.gz
 
 Graph Refactoring
 ^^^^^^^^^^^^^^^^^

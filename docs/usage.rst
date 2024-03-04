@@ -64,7 +64,7 @@ The user has two options: passing arguments individually by the command line or 
 ``--input-user-str``
     Username to log with the database
 
-``--input-password-file``
+``--input-password-txt``
     Password to log with the database
 
 ``--input-database-str``
@@ -73,7 +73,7 @@ The user has two options: passing arguments individually by the command line or 
 **Configuration file**
 Several options, either
 
-``--input-config-file``
+``--input-config-ini``
     An ``ìni`` file containing all these informations above
 
 .. code-block:: toml
@@ -94,7 +94,7 @@ Several options, either
 
 or either
 
-``--input-auradb-file``
+``--input-auradb-txt``
     A ``txt`` file provided by AuraDB
 
 .. code-block:: bash
@@ -119,14 +119,69 @@ To import your data with ``neo4jsbml`` into Neo4j, you will need:
 
 .. code-block:: console
 
-    $ neo4jsbml \
+    $ neo4jsbml sbml-to-neo4j
         <database parameters>
 
-        --input-file-sbml <file> \
-        --input-modelisation-json <file>
+        --input-model-sbml <file> \
+        --input-arrows-json <file>
 
 .. note::
-    If you have multiple model in the database, pass a ``tag`` to identify the model loaded into the database if you want to avoid collision with the argument ``--input-tag-str``
+    If you have multiple model in the database, pass a ``tag`` to identify the model loaded into the database if you want to avoid collision with the argument ``--parameter-tag-property-str``
+
+Plugins compatibility
+~~~~~~~~~~~~~~~~~~~~~
+| Package                                                 | Compatibility |
+| ------------------------------------------------------- | ------------- |
+| Arrays                                                  | No            |
+| Hierarchical Model Composition                          | No            |
+| Distributions                                           | No            |
+| Dynamic Structures                                      | No            |
+| Flux Balance Constraints                                | Yes           |
+| Groups                                                  | Yes           |
+| Layout                                                  | Yes           |
+| Extended MathML                                         | No            |
+| Multistate, Multicomponent and Multicompartment Species | No            |
+| Qualitative models                                      | Yes           |
+| Rendering                                               | No            |
+| Spatial Processes                                       | No            |
+
+Export your data into Neo4j
+---------------------------
+
+Command line
+~~~~~~~~~~~~
+To export your data with ``neo4jsbml`` into Neo4j, you will need:
+1. the database parameters
+1. the ``JSON`` file downloaded from `arrows <https://arrows.app>`_
+
+.. code-block:: console
+
+    $ neo4jsbml sbml-from-neo4j
+        <database parameters>
+
+        --input-arrows-json <file> \
+        --output-model-sbml <file>
+
+.. note::
+    neo4jsbml tries to map your arrows schema to the structure of the SBML document. It's better to keep the SBML structure in Neo4j and in the Arrows schema, notably to keep a Model entity.
+
+Plugins compatibility
+~~~~~~~~~~~~~~~~~~~~~
+| Package                                                 | Compatibility |
+| ------------------------------------------------------- | ------------- |
+| Arrays                                                  | No            |
+| Hierarchical Model Composition                          | No            |
+| Distributions                                           | No            |
+| Dynamic Structures                                      | No            |
+| Flux Balance Constraints                                | No            |
+| Groups                                                  | No            |
+| Layout                                                  | No            |
+| Extended MathML                                         | No            |
+| Multistate, Multicomponent and Multicompartment Species | No            |
+| Qualitative models                                      | No            |
+| Rendering                                               | No            |
+| Spatial Processes                                       | No            |
+
 
 API
 ~~~

@@ -137,12 +137,12 @@
       },
       "caption": "",
       "labels": [
-        "model"
+        "Model"
       ],
       "properties": {
-        "id": "str",
-        "timeUnits": "str",
-        "strict": "str"
+        "id": "",
+        "timeUnits": "",
+        "strict": ""
       },
       "style": {}
     },
@@ -172,7 +172,7 @@
       },
       "caption": "",
       "labels": [
-        "objective"
+        "Objective"
       ],
       "properties": {
         "id": "",
@@ -188,7 +188,7 @@
       },
       "caption": "",
       "labels": [
-        "fluxObjective"
+        "FluxObjective"
       ],
       "properties": {
         "reaction": "",

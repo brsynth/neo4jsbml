@@ -100,11 +100,11 @@
       },
       "caption": "",
       "labels": [
-        "model"
+        "Model"
       ],
       "properties": {
-        "id": "str",
-        "timeUnits": "str"
+        "id": "",
+        "timeUnits": ""
       },
       "style": {}
     },
@@ -116,7 +116,7 @@
       },
       "caption": "",
       "labels": [
-        "reaction"
+        "Reaction"
       ],
       "properties": {
         "id": "",
@@ -133,7 +133,7 @@
       },
       "caption": "",
       "labels": [
-        "layout"
+        "Layout"
       ],
       "properties": {
         "id": ""
@@ -148,7 +148,7 @@
       },
       "caption": "",
       "labels": [
-        "compartmentGlyph"
+        "CompartmentGlyph"
       ],
       "properties": {
         "id": "",
@@ -164,7 +164,7 @@
       },
       "caption": "",
       "labels": [
-        "boundingBox"
+        "BoundingBox"
       ],
       "properties": {
         "id": ""
@@ -179,7 +179,7 @@
       },
       "caption": "",
       "labels": [
-        "position"
+        "Position"
       ],
       "properties": {
         "XOffset": "",
@@ -195,7 +195,7 @@
       },
       "caption": "",
       "labels": [
-        "dimensions"
+        "Dimensions"
       ],
       "properties": {
         "width": "",
@@ -211,7 +211,7 @@
       },
       "caption": "",
       "labels": [
-        "speciesGlyph"
+        "SpeciesGlyph"
       ],
       "properties": {
         "id": ""
@@ -226,7 +226,7 @@
       },
       "caption": "",
       "labels": [
-        "textGlyph"
+        "TextGlyph"
       ],
       "properties": {
         "id": "",
@@ -243,7 +243,7 @@
       },
       "caption": "",
       "labels": [
-        "reactionGlyph"
+        "ReactionGlyph"
       ],
       "properties": {
         "id": "",
@@ -259,7 +259,7 @@
       },
       "caption": "",
       "labels": [
-        "curveSegment"
+        "CurveSegment"
       ],
       "properties": {},
       "style": {}
@@ -272,7 +272,7 @@
       },
       "caption": "",
       "labels": [
-        "start"
+        "Start"
       ],
       "properties": {
         "XOffset": "",
@@ -288,7 +288,7 @@
       },
       "caption": "",
       "labels": [
-        "end"
+        "End"
       ],
       "properties": {
         "XOffset": "",
@@ -304,7 +304,7 @@
       },
       "caption": "",
       "labels": [
-        "speciesReferenceGlyph"
+        "SpeciesReferenceGlyph"
       ],
       "properties": {
         "id": "",
@@ -321,7 +321,7 @@
       },
       "caption": "",
       "labels": [
-        "curve"
+        "Curve"
       ],
       "properties": {},
       "style": {}

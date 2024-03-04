@@ -1,0 +1,82 @@
+{
+    "nodes": [
+        {
+            "label": "UnitDefinition",
+            "value.count": 5
+        },
+        {
+            "label": "Compartment",
+            "value.count": 3
+        },
+        {
+            "label": "Model",
+            "value.count": 1
+        },
+        {
+            "label": "Unit",
+            "value.count": 6
+        },
+        {
+            "label": "Species",
+            "value.count": 8
+        },
+        {
+            "label": "Reaction",
+            "value.count": 4
+        },
+        {
+            "label": "KineticLaw",
+            "value.count": 4
+        },
+        {
+            "label": "LocalParameter",
+            "value.count": 9
+        }
+    ],
+    "relationships": [
+        {
+            "type": "HAS_COMPARTMENT",
+            "value.count": 3
+        },
+        {
+            "type": "IS_COMPOSED",
+            "value.count": 8
+        },
+        {
+            "type": "HAS_UNITDEFINITION",
+            "value.count": 5
+        },
+        {
+            "type": "HAS_SPECIES",
+            "value.count": 8
+        },
+        {
+            "type": "IN_COMPARTMENT",
+            "value.count": 8
+        },
+        {
+            "type": "HAS_REACTION",
+            "value.count": 4
+        },
+        {
+            "type": "HAS_KENETICLAW",
+            "value.count": 4
+        },
+        {
+            "type": "IS_REACTANT",
+            "value.count": 6
+        },
+        {
+            "type": "HAS_PRODUCT",
+            "value.count": 4
+        },
+        {
+            "type": "MODIFIERS",
+            "value.count": 2
+        },
+        {
+            "type": "HAS_LOCALPARAMETER",
+            "value.count": 9
+        }
+    ]
+}

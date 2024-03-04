@@ -354,7 +354,7 @@ Some examples of Arrow's schemas and Neo4j views coming from the :download:`(SBM
 
 **Neo4j**
 
-.. figure:: _static/neo4j/L2V5.7-5.svg
+.. figure:: _static/neo4j/L2V5.7-3.svg
     :align: center
 
 4 - Example involving assignment rules

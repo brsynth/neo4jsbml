@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.11.2](https://github.com/brsynth/neo4jsbml/tree/0.11.2) (2023-10-07)
+
+[Full Changelog](https://github.com/brsynth/neo4jsbml/compare/0.11.1...0.11.2)
+
+**Merged pull requests:**
+
+- AuraDB config [\#14](https://github.com/brsynth/neo4jsbml/pull/14) ([guillaume-gricourt](https://github.com/guillaume-gricourt))
+- Neo4jefmtool [\#13](https://github.com/brsynth/neo4jsbml/pull/13) ([guillaume-gricourt](https://github.com/guillaume-gricourt))
+- Manage plugins [\#12](https://github.com/brsynth/neo4jsbml/pull/12) ([guillaume-gricourt](https://github.com/guillaume-gricourt))
+- Fix Id association [\#11](https://github.com/brsynth/neo4jsbml/pull/11) ([guillaume-gricourt](https://github.com/guillaume-gricourt))
+
 ## [0.11.1](https://github.com/brsynth/neo4jsbml/tree/0.11.1) (2023-09-22)
 
 [Full Changelog](https://github.com/brsynth/neo4jsbml/compare/0.11.0...0.11.1)

@@ -64,10 +64,10 @@
         "UnitDefinition"
       ],
       "properties": {
-        "id": "str (required)",
-        "name": "str (optional)",
-        "metaid": "str (optional)",
-        "sboTerm": "str (optional)"
+        "id": "",
+        "name": "",
+        "metaid": "",
+        "sboTerm": ""
       },
       "style": {}
     },
@@ -79,16 +79,16 @@
       },
       "caption": "",
       "labels": [
-        "compartment"
+        "Compartment"
       ],
       "properties": {
-        "id": "str (required)",
-        "name": "str (optional)",
-        "metaid": "str (optional)",
-        "sboTerm": "str (optional)",
-        "spatialDimensions": "int (optional)",
-        "size": "int (optional)",
-        "constant": "bool (optional)"
+        "id": "",
+        "name": "",
+        "metaid": "",
+        "sboTerm": "",
+        "spatialDimensions": "",
+        "size": "",
+        "constant": ""
       },
       "style": {}
     },
@@ -100,13 +100,13 @@
       },
       "caption": "",
       "labels": [
-        "model"
+        "Model"
       ],
       "properties": {
-        "id": "str",
-        "name": "str",
-        "metaid": "str",
-        "sboTerm": "str"
+        "id": "",
+        "name": "",
+        "metaid": "",
+        "sboTerm": ""
       },
       "style": {}
     },
@@ -118,17 +118,17 @@
       },
       "caption": "",
       "labels": [
-        "unit"
+        "Unit"
       ],
       "properties": {
-        "id": "str (optional)",
-        "name": "str (optional)",
-        "metaid": "str (optional)",
-        "sboTerm": "str (optional)",
-        "kind": "str (required)",
-        "exponent": "float (optional)",
-        "scale": "int (optional)",
-        "multiplier": "float (optional)"
+        "id": "",
+        "name": "",
+        "metaid": "",
+        "sboTerm": "",
+        "kind": "",
+        "exponent": "",
+        "scale": "",
+        "multiplier": ""
       },
       "style": {}
     },
@@ -251,7 +251,7 @@
       "style": {}
     },
     {
-      "id": "n8",
+      "id": "n7",
       "fromId": "n5",
       "toId": "n6",
       "type": "IS_REACTANT",
@@ -259,7 +259,7 @@
       "style": {}
     },
     {
-      "id": "n9",
+      "id": "n8",
       "fromId": "n6",
       "toId": "n5",
       "type": "HAS_PRODUCT",
@@ -267,7 +267,7 @@
       "style": {}
     },
     {
-      "id": "n10",
+      "id": "n9",
       "fromId": "n8",
       "toId": "n1",
       "type": "HAS_UNITS",
@@ -275,12 +275,12 @@
       "style": {}
     },
     {
-      "id": "n11",
-      "type": "HAS_PARAMETER",
-      "style": {},
-      "properties": {},
+      "id": "n10",
       "fromId": "n7",
-      "toId": "n8"
+      "toId": "n8",
+      "type": "HAS_PARAMETER",
+      "properties": {},
+      "style": {}
     }
   ]
 }

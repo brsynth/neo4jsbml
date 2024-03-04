@@ -48,8 +48,10 @@ neo4jsbml \
 
     # Input
     --input-file-sbml <file> \
-    --input-tag-str "" \
-    --input-modelisation-json <file>
+    --input-modelisation-json <file> \
+
+    # Parameter
+    --input-tag-str ""
 ```
 
 ## Config file

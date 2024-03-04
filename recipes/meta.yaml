@@ -22,6 +22,7 @@ requirements:
   run:
     - python-libsbml
     - neo4j-python-driver
+    - networkx
     - sphinx
     - sphinx_rtd_theme
 

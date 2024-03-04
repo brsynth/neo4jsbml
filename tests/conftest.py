@@ -1,65 +1,68 @@
+import json
 import os
+import sys
+import xml.etree.ElementTree as ElementTree
 
 import pytest
-from neo4jsbml import connect, sbml, singleton
+from neo4jsbml import cmd, connect, sbml, singleton
 
 cur_dir = os.path.abspath(os.path.dirname(__file__))
-data_dir = os.path.join(cur_dir, "dataset")
+dir_data = os.path.join(cur_dir, "dataset")
 
 
 @pytest.fixture(scope="session")
-def data_directory():
-    return data_dir
+def data_dir():
+    return dir_data
 
 
 @pytest.fixture(scope="session")
-def config_path(data_directory):
-    return os.path.join(data_directory, "database", "localhost.ini")
+def config_path(data_dir):
+    return os.path.join(data_dir, "database", "localhost.ini")
 
 
 @pytest.fixture(scope="session")
-def auradb_path(data_directory):
-    return os.path.join(data_directory, "database", "auradb.txt")
+def auradb_path(data_dir):
+    return os.path.join(data_dir, "database", "auradb.txt")
 
 
 @pytest.fixture(scope="session")
-def iml_path(data_directory):
-    return os.path.join(data_directory, "model", "iML1515.xml.gz")
+def iml_path(data_dir):
+    return os.path.join(data_dir, "model", "iML1515.xml.gz")
 
 
 @pytest.fixture(scope="function")
 def sbml_iml(iml_path):
-    return sbml.Sbml.from_sbml(path=iml_path)
+    return sbml.SbmlToNeo4j.from_sbml(path=iml_path)
 
 
 @pytest.fixture(scope="session")
-def iaf1260_path(data_directory):
-    return os.path.join(data_directory, "model", "iAF1260.xml.gz")
+def iaf1260_path(data_dir):
+    return os.path.join(data_dir, "model", "iAF1260.xml.gz")
 
 
 @pytest.fixture(scope="session")
-def ecore_path(data_directory):
-    return os.path.join(data_directory, "model", "e_coli_core.xml.gz")
+def ecore_path(data_dir):
+    return os.path.join(data_dir, "model", "e_coli_core.xml.gz")
 
 
 @pytest.fixture(scope="session")
-def iml_toy_path(data_directory):
-    return os.path.join(data_directory, "model", "iML1515.toy.xml.gz")
+def iml_toy_path(data_dir):
+    return os.path.join(data_dir, "model", "iML1515.toy.xml.gz")
 
 
 @pytest.fixture(scope="function")
 def sbml_toy(iml_toy_path):
-    return sbml.Sbml.from_sbml(path=iml_toy_path)
+    return sbml.SbmlToNeo4j.from_sbml(path=iml_toy_path)
 
 
 @pytest.fixture(scope="session")
-def pathway_one_path(data_directory):
-    return os.path.join(data_directory, "arrows", "PathwayModelisation-1.0.0.json")
+def pathway_one_path(data_dir):
+    return os.path.join(data_dir, "arrows", "PathwayModelisation-1.0.0.json")
 
 
 @pytest.fixture(scope="session")
-def pathway_two_path(data_directory):
-    return os.path.join(data_directory, "arrows", "PathwayModelisation-2.0.2.json")
+def pathway_two_path(data_dir):
+    return os.path.join(data_dir, "arrows", "PathwayModelisation-2.0.2.json")
 
 
 @pytest.fixture(scope="function")
@@ -181,3 +184,83 @@ is_not_connected = pytest.mark.skipif(
     ).is_connected(),
     reason="connected",
 )
+
+
+def neo4jsbml_clean(config: str) -> None:
+    args = ["neo4jsbml", "clean"]
+    args += ["--input-config-ini", config]
+    ret = cmd.run(args)
+    if ret.returncode > 0:
+        print(ret.stderr)
+        print(ret.stdout)
+        sys.exit(1)
+
+
+def neo4jsbml_sbml_to_neo4j(config: str, arrows: str, model: str) -> None:
+    neo4jsbml_clean(config=config)
+    args = ["neo4jsbml", "sbml-to-neo4j"]
+    args += ["--input-config-ini", config]
+    args += ["--input-arrows-json", arrows]
+    args += ["--input-model-sbml", model]
+    ret = cmd.run(args)
+    if ret.returncode > 0:
+        print(ret.stderr)
+        print(ret.stdout)
+        sys.exit(1)
+
+
+def neo4jsbml_sbml_from_neo4j(config: str, arrows: str, model: str) -> None:
+    args = ["neo4jsbml", "sbml-from-neo4j"]
+    args += ["--input-config-ini", config]
+    args += ["--input-arrows-json", arrows]
+    args += ["--output-model-sbml", model]
+    ret = cmd.run(args)
+    if ret.returncode > 0:
+        print(ret.stderr)
+        print(ret.stdout)
+        sys.exit(1)
+
+
+def neo4jsbml_statistics(config: str, output: str) -> None:
+    args = ["neo4jsbml", "statistics"]
+    args += ["--input-config-ini", config]
+    args += ["--output-statistics-json", output]
+    ret = cmd.run(args)
+    if ret.returncode > 0:
+        print(ret.stderr)
+        print(ret.stdout)
+        sys.exit(1)
+
+
+def ordered(obj):
+    if isinstance(obj, dict):
+        return sorted((k, ordered(v)) for k, v in obj.items())
+    if isinstance(obj, list):
+        return sorted(ordered(x) for x in obj)
+    else:
+        return obj
+
+
+def compare_json(result: str, expect: str) -> bool:
+    data_result = {}
+    with open(result) as fd:
+        data_result = json.load(fd)
+    data_expect = {}
+    with open(expect) as fd:
+        data_expect = json.load(fd)
+    return ordered(data_expect) == ordered(data_result)
+
+
+def _canonicalize_XML(xml: bytes):
+    # From https://stackoverflow.com/questions/24492895/comparing-two-xml-files-in-python
+    root = ElementTree.fromstring(xml)
+    rootstr = ElementTree.tostring(root)
+    return ElementTree.canonicalize(rootstr, strip_text=True)
+
+
+def compare_xml(result: str, expect: str) -> bool:
+    xml_result = ElementTree.parse(result)
+    data_result = _canonicalize_XML(ElementTree.tostring(xml_result.getroot()))
+    xml_expect = ElementTree.parse(expect)
+    data_expect = _canonicalize_XML(ElementTree.tostring(xml_expect.getroot()))
+    return data_result == data_expect

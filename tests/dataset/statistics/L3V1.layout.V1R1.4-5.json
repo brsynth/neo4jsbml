@@ -1,0 +1,134 @@
+{
+    "nodes": [
+        {
+            "label": "Compartment",
+            "value.count": 1
+        },
+        {
+            "label": "Species",
+            "value.count": 5
+        },
+        {
+            "label": "Model",
+            "value.count": 1
+        },
+        {
+            "label": "Reaction",
+            "value.count": 1
+        },
+        {
+            "label": "Layout",
+            "value.count": 1
+        },
+        {
+            "label": "CompartmentGlyph",
+            "value.count": 1
+        },
+        {
+            "label": "BoundingBox",
+            "value.count": 12
+        },
+        {
+            "label": "Position",
+            "value.count": 12
+        },
+        {
+            "label": "Dimensions",
+            "value.count": 10
+        },
+        {
+            "label": "SpeciesGlyph",
+            "value.count": 5
+        },
+        {
+            "label": "TextGlyph",
+            "value.count": 5
+        },
+        {
+            "label": "ReactionGlyph",
+            "value.count": 1
+        },
+        {
+            "label": "CurveSegment",
+            "value.count": 7
+        },
+        {
+            "label": "Start",
+            "value.count": 4
+        },
+        {
+            "label": "End",
+            "value.count": 7
+        },
+        {
+            "label": "SpeciesReferenceGlyph",
+            "value.count": 6
+        },
+        {
+            "label": "Curve",
+            "value.count": 7
+        }
+    ],
+    "relationships": [
+        {
+            "type": "IN_COMPARTMENT",
+            "value.count": 5
+        },
+        {
+            "type": "HAS_REACTION",
+            "value.count": 1
+        },
+        {
+            "type": "HAS_SPECIES",
+            "value.count": 10
+        },
+        {
+            "type": "HAS_LAYOUT",
+            "value.count": 1
+        },
+        {
+            "type": "HAS_COMPARTMENTGLYPH",
+            "value.count": 1
+        },
+        {
+            "type": "HAS_BOUNDINGBOX",
+            "value.count": 11
+        },
+        {
+            "type": "HAS_POSITION",
+            "value.count": 12
+        },
+        {
+            "type": "HAS_DIMENSIONS",
+            "value.count": 22
+        },
+        {
+            "type": "HAS_SPECIESGLYPH",
+            "value.count": 5
+        },
+        {
+            "type": "HAS_TEXTGLYPH",
+            "value.count": 5
+        },
+        {
+            "type": "HAS_REACTIONGLYPH",
+            "value.count": 1
+        },
+        {
+            "type": "HAS_CURVESEGMENT",
+            "value.count": 14
+        },
+        {
+            "type": "HAS_START",
+            "value.count": 7
+        },
+        {
+            "type": "HAS_END",
+            "value.count": 7
+        },
+        {
+            "type": "HAS_SPECIESREFERENCEGLYPH",
+            "value.count": 6
+        }
+    ]
+}

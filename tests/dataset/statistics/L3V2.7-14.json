@@ -1,0 +1,98 @@
+{
+    "nodes": [
+        {
+            "label": "UnitDefinition",
+            "value.count": 2
+        },
+        {
+            "label": "Compartment",
+            "value.count": 1
+        },
+        {
+            "label": "Model",
+            "value.count": 1
+        },
+        {
+            "label": "Unit",
+            "value.count": 4
+        },
+        {
+            "label": "Species",
+            "value.count": 5
+        },
+        {
+            "label": "AssignmentRule",
+            "value.count": 1
+        },
+        {
+            "label": "Event",
+            "value.count": 1
+        },
+        {
+            "label": "Trigger",
+            "value.count": 1
+        },
+        {
+            "label": "EventAssignment",
+            "value.count": 1
+        },
+        {
+            "label": "Delay",
+            "value.count": 1
+        },
+        {
+            "label": "Parameter",
+            "value.count": 1
+        }
+    ],
+    "relationships": [
+        {
+            "type": "HAS_COMPARTMENT",
+            "value.count": 1
+        },
+        {
+            "type": "IS_COMPOSED",
+            "value.count": 4
+        },
+        {
+            "type": "HAS_UNITDEFINITION",
+            "value.count": 2
+        },
+        {
+            "type": "HAS_SPECIES",
+            "value.count": 5
+        },
+        {
+            "type": "IN_COMPARTMENT",
+            "value.count": 5
+        },
+        {
+            "type": "HAS_ASSIGNMENTRULE",
+            "value.count": 1
+        },
+        {
+            "type": "HAS_EVENT",
+            "value.count": 1
+        },
+        {
+            "type": "HAS_TRIGGER",
+            "value.count": 1
+        },
+        {
+            "type": "HAS_EVENTASSIGNMENT",
+            "value.count": 1
+        },
+        {
+            "type": "HAS_DELAY",
+            "value.count": 1
+        },
+        {
+            "type": "HAS_PARAMETER",
+            "value.count": 1
+        },
+        {
+            "type": "HAS_UNITS",
+            "value.count": 1
+        }
+    ]
+}

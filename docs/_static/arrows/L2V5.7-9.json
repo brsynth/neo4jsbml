@@ -61,7 +61,7 @@
       },
       "caption": "",
       "labels": [
-        "compartment"
+        "Compartment"
       ],
       "properties": {
         "id": "",
@@ -78,7 +78,7 @@
       },
       "caption": "",
       "labels": [
-        "model"
+        "Model"
       ],
       "properties": {
         "id": ""
@@ -109,7 +109,7 @@
       },
       "caption": "",
       "labels": [
-        "rateRule"
+        "RateRule"
       ],
       "properties": {
         "id": "",
@@ -119,7 +119,7 @@
       "style": {}
     },
     {
-      "id": "n6",
+      "id": "n5",
       "position": {
         "x": 419.3931065242752,
         "y": -4
@@ -146,28 +146,28 @@
       "style": {}
     },
     {
-      "id": "n4",
+      "id": "n1",
       "fromId": "n2",
-      "toId": "n6",
+      "toId": "n5",
       "type": "HAS_PARAMETER",
       "properties": {},
       "style": {}
     },
     {
-      "id": "n7",
-      "type": "HAS_SPECIES",
-      "style": {},
-      "properties": {},
+      "id": "n2",
       "fromId": "n2",
-      "toId": "n3"
+      "toId": "n3",
+      "type": "HAS_SPECIES",
+      "properties": {},
+      "style": {}
     },
     {
-      "id": "n8",
-      "type": "HAS_RATERULE",
-      "style": {},
-      "properties": {},
+      "id": "n3",
       "fromId": "n2",
-      "toId": "n4"
+      "toId": "n4",
+      "type": "HAS_RATERULE",
+      "properties": {},
+      "style": {}
     }
   ]
 }

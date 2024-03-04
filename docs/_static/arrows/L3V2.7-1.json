@@ -54,102 +54,98 @@
   },
   "nodes": [
     {
-      "id": "n11",
+      "id": "n1",
       "position": {
-        "x": 522.4546214921043,
-        "y": 1168.3242638484294
+        "x": 592.1514046462285,
+        "y": 594.4271563266282
       },
       "caption": "",
       "labels": [
         "UnitDefinition"
       ],
       "properties": {
-        "id": "str (required)",
-        "name": "str (optional)",
-        "metaid": "str (optional)",
-        "sboTerm": "str (optional)"
+        "id": ""
       },
       "style": {}
     },
     {
-      "id": "n12",
+      "id": "n2",
       "position": {
-        "x": 739.9658296571748,
-        "y": 569.8971075218012
+        "x": 823.7271069693428,
+        "y": -4
       },
       "caption": "",
       "labels": [
-        "compartment"
+        "Compartment"
       ],
       "properties": {
-        "id": "str (required)",
-        "name": "str (optional)",
-        "metaid": "str (optional)",
-        "sboTerm": "str (optional)",
-        "spatialDimensions": "int (optional)",
-        "size": "int (optional)",
-        "constant": "bool (optional)"
+        "id": "",
+        "spatialDimensions": "",
+        "size": "",
+        "constant": "",
+        "units": ""
       },
       "style": {}
     },
     {
-      "id": "n13",
+      "id": "n3",
       "position": {
-        "x": 508.39012733406054,
-        "y": 801.4728098449154
+        "x": 592.1514046462285,
+        "y": 227.57570232311423
       },
       "caption": "",
       "labels": [
-        "model"
+        "Model"
       ],
       "properties": {
-        "id": "str",
-        "name": "str",
-        "metaid": "str",
-        "sboTerm": "str"
+        "extentUnits": "",
+        "timeUnits": ""
       },
       "style": {}
     },
     {
-      "id": "n14",
+      "id": "n4",
       "position": {
-        "x": 739.9658296571748,
-        "y": 992.0183018626179
+        "x": 823.7271069693428,
+        "y": 418.1211943408167
       },
       "caption": "",
       "labels": [
-        "unit"
+        "Unit"
       ],
       "properties": {
-        "id": "str (optional)",
-        "name": "str (optional)",
-        "metaid": "str (optional)",
-        "sboTerm": "str (optional)",
-        "kind": "str (required)",
-        "exponent": "float (optional)",
-        "scale": "int (optional)",
-        "multiplier": "float (optional)"
+        "kind": "",
+        "exponent": "",
+        "scale": "",
+        "multiplier": ""
       },
       "style": {}
     },
     {
-      "id": "n15",
+      "id": "n5",
       "position": {
-        "x": 276.8144250109463,
-        "y": 569.8971075218012
+        "x": 360.5757023231143,
+        "y": -4
       },
       "caption": "",
       "labels": [
         "Species"
       ],
-      "properties": {},
+      "properties": {
+        "id": "",
+        "initialAmount": "",
+        "boundaryCondition": "",
+        "hasOnlySubstanceUnits": "",
+        "substanceUnits": "",
+        "constant": ""
+      },
       "style": {}
     },
     {
-      "id": "n16",
+      "id": "n6",
       "position": {
-        "x": 45.23872268783202,
-        "y": 801.4728098449154
+        "x": 129,
+        "y": 227.57570232311423
       },
       "caption": "",
       "labels": [
@@ -162,10 +158,10 @@
       "style": {}
     },
     {
-      "id": "n17",
+      "id": "n7",
       "position": {
-        "x": 311.59755450051836,
-        "y": 992.0183018626179
+        "x": 422.06186045423505,
+        "y": 373.75832016801974
       },
       "caption": "",
       "labels": [
@@ -177,110 +173,111 @@
       "style": {}
     },
     {
-      "id": "n18",
+      "id": "n8",
       "position": {
-        "x": 45.23872268783202,
-        "y": 1168.3242638484294
+        "x": 129,
+        "y": 594.4271563266282
       },
       "caption": "",
       "labels": [
-        "localParameter"
+        "LocalParameter"
       ],
       "properties": {
         "id": "",
-        "value": ""
+        "value": "",
+        "units": ""
       },
       "style": {}
     }
   ],
   "relationships": [
     {
-      "id": "n8",
-      "fromId": "n13",
-      "toId": "n12",
+      "id": "n0",
+      "fromId": "n3",
+      "toId": "n2",
       "type": "HAS_COMPARTMENT",
       "properties": {},
       "style": {}
     },
     {
-      "id": "n10",
-      "fromId": "n11",
-      "toId": "n14",
+      "id": "n1",
+      "fromId": "n1",
+      "toId": "n4",
       "type": "IS_COMPOSED",
       "properties": {},
       "style": {}
     },
     {
-      "id": "n11",
-      "fromId": "n13",
-      "toId": "n11",
+      "id": "n2",
+      "fromId": "n3",
+      "toId": "n1",
       "type": "HAS_UNITDEFINITION",
       "properties": {},
       "style": {}
     },
     {
-      "id": "n13",
-      "fromId": "n13",
-      "toId": "n15",
+      "id": "n3",
+      "fromId": "n3",
+      "toId": "n5",
       "type": "HAS_SPECIES",
       "properties": {},
       "style": {}
     },
     {
-      "id": "n14",
-      "fromId": "n15",
-      "toId": "n12",
+      "id": "n4",
+      "fromId": "n5",
+      "toId": "n2",
       "type": "IN_COMPARTMENT",
       "properties": {},
       "style": {}
     },
     {
-      "id": "n15",
-      "fromId": "n13",
-      "toId": "n16",
+      "id": "n5",
+      "fromId": "n3",
+      "toId": "n6",
       "type": "HAS_REACTION",
       "properties": {},
       "style": {}
     },
     {
-      "id": "n16",
-      "fromId": "n16",
-      "toId": "n17",
+      "id": "n6",
+      "fromId": "n6",
+      "toId": "n7",
       "type": "HAS_KENETICLAW",
       "properties": {},
       "style": {}
     },
     {
-      "id": "n17",
-      "fromId": "n16",
-      "toId": "n18",
-      "type": "HAS_LOCALPARAMETER",
-      "properties": {},
-      "style": {}
-    },
-    {
-      "id": "n19",
-      "fromId": "n15",
-      "toId": "n16",
+      "id": "n8",
+      "fromId": "n5",
+      "toId": "n6",
       "type": "IS_REACTANT",
       "properties": {},
       "style": {}
     },
     {
-      "id": "n20",
-      "fromId": "n16",
-      "toId": "n15",
+      "id": "n9",
+      "fromId": "n6",
+      "toId": "n5",
       "type": "HAS_PRODUCT",
       "properties": {},
       "style": {}
     },
     {
-      "id": "n21",
-      "fromId": "n18",
-      "toId": "n11",
+      "id": "n10",
+      "fromId": "n8",
+      "toId": "n1",
       "type": "HAS_UNITS",
       "properties": {},
       "style": {}
+    },
+    {
+      "id": "n11",
+      "type": "HAS_LOCALPARAMETER",
+      "style": {},
+      "properties": {},
+      "fromId": "n7",
+      "toId": "n8"
     }
   ]
 }

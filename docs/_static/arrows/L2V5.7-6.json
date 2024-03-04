@@ -79,7 +79,7 @@
       },
       "caption": "",
       "labels": [
-        "compartment"
+        "Compartment"
       ],
       "properties": {
         "id": "",
@@ -96,7 +96,7 @@
       },
       "caption": "",
       "labels": [
-        "model"
+        "Model"
       ],
       "properties": {
         "id": "",
@@ -113,7 +113,7 @@
       },
       "caption": "",
       "labels": [
-        "unit"
+        "Unit"
       ],
       "properties": {
         "id": "",
@@ -192,7 +192,7 @@
       },
       "caption": "",
       "labels": [
-        "rateRule"
+        "RateRule"
       ],
       "properties": {
         "id": "",
@@ -267,15 +267,15 @@
       "style": {}
     },
     {
-      "id": "n9",
-      "type": "HAS_RATERULE",
-      "style": {},
-      "properties": {},
+      "id": "n8",
       "fromId": "n3",
-      "toId": "n9"
+      "toId": "n9",
+      "type": "HAS_RATERULE",
+      "properties": {},
+      "style": {}
     },
     {
-      "id": "n10",
+      "id": "n9",
       "fromId": "n6",
       "toId": "n5",
       "type": "MODIFIERS",
@@ -283,7 +283,7 @@
       "style": {}
     },
     {
-      "id": "n12",
+      "id": "n10",
       "fromId": "n3",
       "toId": "n8",
       "type": "HAS_PARAMETER",

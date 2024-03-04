@@ -56,7 +56,7 @@
     {
       "id": "n1",
       "position": {
-        "x": 606.2158988042722,
+        "x": 616.4851831281619,
         "y": 594.4271563266282
       },
       "caption": "",
@@ -74,12 +74,12 @@
     {
       "id": "n2",
       "position": {
-        "x": 823.7271069693428,
+        "x": 833.9963912932325,
         "y": -4
       },
       "caption": "",
       "labels": [
-        "compartment"
+        "Compartment"
       ],
       "properties": {
         "id": "",
@@ -91,12 +91,12 @@
     {
       "id": "n3",
       "position": {
-        "x": 606.2158988042722,
+        "x": 616.4851831281619,
         "y": 227.57570232311423
       },
       "caption": "",
       "labels": [
-        "model"
+        "Model"
       ],
       "properties": {
         "id": "",
@@ -108,12 +108,12 @@
     {
       "id": "n4",
       "position": {
-        "x": 888.4255801758507,
+        "x": 898.6948644997403,
         "y": 594.4271563266282
       },
       "caption": "",
       "labels": [
-        "unit"
+        "Unit"
       ],
       "properties": {
         "id": "",
@@ -127,7 +127,7 @@
     {
       "id": "n5",
       "position": {
-        "x": 360.5757023231143,
+        "x": 370.84498664700396,
         "y": -4
       },
       "caption": "",
@@ -140,7 +140,7 @@
     {
       "id": "n6",
       "position": {
-        "x": 118.73071567611034,
+        "x": 129,
         "y": 258.4098770239455
       },
       "caption": "",
@@ -156,7 +156,7 @@
     {
       "id": "n7",
       "position": {
-        "x": 118.73071567611034,
+        "x": 129,
         "y": 615.2683099157741
       },
       "caption": "",
@@ -171,7 +171,7 @@
     {
       "id": "n8",
       "position": {
-        "x": 360.5757023231143,
+        "x": 370.84498664700396,
         "y": 452.60672276443904
       },
       "caption": "",
@@ -187,12 +187,12 @@
     {
       "id": "n9",
       "position": {
-        "x": 954.8606643029914,
+        "x": 965.1299486268811,
         "y": 138.75741483624824
       },
       "caption": "",
       "labels": [
-        "assignmentRule"
+        "AssignmentRule"
       ],
       "properties": {
         "id": "",
@@ -203,18 +203,18 @@
     {
       "id": "n10",
       "position": {
-        "x": 954.8606643029914,
+        "x": 965.1299486268811,
         "y": 341.710783673396
       },
       "caption": "",
-      "style": {},
       "labels": [
-        "algebraicRule"
+        "AlgebraicRule"
       ],
       "properties": {
         "id": "",
         "math": ""
-      }
+      },
+      "style": {}
     }
   ],
   "relationships": [
@@ -300,27 +300,27 @@
     },
     {
       "id": "n10",
-      "type": "MODIFIERS",
-      "style": {},
-      "properties": {},
       "fromId": "n6",
-      "toId": "n5"
+      "toId": "n5",
+      "type": "MODIFIERS",
+      "properties": {},
+      "style": {}
     },
     {
       "id": "n11",
-      "type": "HAS_ALGEBRAICRULE",
-      "style": {},
-      "properties": {},
       "fromId": "n3",
-      "toId": "n10"
+      "toId": "n10",
+      "type": "HAS_ALGEBRAICRULE",
+      "properties": {},
+      "style": {}
     },
     {
       "id": "n12",
-      "type": "HAS_PARAMETER",
-      "style": {},
-      "properties": {},
       "fromId": "n3",
-      "toId": "n8"
+      "toId": "n8",
+      "type": "HAS_PARAMETER",
+      "properties": {},
+      "style": {}
     }
   ]
 }

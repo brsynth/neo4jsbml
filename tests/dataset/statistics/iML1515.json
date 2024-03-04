@@ -1,0 +1,66 @@
+{
+    "nodes": [
+        {
+            "label": "UnitDefinition",
+            "value.count": 1
+        },
+        {
+            "label": "Model",
+            "value.count": 1
+        },
+        {
+            "label": "Species",
+            "value.count": 1877
+        },
+        {
+            "label": "Reaction",
+            "value.count": 2712
+        },
+        {
+            "label": "Parameter",
+            "value.count": 5
+        },
+        {
+            "label": "Compartment",
+            "value.count": 3
+        },
+        {
+            "label": "GeneProduct",
+            "value.count": 1516
+        }
+    ],
+    "relationships": [
+        {
+            "type": "IN_COMPARTMENT",
+            "value.count": 1877
+        },
+        {
+            "type": "IS_REACTANT",
+            "value.count": 5247
+        },
+        {
+            "type": "HAS_PRODUCT",
+            "value.count": 5328
+        },
+        {
+            "type": "HAS_PARAMETER",
+            "value.count": 5
+        },
+        {
+            "type": "HAS_UNIT",
+            "value.count": 5
+        },
+        {
+            "type": "HAS_LOWERFLUXBOUND",
+            "value.count": 2712
+        },
+        {
+            "type": "HAS_UPPERFLUXBOUND",
+            "value.count": 2712
+        },
+        {
+            "type": "IS_IMPLIED",
+            "value.count": 4624
+        }
+    ]
+}

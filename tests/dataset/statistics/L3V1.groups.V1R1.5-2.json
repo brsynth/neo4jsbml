@@ -1,0 +1,50 @@
+{
+    "nodes": [
+        {
+            "label": "Compartment",
+            "value.count": 1
+        },
+        {
+            "label": "Species",
+            "value.count": 2
+        },
+        {
+            "label": "Model",
+            "value.count": 1
+        },
+        {
+            "label": "Group",
+            "value.count": 1
+        },
+        {
+            "label": "Member",
+            "value.count": 2
+        },
+        {
+            "label": "AssignmentRule",
+            "value.count": 2
+        }
+    ],
+    "relationships": [
+        {
+            "type": "IN_COMPARTMENT",
+            "value.count": 2
+        },
+        {
+            "type": "HAS_GROUP",
+            "value.count": 1
+        },
+        {
+            "type": "HAS_MEMBER",
+            "value.count": 2
+        },
+        {
+            "type": "HAS_SPECIES",
+            "value.count": 2
+        },
+        {
+            "type": "HAS_RULE",
+            "value.count": 2
+        }
+    ]
+}
