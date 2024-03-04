@@ -19,7 +19,7 @@ jobs:
         python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
     defaults:
       run:
-        shell: bash -l {0}
+        shell: bash -el {0}
     steps:
       - name: 'Checkout'
         uses: actions/checkout@v4
@@ -33,9 +33,8 @@ jobs:
           miniconda-version: "latest"
           environment-file: recipes/workflow.yaml
           python-version: ${{ matrix.python-version }}
-          mamba-version: "*"
           channel-priority: true
-          use-mamba: true
+          auto-update-conda: true
       - name: 'Build conda package'
         run: |
           conda-build recipes/
