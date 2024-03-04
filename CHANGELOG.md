@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.12.0](https://github.com/brsynth/neo4jsbml/tree/0.12.0) (2023-10-08)
+
+[Full Changelog](https://github.com/brsynth/neo4jsbml/compare/0.11.2...0.12.0)
+
+**Merged pull requests:**
+
+- Take into account `annotation` field [\#15](https://github.com/brsynth/neo4jsbml/pull/15) ([guillaume-gricourt](https://github.com/guillaume-gricourt))
+
 ## [0.11.2](https://github.com/brsynth/neo4jsbml/tree/0.11.2) (2023-10-07)
 
 [Full Changelog](https://github.com/brsynth/neo4jsbml/compare/0.11.1...0.11.2)
