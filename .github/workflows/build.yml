@@ -19,7 +19,7 @@ jobs:
           fetch-depth: 0
       - name: 'Bump version and push tag - dry run'
         id: tag_raw
-        uses: mathieudutour/github-tag-action@v6.1
+        uses: mathieudutour/github-tag-action@v6.2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           release_branches: stable
@@ -156,7 +156,7 @@ jobs:
           fetch-depth: 0
       - name: 'Bump version and push tag'
         id: tag
-        uses: mathieudutour/github-tag-action@v6.1
+        uses: mathieudutour/github-tag-action@v6.2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           release_branches: stable
