@@ -10,7 +10,7 @@ Arrows modelisation
 ^^^^^^^^^^^^^^^^^^^
 :download:`(JSON schema) <_static/arrows/PathwayModelisation-2.0.2.json>`
 
-.. figure:: _static/arrows/PathwayModelisation-2.0.2.png
+.. figure:: _static/arrows/PathwayModelisation-2.0.2.svg
    :align: center
 
 Neo4jSbml
@@ -50,7 +50,7 @@ Arrows modelisation
 ^^^^^^^^^^^^^^^^^^^
 :download:`(JSON schema) <_static/arrows/PathwayModelisation-2.0.2.json>`
 
-.. figure:: _static/arrows/PathwayModelisation-2.0.2.png
+.. figure:: _static/arrows/PathwayModelisation-2.0.2.svg
     :align: center
 
 Neo4jSbml
