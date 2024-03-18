@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.0.0](https://github.com/brsynth/neo4jsbml/tree/1.0.0) (2024-03-04)
+
+[Full Changelog](https://github.com/brsynth/neo4jsbml/compare/0.12.0...1.0.0)
+
+**Implemented enhancements:**
+
+- sbml from neo4j [\#20](https://github.com/brsynth/neo4jsbml/pull/20) ([guillaume-gricourt](https://github.com/guillaume-gricourt))
+- Add `statistics` subcmd [\#19](https://github.com/brsynth/neo4jsbml/pull/19) ([guillaume-gricourt](https://github.com/guillaume-gricourt))
+
+**Merged pull requests:**
+
+- Fix github workflow [\#25](https://github.com/brsynth/neo4jsbml/pull/25) ([guillaume-gricourt](https://github.com/guillaume-gricourt))
+- chore\(deps\): bump actions/upload-artifact from 3 to 4 [\#24](https://github.com/brsynth/neo4jsbml/pull/24) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump actions/download-artifact from 3 to 4 [\#23](https://github.com/brsynth/neo4jsbml/pull/23) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump conda-incubator/setup-miniconda from 2 to 3 [\#22](https://github.com/brsynth/neo4jsbml/pull/22) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump actions/setup-java from 3 to 4 [\#21](https://github.com/brsynth/neo4jsbml/pull/21) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Add `clean` subcmd [\#18](https://github.com/brsynth/neo4jsbml/pull/18) ([guillaume-gricourt](https://github.com/guillaume-gricourt))
+- Create sub-command sbml-to-neo4j [\#17](https://github.com/brsynth/neo4jsbml/pull/17) ([guillaume-gricourt](https://github.com/guillaume-gricourt))
+
 ## [0.12.0](https://github.com/brsynth/neo4jsbml/tree/0.12.0) (2023-10-08)
 
 [Full Changelog](https://github.com/brsynth/neo4jsbml/compare/0.11.2...0.12.0)
