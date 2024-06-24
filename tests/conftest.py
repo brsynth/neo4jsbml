@@ -232,11 +232,23 @@ def neo4jsbml_statistics(config: str, output: str) -> None:
         sys.exit(1)
 
 
-def ordered(obj):
+def normalize_json(obj):
+    """
+    Recursively sort lists within JSON objects to allow for unordered comparison.
+
+    Parameters:
+    obj (any): The JSON object to normalize.
+
+    Returns:
+    any: The normalized JSON object.
+    """
     if isinstance(obj, dict):
-        return sorted((k, ordered(v)) for k, v in obj.items())
-    if isinstance(obj, list):
-        return sorted(ordered(x) for x in obj)
+        return {k: normalize_json(v) for k, v in sorted(obj.items())}
+    elif isinstance(obj, list):
+        return sorted(
+            (normalize_json(x) for x in obj),
+            key=lambda x: json.dumps(x, sort_keys=True),
+        )
     else:
         return obj
 
@@ -248,7 +260,7 @@ def compare_json(result: str, expect: str) -> bool:
     data_expect = {}
     with open(expect) as fd:
         data_expect = json.load(fd)
-    return ordered(data_expect) == ordered(data_result)
+    return normalize_json(data_result) == normalize_json(data_expect)
 
 
 def _canonicalize_XML(xml: bytes):
