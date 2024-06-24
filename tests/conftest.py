@@ -260,6 +260,10 @@ def compare_json(result: str, expect: str) -> bool:
     data_expect = {}
     with open(expect) as fd:
         data_expect = json.load(fd)
+    print("Result")
+    print(normalize_json(data_result))
+    print("Expect")
+    print(normalize_json(data_expect))
     return normalize_json(data_result) == normalize_json(data_expect)
 
 
