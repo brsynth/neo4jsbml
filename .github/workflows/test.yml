@@ -41,6 +41,7 @@ jobs:
           conda-build recipes/
       - name: 'Run tests'
         run: |
+          conda list
           pip install --no-deps .
           python -m pytest tests
 
