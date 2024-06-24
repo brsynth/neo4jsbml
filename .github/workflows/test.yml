@@ -3,6 +3,7 @@ name: Tests
 on:
   push:
     branches:
+      - github
       - main
   pull_request:
     branches:
